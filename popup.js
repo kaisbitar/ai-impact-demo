@@ -1,6 +1,13 @@
 /**
  * AI Impact Tracker - Popup UI Script
  * =======================================
+ *
+ * Original Author: Simonas Zilinskas
+ * Original Repository: https://github.com/simonaszilinskas/ai-impact-tracker
+ * License: GPL-3.0
+ *
+ * This is a modified version of the original work.
+ *
  * This script handles the popup UI functionality including loading,
  * displaying usage logs and environmental metrics.
  */

@@ -1,6 +1,13 @@
 /**
  * AI Impact Tracker - Content Script
  * =====================================
+ *
+ * Original Author: Simonas Zilinskas
+ * Original Repository: https://github.com/simonaszilinskas/ai-impact-tracker
+ * License: GPL-3.0
+ *
+ * This is a modified version of the original work.
+ *
  * This script captures conversation data from the ChatGPT web interface,
  * extracts message content, calculates token usage, energy consumption,
  * and CO2 emissions. It persists data to Chrome storage for the popup UI.

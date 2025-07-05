@@ -1,8 +1,17 @@
+# AI Impact Tracker 🌱
+
+> **Original Author**: [Simonas Zilinskas](https://github.com/simonaszilinskas)  
+> **Original Repository**: [https://github.com/simonaszilinskas/ai-impact-tracker](https://github.com/simonaszilinskas/ai-impact-tracker)  
+> **License**: GPL-3.0 (see [LICENSE](LICENSE) file)  
+> **Modified Version**: This is a modified version of the original work
+
+---
+
+A browser extension (for now only Chrome) that estimates the environmental impact of your AI interactions.
+
 <div align="center">
 
 # AI impact tracker 🌱
-
-A browser extension (for now only Chrome) that estimates the environmental impact of your AI interactions.
 
 <div style="margin: 20px 0;">
   <a href="https://chromewebstore.google.com/detail/ai-impact-tracker/lbeceglchgnhaaidddcdgapnacdjofpf?authuser=1&hl=fr&pli=1" style="display: inline-block; background-color: #4285F4; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; transition: background-color 0.3s;">
