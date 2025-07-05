@@ -1,667 +1,838 @@
 <!-- popup.html -->
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>AI Impact Tracker</title>
-  <!-- Remix Icon CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      /* Colors */
-      --primary-color: #3E7B67;
-      --primary-color-hover: #2E5B4D;
-      --text-color: #343541;
-      --background-color: #f7f7f8;
-      --card-background: white;
-      --secondary-background: transparent;
-      --stat-box-background: transparent;
-      --equiv-item-background: #f6f8fa;
-      --border-color: #D5DFD9;
-      --tooltip-background: #333;
-      --tooltip-text: white;
-      --muted-text: #666;
-      --header-text: #444;
-      --divider-color: #ddd;
-      --chart-bar-color: var(--primary-color);
-      --chart-bar-hover: var(--primary-color-hover);
-      --link-color: var(--primary-color);
-      --tab-active-background: rgba(62, 123, 103, 0.1);
-      --tab-active-color: var(--primary-color);
-    }
-    
-    .estimation-disclaimer {
-      font-size: 10px;
-      color: #999;
-      text-align: center;
-      margin: 0 10px 12px;
-      padding: 0 5px;
-    }
+  <head>
+    <meta charset="utf-8" />
+    <title>AI Impact Tracker</title>
+    <!-- Remix Icon CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        /* Colors - Bergwaldprojekt inspired */
+        --primary-color: #1e4d2b;
+        --primary-color-hover: #0f2e1a;
+        --text-color: #2c3e50;
+        --background-color: #f8f9fa;
+        --card-background: white;
+        --secondary-background: #f1f3f4;
+        --stat-box-background: #f8f9fa;
+        --equiv-item-background: #f1f3f4;
+        --border-color: #d1d5db;
+        --tooltip-background: #2c3e50;
+        --tooltip-text: white;
+        --muted-text: #6b7280;
+        --header-text: #374151;
+        --divider-color: #e5e7eb;
+        --chart-bar-color: var(--primary-color);
+        --chart-bar-hover: var(--primary-color-hover);
+        --link-color: var(--primary-color);
+        --tab-active-background: rgba(30, 77, 43, 0.1);
+        --tab-active-color: var(--primary-color);
+        --accent-color: #8b5a3c;
+        --success-color: #059669;
+      }
 
-    body {
-      width: 400px;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: var(--text-color);
-      background-color: var(--background-color);
-      padding-bottom: 16px;
-    }
+      .estimation-disclaimer {
+        font-size: 10px;
+        color: #999;
+        text-align: center;
+        margin: 0 10px 12px;
+        padding: 0 5px;
+      }
 
-    .header {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    
-    .info-icon {
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-    
-    .info-icon i {
-      font-size: 20px;
-      color: var(--primary-color);
-    }
-    
-    .info-icon:hover {
-      background-color: rgba(62, 123, 103, 0.1);
-      text-decoration: none;
-    }
-    
-    .header-logo {
-      display: flex;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 700;
-      font-family: 'Quicksand', sans-serif;
-      flex-shrink: 0;
-      white-space: nowrap;
-    }
-    
-    .header-logo .icon {
-      margin-right: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .header-logo .icon i {
-      font-size: 22px;
-      color: var(--primary-color);
-    }
-    
-    .estimation-select {
-      font-size: 12px;
-      padding: 6px 10px;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      background-color: white;
-      color: var(--text-color);
-      font-family: inherit;
-      cursor: pointer;
-      min-width: 160px;
-      flex-shrink: 0;
-    }
-    
-    .estimation-select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
-    
-    .methodology-link {
-      color: var(--primary-color);
-      text-decoration: none;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    
-    .methodology-link:hover {
-      text-decoration: underline;
-    }
-    
-    .tab-container {
-      display: flex;
-      background-color: var(--background-color);
-      padding: 8px 12px;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .tabs-group {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .tab {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-    
-    .tab.active {
-      background-color: var(--tab-active-background);
-      color: var(--tab-active-color);
-      font-weight: 600;
-    }
-    
-    .tab:hover:not(.active) {
-      background-color: rgba(0,0,0,0.03);
-    }
-    
-    .content-section {
-      background-color: var(--card-background);
-      border-radius: 8px;
-      margin: 10px;
-      padding: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
-    
-    .stats-container {
-      display: none;
-    }
-    
-    .stats-container.active {
-      display: block;
-    }
-    
-    .section-header {
-      font-weight: bold;
-      margin-bottom: 12px;
-      font-size: 15px;
-      color: var(--header-text);
-    }
-    
-    .usage-stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-    
-    .stat-box {
-      padding: 12px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      gap: 10px;
-    }
-    
-    .stat-data {
-      flex: 1;
-    }
-    
-    .stat-box .emoji {
-      font-size: 24px;
-    }
-    
-    .message-value {
-      font-size: 32px;
-      font-weight: bold;
-      color: var(--primary-color);
-    }
-    
-    .token-value {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--muted-text);
-    }
-    
-    .token-item {
-      display: flex;
-      align-items: center;
-    }
-    
-    .token-divider {
-      height: 20px;
-      width: 1px;
-      background-color: var(--divider-color);
-      margin: 0 12px;
-    }
-    
-    .info-tooltip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted-text);
-      cursor: help;
-      position: relative;
-      flex-shrink: 0;
-    }
-    
-    .info-tooltip i {
-      font-size: 14px;
-    }
-    
-    .tooltip-text {
-      visibility: hidden;
-      width: 200px;
-      background-color: var(--tooltip-background);
-      color: var(--tooltip-text);
-      text-align: center;
-      border-radius: 4px;
-      padding: 6px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 12px;
-      pointer-events: none;
-    }
-    
-    .info-tooltip:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
-    
-    .stat-label {
-      font-size: 12px;
-      color: var(--muted-text);
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    
-    .equivalence-section {
-      margin-top: 12px;
-      margin-bottom: 16px;
-    }
-    
-    .equivalence-header {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 12px;
-      color: var(--header-text);
-    }
-    
-    .equivalence-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    
-    .equivalence-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-      background-color: var(--equiv-item-background);
-      border-radius: 6px;
-    }
-    
-    .equivalence-item .emoji {
-      font-size: 20px;
-    }
-    
-    .equivalence-data {
-      flex: 1;
-    }
-    
-    .equivalence-value {
-      font-weight: 500;
-      color: var(--text-color);
-      font-size: 14px;
-    }
-    
-    .equivalence-label {
-      font-size: 11px;
-      color: var(--muted-text);
-    }
-    
-    
-    /* Email Collection Overlay */
-    .email-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(247, 247, 248, 0.95);
-      backdrop-filter: blur(4px);
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 16px;
-      z-index: 10;
-    }
-    
-    .email-overlay.hidden {
-      display: none;
-    }
-    
-    .email-overlay h3 {
-      margin: 0 0 8px 0;
-      color: var(--primary-color);
-      font-size: 16px;
-      font-weight: 600;
-    }
-    
-    .email-overlay p {
-      margin: 0 0 16px 0;
-      color: var(--muted-text);
-      font-size: 12px;
-      line-height: 1.4;
-      max-width: 280px;
-    }
-    
-    .email-form {
-      width: 100%;
-      max-width: 280px;
-    }
-    
-    .email-input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 13px;
-      margin-bottom: 12px;
-      box-sizing: border-box;
-      font-family: inherit;
-      transition: border-color 0.2s ease;
-    }
-    
-    .email-input:focus {
-      outline: none;
-      border-color: var(--primary-color);
-    }
-    
-    .email-buttons {
-      display: flex;
-      gap: 0;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-    
-    .email-btn {
-      width: 100%;
-      padding: 10px 14px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: inherit;
-    }
-    
-    .email-btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-    }
-    
-    .email-btn-primary:hover {
-      background-color: var(--primary-color-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(62, 123, 103, 0.3);
-    }
-    
-    .email-btn-secondary {
-      background-color: transparent;
-      color: var(--muted-text);
-      border: 1px solid var(--border-color);
-    }
-    
-    .email-btn-secondary:hover {
-      background-color: var(--background-color);
-    }
-    
-    .gdpr-notice {
-      font-size: 10px;
-      color: var(--muted-text);
-      line-height: 1.3;
-      margin-top: 0;
-      max-width: 280px;
-    }
-    
-    .gdpr-notice a {
-      color: var(--primary-color);
-      text-decoration: none;
-    }
-    
-    .gdpr-notice a:hover {
-      text-decoration: underline;
-    }
-    
-    .lifetime-blurred {
-      position: relative;
-    }
-    
-    .lifetime-blurred .content-section {
-      filter: blur(3px);
-      pointer-events: none;
-      user-select: none;
-    }
-    
-    /* Checkbox Styling */
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 14px;
-      cursor: pointer;
-      font-size: 12px;
-      color: var(--text-color);
-      line-height: 1.3;
-      text-align: center;
-      gap: 6px;
-    }
-    
-    .marketing-checkbox {
-      margin-right: 0;
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-      accent-color: var(--primary-color);
-    }
-    
-    .checkbox-text {
-      flex: 1;
-      user-select: none;
-    }
-    
-  </style>
-  <script src="popup.js"></script>
-</head>
-<body>
-  <div class="header">
-    <div class="header-logo">
-      <div class="icon"><i class="ri-leaf-line"></i></div>
-      <div>AI impact tracker</div>
-    </div>
-    <select id="estimation-method" class="estimation-select">
-      <option value="community">Community estimates</option>
-      <option value="altman">Sam Altman's estimation</option>
-    </select>
-  </div>
-  
-  <div class="tab-container">
-    <div class="tabs-group">
-      <div class="tab active" id="today-tab">Today</div>
-      <div class="tab" id="lifetime-tab">Lifetime</div>
-    </div>
-    <a href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/methodology.md" target="_blank" class="methodology-link">methodology</a>
-  </div>
-  
-  <!-- Today Stats Container -->
-  <div id="today-stats" class="stats-container active">
-    <div class="content-section">
-      <div class="usage-stats-grid">
-        <div class="stat-box">
-          <div class="emoji">💬</div>
-          <div class="stat-data">
-            <div class="message-value" id="today-messages">0</div>
-            <div class="stat-label">Messages sent</div>
-          </div>
-        </div>
-        <div class="stat-box">
-          <div class="emoji">⚡️</div>
-          <div class="stat-data">
-            <div class="message-value" id="today-energy">0</div>
-            <div class="stat-label">
-              <span>Watt-hours used</span>
-              <span class="info-tooltip"><i class="ri-question-line"></i>
-                <div class="tooltip-text">This is an estimate based on energy usage patterns for large Mixture of Experts (MoE) models with 440B total parameters and 55B active parameters per inference.</div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="equivalence-section">
-        <div class="equivalence-header">Environmental equivalents:</div>
-        
-        <div class="equivalence-grid">
-          <div class="equivalence-item">
-            <div class="emoji">📺</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="today-movies">0 mins</div>
-              <div class="equivalence-label">YouTube streamed</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">💧</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="today-toasts">0</div>
-              <div class="equivalence-label">Water evaporated</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">📱</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="today-phones">0</div>
-              <div class="equivalence-label">Phones charged</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">🛗</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="today-elevator">0 floors</div>
-              <div class="equivalence-label">Elevator travel</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Lifetime Stats Container -->
-  <div id="lifetime-stats" class="stats-container">
-    <!-- Email Collection Overlay -->
-    <div id="email-overlay" class="email-overlay">
-      <h3>📊 View Lifetime Stats</h3>
-      <p>Provide your email to access lifetime usage data.</p>
-      <div class="email-form">
-        <input type="email" id="email-input" class="email-input" placeholder="your.email@example.com">
-        
-        <label class="checkbox-container">
-          <input type="checkbox" id="marketing-consent" class="marketing-checkbox">
-          <span class="checkmark"></span>
-          <span class="checkbox-text">Send me eco-friendly AI tips</span>
-        </label>
-        
-        <div class="email-buttons">
-          <button id="email-submit" class="email-btn email-btn-primary">View Stats</button>
-        </div>
-        <div class="gdpr-notice">
-          Email required for lifetime stats access. Marketing emails are optional. 
-          <a href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/privacy-policy.md" target="_blank">Privacy Policy</a>
-        </div>
-      </div>
-    </div>
-    
-    <div class="content-section">
-      <div class="usage-stats-grid">
-        <div class="stat-box">
-          <div class="emoji">💬</div>
-          <div class="stat-data">
-            <div class="message-value" id="lifetime-messages">0</div>
-            <div class="stat-label">Messages sent</div>
-          </div>
-        </div>
-        <div class="stat-box">
-          <div class="emoji">⚡️</div>
-          <div class="stat-data">
-            <div class="message-value" id="lifetime-energy">0</div>
-            <div class="stat-label">
-              <span>Watt-hours used</span>
-              <span class="info-tooltip"><i class="ri-question-line"></i>
-                <div class="tooltip-text">This is an estimate based on energy usage patterns for large Mixture of Experts (MoE) models with 440B total parameters and 55B active parameters per inference.</div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="equivalence-section">
-        <div class="equivalence-header">Environmental equivalents:</div>
-        
-        <div class="equivalence-grid">
-          <div class="equivalence-item">
-            <div class="emoji">📺</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="lifetime-movies">0 mins</div>
-              <div class="equivalence-label">YouTube streamed</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">💧</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="lifetime-toasts">0</div>
-              <div class="equivalence-label">Water evaporated</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">📱</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="lifetime-phones">0</div>
-              <div class="equivalence-label">Phones charged</div>
-            </div>
-          </div>
-          <div class="equivalence-item">
-            <div class="emoji">🛗</div>
-            <div class="equivalence-data">
-              <div class="equivalence-value" id="lifetime-elevator">0 floors</div>
-              <div class="equivalence-label">Elevator travel</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+      body {
+        width: 400px;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: var(--text-color);
+        background-color: var(--background-color);
+        padding-bottom: 16px;
+      }
 
-  <div class="estimation-disclaimer">
-    The numbers are estimations based on realistic assumptions.
-    <a href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/methodology.md" target="_blank" style="color: var(--link-color);">View methodology</a>
-  </div>
+      .header {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
 
-  
-</body>
+      .info-icon {
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .info-icon i {
+        font-size: 20px;
+        color: var(--primary-color);
+      }
+
+      .info-icon:hover {
+        background-color: rgba(62, 123, 103, 0.1);
+        text-decoration: none;
+      }
+
+      .header-logo {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        flex-shrink: 0;
+        white-space: nowrap;
+        color: var(--primary-color);
+      }
+
+      .header-logo .icon {
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color) 0%,
+          var(--accent-color) 100%
+        );
+        border-radius: 6px;
+        padding: 6px;
+      }
+
+      .header-logo .icon i {
+        font-size: 18px;
+        color: white;
+      }
+
+      .estimation-select {
+        font-size: 12px;
+        padding: 6px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background-color: white;
+        color: var(--text-color);
+        font-family: inherit;
+        cursor: pointer;
+        min-width: 160px;
+        flex-shrink: 0;
+      }
+
+      .estimation-select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .methodology-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .methodology-link:hover {
+        text-decoration: underline;
+      }
+
+      .tab-container {
+        display: flex;
+        background-color: var(--background-color);
+        padding: 8px 12px;
+        gap: 8px;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .tabs-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .tab {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+
+      .tab.active {
+        background-color: var(--tab-active-background);
+        color: var(--tab-active-color);
+        font-weight: 600;
+      }
+
+      .tab:hover:not(.active) {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
+
+      .content-section {
+        background-color: var(--card-background);
+        border-radius: 8px;
+        margin: 10px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .content-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color) 0%,
+          var(--accent-color) 100%
+        );
+        opacity: 0.7;
+      }
+
+      .stats-container {
+        display: none;
+      }
+
+      .stats-container.active {
+        display: block;
+      }
+
+      .section-header {
+        font-weight: bold;
+        margin-bottom: 12px;
+        font-size: 15px;
+        color: var(--header-text);
+      }
+
+      .usage-stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .stat-box {
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        gap: 10px;
+        border: 1px solid var(--border-color);
+        background: linear-gradient(
+          135deg,
+          var(--card-background) 0%,
+          var(--stat-box-background) 100%
+        );
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      .stat-box:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .stat-data {
+        flex: 1;
+      }
+
+      .stat-box .emoji {
+        font-size: 24px;
+      }
+
+      .message-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: var(--primary-color);
+      }
+
+      .token-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--muted-text);
+      }
+
+      .token-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .token-divider {
+        height: 20px;
+        width: 1px;
+        background-color: var(--divider-color);
+        margin: 0 12px;
+      }
+
+      .info-tooltip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted-text);
+        cursor: help;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .info-tooltip i {
+        font-size: 14px;
+      }
+
+      .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: var(--tooltip-background);
+        color: var(--tooltip-text);
+        text-align: center;
+        border-radius: 4px;
+        padding: 6px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+        pointer-events: none;
+      }
+
+      .info-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted-text);
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .equivalence-section {
+        margin-top: 12px;
+        margin-bottom: 16px;
+      }
+
+      .equivalence-header {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        color: var(--header-text);
+      }
+
+      .equivalence-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .equivalence-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        background-color: var(--equiv-item-background);
+        border-radius: 6px;
+      }
+
+      .equivalence-item .emoji {
+        font-size: 20px;
+      }
+
+      .equivalence-data {
+        flex: 1;
+      }
+
+      .equivalence-value {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 14px;
+      }
+
+      .equivalence-label {
+        font-size: 11px;
+        color: var(--muted-text);
+      }
+
+      /* Email Collection Overlay */
+      .email-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(247, 247, 248, 0.95);
+        backdrop-filter: blur(4px);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px;
+        z-index: 10;
+      }
+
+      .email-overlay.hidden {
+        display: none;
+      }
+
+      .email-overlay h3 {
+        margin: 0 0 8px 0;
+        color: var(--primary-color);
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .email-overlay p {
+        margin: 0 0 16px 0;
+        color: var(--muted-text);
+        font-size: 12px;
+        line-height: 1.4;
+        max-width: 280px;
+      }
+
+      .email-form {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .email-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border-color 0.2s ease;
+      }
+
+      .email-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+      }
+
+      .email-buttons {
+        display: flex;
+        gap: 0;
+        margin-bottom: 12px;
+        width: 100%;
+      }
+
+      .email-btn {
+        width: 100%;
+        padding: 10px 14px;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: inherit;
+      }
+
+      .email-btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .email-btn-primary:hover {
+        background-color: var(--primary-color-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(62, 123, 103, 0.3);
+      }
+
+      .email-btn-secondary {
+        background-color: transparent;
+        color: var(--muted-text);
+        border: 1px solid var(--border-color);
+      }
+
+      .email-btn-secondary:hover {
+        background-color: var(--background-color);
+      }
+
+      .gdpr-notice {
+        font-size: 10px;
+        color: var(--muted-text);
+        line-height: 1.3;
+        margin-top: 0;
+        max-width: 280px;
+      }
+
+      .gdpr-notice a {
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .gdpr-notice a:hover {
+        text-decoration: underline;
+      }
+
+      .lifetime-blurred {
+        position: relative;
+      }
+
+      .lifetime-blurred .content-section {
+        filter: blur(3px);
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* Checkbox Styling */
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 14px;
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--text-color);
+        line-height: 1.3;
+        text-align: center;
+        gap: 6px;
+      }
+
+      .marketing-checkbox {
+        margin-right: 0;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        accent-color: var(--primary-color);
+      }
+
+      .checkbox-text {
+        flex: 1;
+        user-select: none;
+      }
+    </style>
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <div class="header">
+      <div class="header-logo">
+        <div class="icon"><i class="ri-leaf-line"></i></div>
+        <div>Green AI Impact</div>
+      </div>
+      <select id="estimation-method" class="estimation-select">
+        <option value="community">Community estimates</option>
+        <option value="altman">Sam Altman's estimation</option>
+      </select>
+    </div>
+    <div
+      id="user-state-subtitle"
+      style="
+        text-align: center;
+        font-size: 13px;
+        color: var(--muted-text);
+        margin-bottom: 4px;
+      "
+    ></div>
+
+    <div class="tab-container">
+      <div class="tabs-group">
+        <div class="tab active" id="today-tab">Today</div>
+        <div class="tab" id="lifetime-tab">Lifetime</div>
+      </div>
+      <a
+        href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/methodology.md"
+        target="_blank"
+        class="methodology-link"
+        >methodology</a
+      >
+    </div>
+
+    <!-- Mission Statement -->
+    <div
+      style="
+        margin: 8px 10px;
+        padding: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(30, 77, 43, 0.05) 0%,
+          rgba(139, 90, 60, 0.05) 100%
+        );
+        border-radius: 6px;
+        border: 1px solid rgba(30, 77, 43, 0.1);
+      "
+    >
+      <div
+        style="
+          font-size: 11px;
+          color: var(--muted-text);
+          line-height: 1.4;
+          text-align: center;
+        "
+      >
+        <strong style="color: var(--primary-color)">Mission:</strong> Making AI
+        usage transparent and supporting ecosystem restoration through conscious
+        technology use.
+      </div>
+    </div>
+
+    <!-- Today Stats Container -->
+    <div id="today-stats" class="stats-container active">
+      <div class="content-section">
+        <div class="usage-stats-grid">
+          <div id="main-metric-tile">
+            <div class="stat-box">
+              <div class="emoji">💬</div>
+              <div class="stat-data">
+                <div class="message-value" id="today-messages">0</div>
+                <div class="stat-label" id="main-metric-label">
+                  Messages sent
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="emoji">⚡️</div>
+            <div class="stat-data">
+              <div class="message-value" id="today-energy">0</div>
+              <div class="stat-label">
+                <span>Watt-hours used</span>
+                <span class="info-tooltip"
+                  ><i class="ri-question-line"></i>
+                  <div class="tooltip-text">
+                    This is an estimate based on energy usage patterns for large
+                    Mixture of Experts (MoE) models with 440B total parameters
+                    and 55B active parameters per inference.
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="equivalence-section">
+          <div class="equivalence-header">Environmental equivalents:</div>
+
+          <div class="equivalence-grid">
+            <div class="equivalence-item">
+              <div class="emoji">🌿</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="today-movies">0 mins</div>
+                <div class="equivalence-label">YouTube streamed</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">💧</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="today-toasts">0</div>
+                <div class="equivalence-label">Water evaporated</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">📱</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="today-phones">0</div>
+                <div class="equivalence-label">Phones charged</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">🌱</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="today-elevator">
+                  0 floors
+                </div>
+                <div class="equivalence-label">Elevator travel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifetime Stats Container -->
+    <div id="lifetime-stats" class="stats-container">
+      <!-- Email Collection Overlay -->
+      <div id="email-overlay" class="email-overlay">
+        <h3>📊 View Lifetime Stats</h3>
+        <p>Provide your email to access lifetime usage data.</p>
+        <div class="email-form">
+          <input
+            type="email"
+            id="email-input"
+            class="email-input"
+            placeholder="your.email@example.com"
+          />
+
+          <label class="checkbox-container">
+            <input
+              type="checkbox"
+              id="marketing-consent"
+              class="marketing-checkbox"
+            />
+            <span class="checkmark"></span>
+            <span class="checkbox-text">Send me eco-friendly AI tips</span>
+          </label>
+
+          <div class="email-buttons">
+            <button id="email-submit" class="email-btn email-btn-primary">
+              View Stats
+            </button>
+          </div>
+          <div class="gdpr-notice">
+            Email required for lifetime stats access. Marketing emails are
+            optional.
+            <a
+              href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/privacy-policy.md"
+              target="_blank"
+              >Privacy Policy</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="content-section">
+        <div class="usage-stats-grid">
+          <div class="stat-box">
+            <div class="emoji">💬</div>
+            <div class="stat-data">
+              <div class="message-value" id="lifetime-messages">0</div>
+              <div class="stat-label">Messages sent</div>
+            </div>
+          </div>
+          <div class="stat-box">
+            <div class="emoji">⚡️</div>
+            <div class="stat-data">
+              <div class="message-value" id="lifetime-energy">0</div>
+              <div class="stat-label">
+                <span>Watt-hours used</span>
+                <span class="info-tooltip"
+                  ><i class="ri-question-line"></i>
+                  <div class="tooltip-text">
+                    This is an estimate based on energy usage patterns for large
+                    Mixture of Experts (MoE) models with 440B total parameters
+                    and 55B active parameters per inference.
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="equivalence-section">
+          <div class="equivalence-header">Environmental equivalents:</div>
+
+          <div class="equivalence-grid">
+            <div class="equivalence-item">
+              <div class="emoji">🌿</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="lifetime-movies">0 mins</div>
+                <div class="equivalence-label">YouTube streamed</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">💧</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="lifetime-toasts">0</div>
+                <div class="equivalence-label">Water evaporated</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">📱</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="lifetime-phones">0</div>
+                <div class="equivalence-label">Phones charged</div>
+              </div>
+            </div>
+            <div class="equivalence-item">
+              <div class="emoji">🌱</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="lifetime-elevator">
+                  0 floors
+                </div>
+                <div class="equivalence-label">Elevator travel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="estimation-disclaimer">
+      The numbers are estimations based on realistic assumptions.
+      <a
+        href="https://github.com/simonaszilinskas/ai-impact-tracker/blob/main/methodology.md"
+        target="_blank"
+        style="color: var(--link-color)"
+        >View methodology</a
+      >
+    </div>
+
+    <div
+      style="
+        text-align: center;
+        font-size: 12px;
+        color: var(--muted-text);
+        margin: 12px 10px;
+        padding: 12px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        border-left: 4px solid var(--primary-color);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      "
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-bottom: 4px;
+        "
+      >
+        <span style="font-size: 16px">🌲</span>
+        <span style="font-weight: 600; color: var(--primary-color)"
+          >Partnered with Bergwaldprojekt</span
+        >
+      </div>
+      <div style="font-size: 11px; line-height: 1.4">
+        Support forest restoration and ecosystem protection with your AI usage
+        <br />
+        <a
+          href="https://www.bergwaldprojekt.de/"
+          target="_blank"
+          style="
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+          "
+          >Learn more →</a
+        >
+      </div>
+    </div>
+  </body>
 </html>

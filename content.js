@@ -14,15 +14,15 @@ let intervalIds = []; // Track all intervals to clear them if context is invalid
 
 // Constants for EcoLogits methodology
 // These constants are derived from academic research on LLM energy consumption
-const ENERGY_ALPHA = 8.91e-5;  // Energy coefficient for model parameters (Wh/token/B-params)
-const ENERGY_BETA = 1.43e-3;   // Base energy per token (Wh/token)
+const ENERGY_ALPHA = 8.91e-5; // Energy coefficient for model parameters (Wh/token/B-params)
+const ENERGY_BETA = 1.43e-3; // Base energy per token (Wh/token)
 const LATENCY_ALPHA = 8.02e-4; // Latency coefficient for model parameters (s/token/B-params)
-const LATENCY_BETA = 2.23e-2;  // Base latency per token (s/token)
-const PUE = 1.2;               // Power Usage Effectiveness for modern data centers
-const GPU_MEMORY = 80;         // A100 GPU memory in GB
+const LATENCY_BETA = 2.23e-2; // Base latency per token (s/token)
+const PUE = 1.2; // Power Usage Effectiveness for modern data centers
+const GPU_MEMORY = 80; // A100 GPU memory in GB
 const SERVER_POWER_WITHOUT_GPU = 1; // Server power excluding GPUs (kW)
-const INSTALLED_GPUS = 8;      // Typical GPUs per server in OpenAI's infrastructure
-const GPU_BITS = 4;            // Quantization level in bits (4-bit = 4x memory compression)
+const INSTALLED_GPUS = 8; // Typical GPUs per server in OpenAI's infrastructure
+const GPU_BITS = 4; // Quantization level in bits (4-bit = 4x memory compression)
 const WORLD_EMISSION_FACTOR = 0.418; // Global average emission factor (kgCO2eq/kWh)
 
 /**
@@ -32,11 +32,11 @@ const WORLD_EMISSION_FACTOR = 0.418; // Global average emission factor (kgCO2eq/
 function checkExtensionContext() {
   try {
     // Try to access a simple Chrome API property
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+    if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.id) {
       return true;
     }
   } catch (e) {
-    console.warn('Extension context check failed:', e.message);
+    console.warn("Extension context check failed:", e.message);
   }
   return false;
 }
@@ -48,25 +48,36 @@ function checkExtensionContext() {
 function getEstimationMethod() {
   return new Promise((resolve) => {
     if (!checkExtensionContext()) {
-      console.log('Content script: No extension context, defaulting to community');
-      resolve('community'); // Default to community estimates
+      console.log(
+        "Content script: No extension context, defaulting to community"
+      );
+      resolve("community"); // Default to community estimates
       return;
     }
-    
+
     try {
-      chrome.storage.local.get(['estimationMethod'], function(result) {
+      chrome.storage.local.get(["estimationMethod"], function (result) {
         if (chrome.runtime.lastError) {
-          console.error('Content script: Error getting estimation method:', chrome.runtime.lastError);
-          resolve('community');
+          console.error(
+            "Content script: Error getting estimation method:",
+            chrome.runtime.lastError
+          );
+          resolve("community");
         } else {
-          const method = result.estimationMethod || 'community';
-          console.log('Content script: Loaded estimation method from storage:', method);
+          const method = result.estimationMethod || "community";
+          console.log(
+            "Content script: Loaded estimation method from storage:",
+            method
+          );
           resolve(method);
         }
       });
     } catch (error) {
-      console.error('Content script: Error accessing storage for estimation method:', error);
-      resolve('community');
+      console.error(
+        "Content script: Error accessing storage for estimation method:",
+        error
+      );
+      resolve("community");
     }
   });
 }
@@ -80,22 +91,30 @@ function saveToStorage(data) {
   try {
     // Check if extension context is still valid
     if (!isExtensionContextValid || !checkExtensionContext()) {
-      console.warn('Extension context invalidated, skipping storage save');
+      console.warn("Extension context invalidated, skipping storage save");
       return;
     }
-    
+
     // Check if Chrome API is still available
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.set(data, function() {
+    if (
+      typeof chrome !== "undefined" &&
+      chrome.storage &&
+      chrome.storage.local
+    ) {
+      chrome.storage.local.set(data, function () {
         // Check for runtime error
         if (chrome.runtime.lastError) {
           console.error("Chrome storage error:", chrome.runtime.lastError);
           // If context is invalidated, we'll retry once after a delay
-          if (chrome.runtime.lastError.message.includes("Extension context invalidated")) {
-            console.warn('Extension context has been invalidated');
+          if (
+            chrome.runtime.lastError.message.includes(
+              "Extension context invalidated"
+            )
+          ) {
+            console.warn("Extension context has been invalidated");
             isExtensionContextValid = false;
             // Clear all intervals to prevent further errors
-            intervalIds.forEach(id => clearInterval(id));
+            intervalIds.forEach((id) => clearInterval(id));
             intervalIds = [];
           }
         }
@@ -117,31 +136,36 @@ function saveToStorage(data) {
 async function saveLog(userMessage, assistantResponse) {
   // Use message prefix as unique identifier for this exchange
   const userMessageKey = userMessage.substring(0, 100);
-  
+
   // Estimate token count (4 chars ≈ 1 token for English text)
   const userTokenCount = Math.ceil(userMessage.length / 4);
   const assistantTokenCount = Math.ceil(assistantResponse.length / 4);
-  
+
   // Get the current estimation method and calculate environmental impact
   const estimationMethod = await getEstimationMethod();
-  const energyData = calculateEnergyAndEmissions(assistantTokenCount, estimationMethod);
+  const energyData = calculateEnergyAndEmissions(
+    assistantTokenCount,
+    estimationMethod
+  );
   const energyUsage = energyData.totalEnergy;
   const co2Emissions = energyData.co2Emissions;
-  
+
   // Check if we already have a log with this user message
-  const existingLogIndex = logs.findIndex(log => 
-    log.userMessage.substring(0, 100) === userMessageKey
+  const existingLogIndex = logs.findIndex(
+    (log) => log.userMessage.substring(0, 100) === userMessageKey
   );
-  
+
   let shouldUpdateNotification = false;
-  
+
   if (existingLogIndex !== -1) {
     // Update existing log if new response is more complete
     const existingLog = logs[existingLogIndex];
-    
-    if (assistantResponse.length > existingLog.assistantResponse.length || 
-        (assistantResponse.length > 0 && existingLog.assistantResponse.length === 0)) {
-      
+
+    if (
+      assistantResponse.length > existingLog.assistantResponse.length ||
+      (assistantResponse.length > 0 &&
+        existingLog.assistantResponse.length === 0)
+    ) {
       // Update with more complete response
       logs[existingLogIndex] = {
         ...existingLog,
@@ -149,9 +173,9 @@ async function saveLog(userMessage, assistantResponse) {
         assistantTokenCount: assistantTokenCount,
         energyUsage: energyData.totalEnergy,
         co2Emissions: energyData.co2Emissions,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
       };
-      
+
       saveToStorage({ chatgptLogs: logs });
       shouldUpdateNotification = true;
     }
@@ -167,17 +191,17 @@ async function saveLog(userMessage, assistantResponse) {
       userTokenCount: userTokenCount,
       assistantTokenCount: assistantTokenCount,
       energyUsage: energyUsage,
-      co2Emissions: co2Emissions
+      co2Emissions: co2Emissions,
     };
-    
+
     logs.push(logEntry);
     saveToStorage({ chatgptLogs: logs });
     shouldUpdateNotification = true;
   }
-  
+
   // Always update the notification when logs change
   // Create the notification if it doesn't exist yet
-  if (!document.getElementById('ai-impact-notification')) {
+  if (!document.getElementById("ai-impact-notification")) {
     createUsageNotification();
   } else {
     updateUsageNotification();
@@ -194,59 +218,75 @@ async function scanMessages() {
   if (!isExtensionContextValid) {
     return false;
   }
-  
+
   try {
     // Find all user and assistant messages by their data attributes
-    const userMessages = [...document.querySelectorAll('[data-message-author-role="user"]')];
-    const assistantMessages = [...document.querySelectorAll('[data-message-author-role="assistant"]')];
-    
+    const userMessages = [
+      ...document.querySelectorAll('[data-message-author-role="user"]'),
+    ];
+    const assistantMessages = [
+      ...document.querySelectorAll('[data-message-author-role="assistant"]'),
+    ];
+
     // Attempt alternative selectors if the primary ones didn't find anything
     let foundMessages = userMessages.length > 0 && assistantMessages.length > 0;
-    
+
     // If we didn't find any messages with the primary selectors, try alternative ones
     if (!foundMessages) {
       // Try some alternative selectors that might match different versions of ChatGPT
       const alternativeUserSelectors = [
-        '.markdown p', // Look for paragraph text in markdown areas
-        '[data-role="user"]', 
-        '.user-message',
+        ".markdown p", // Look for paragraph text in markdown areas
+        '[data-role="user"]',
+        ".user-message",
         '[data-testid="user-message"]',
-        '.text-message-content'
+        ".text-message-content",
       ];
-      
+
       const alternativeAssistantSelectors = [
-        '.markdown p',
+        ".markdown p",
         '[data-role="assistant"]',
-        '.assistant-message', 
+        ".assistant-message",
         '[data-testid="assistant-message"]',
-        '.assistant-response'
+        ".assistant-response",
       ];
-      
+
       // Try each alternative selector
       for (const userSelector of alternativeUserSelectors) {
         const altUserMessages = document.querySelectorAll(userSelector);
         if (altUserMessages.length > 0) {
           for (const assistantSelector of alternativeAssistantSelectors) {
-            const altAssistantMessages = document.querySelectorAll(assistantSelector);
+            const altAssistantMessages =
+              document.querySelectorAll(assistantSelector);
             if (altAssistantMessages.length > 0) {
-              console.log(`Found alternative selectors: ${userSelector} (${altUserMessages.length}) and ${assistantSelector} (${altAssistantMessages.length})`);
-              
+              console.log(
+                `Found alternative selectors: ${userSelector} (${altUserMessages.length}) and ${assistantSelector} (${altAssistantMessages.length})`
+              );
+
               // Try to process these alternative messages
-              for (let i = 0; i < Math.min(altUserMessages.length, altAssistantMessages.length); i++) {
+              for (
+                let i = 0;
+                i <
+                Math.min(altUserMessages.length, altAssistantMessages.length);
+                i++
+              ) {
                 try {
                   const userMessage = altUserMessages[i].textContent.trim();
-                  const assistantResponse = altAssistantMessages[i].textContent.trim();
-                  
+                  const assistantResponse =
+                    altAssistantMessages[i].textContent.trim();
+
                   if (userMessage && assistantResponse) {
                     // Save any non-empty exchange
                     await saveLog(userMessage, assistantResponse);
                     foundMessages = true;
                   }
                 } catch (altMessageError) {
-                  console.error("Error processing alternative message pair:", altMessageError);
+                  console.error(
+                    "Error processing alternative message pair:",
+                    altMessageError
+                  );
                 }
               }
-              
+
               // If we found messages with this selector pair, stop trying others
               if (foundMessages) break;
             }
@@ -256,19 +296,21 @@ async function scanMessages() {
         }
       }
     }
-    
+
     // Log the results of the scan for debugging
     if (userMessages.length > 0 || assistantMessages.length > 0) {
-      console.log(`Found ${userMessages.length} user messages and ${assistantMessages.length} assistant messages`);
+      console.log(
+        `Found ${userMessages.length} user messages and ${assistantMessages.length} assistant messages`
+      );
     }
-    
+
     // Process message pairs in order
     for (let i = 0; i < userMessages.length; i++) {
       if (i < assistantMessages.length) {
         try {
           const userMessage = userMessages[i].textContent.trim();
           const assistantResponse = assistantMessages[i].textContent.trim();
-          
+
           if (userMessage) {
             // Save any non-empty exchange
             await saveLog(userMessage, assistantResponse);
@@ -279,7 +321,7 @@ async function scanMessages() {
         }
       }
     }
-    
+
     return foundMessages;
   } catch (e) {
     console.error("Error scanning messages:", e);
@@ -293,65 +335,70 @@ async function scanMessages() {
  */
 function setupFetchInterceptor() {
   const originalFetch = window.fetch;
-  
-  window.fetch = async function(resource, init) {
+
+  window.fetch = async function (resource, init) {
     const url = resource instanceof Request ? resource.url : resource;
-    
+
     // Call original fetch
     const response = await originalFetch.apply(this, arguments);
-    
+
     // Process conversation API responses
-    if (typeof url === 'string' && url.includes('conversation')) {
+    if (typeof url === "string" && url.includes("conversation")) {
       try {
         // Extract conversation ID from URL
         const match = url.match(/\/c\/([a-zA-Z0-9-]+)/);
         if (match && match[1]) {
           conversationId = match[1];
         }
-        
+
         // Process server-sent events streams
-        if (response.headers.get('content-type')?.includes('text/event-stream')) {
+        if (
+          response.headers.get("content-type")?.includes("text/event-stream")
+        ) {
           const clonedResponse = response.clone();
-          
+
           (async () => {
             try {
               const reader = clonedResponse.body.getReader();
               const decoder = new TextDecoder();
-              let buffer = '';
+              let buffer = "";
               let lastUpdateTime = 0;
-              
+
               while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                
+
                 // Process stream data
                 const chunk = decoder.decode(value, { stream: true });
                 buffer += chunk;
-                
+
                 // Extract conversation ID
-                const convoMatch = buffer.match(/"conversation_id":\s*"([^"]+)"/);
+                const convoMatch = buffer.match(
+                  /"conversation_id":\s*"([^"]+)"/
+                );
                 if (convoMatch && convoMatch[1]) {
                   conversationId = convoMatch[1];
                 }
-                
+
                 // Check for content updates during streaming
                 const now = Date.now();
-                if (now - lastUpdateTime > 500) { // Update every 500ms max
+                if (now - lastUpdateTime > 500) {
+                  // Update every 500ms max
                   lastUpdateTime = now;
-                  
+
                   // Quick scan for updates during active generation
                   await scanMessages();
-                  
+
                   // Update notification with latest data
                   updateUsageNotification();
                 }
-                
+
                 // Limit buffer size
                 if (buffer.length > 100000) {
                   buffer = buffer.substring(buffer.length - 50000);
                 }
               }
-              
+
               // Scan after stream completes
               setTimeout(async () => {
                 await scanMessages();
@@ -366,7 +413,7 @@ function setupFetchInterceptor() {
         // Ignore general interception errors
       }
     }
-    
+
     return response;
   };
 }
@@ -378,46 +425,48 @@ function setupFetchInterceptor() {
 function setupObserver() {
   // Track the time of the last update to avoid excessive updates
   let lastUpdateTime = 0;
-  
+
   const observer = new MutationObserver(async (mutations) => {
     let shouldScan = false;
-    
+
     // Check if any assistant messages were added or modified
     for (const mutation of mutations) {
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
         for (const node of mutation.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE && 
-              (node.getAttribute('data-message-author-role') === 'assistant' || 
-               node.querySelector('[data-message-author-role="assistant"]'))) {
+          if (
+            node.nodeType === Node.ELEMENT_NODE &&
+            (node.getAttribute("data-message-author-role") === "assistant" ||
+              node.querySelector('[data-message-author-role="assistant"]'))
+          ) {
             shouldScan = true;
             break;
           }
         }
-      } else if (mutation.type === 'characterData') {
+      } else if (mutation.type === "characterData") {
         // Text content changed inside an element
         // This can catch typing updates on the assistant's responses
         shouldScan = true;
       }
-      
+
       if (shouldScan) break;
     }
-    
+
     // Scan on relevant changes
     if (shouldScan) {
       const now = Date.now();
-      
+
       // Throttle updates to avoid excessive processing
       // Update at most every 300ms during active typing/generation
       if (now - lastUpdateTime > 300) {
         lastUpdateTime = now;
-        
+
         // Scan for new/updated content
         await scanMessages();
-        
+
         // Update the notification with latest data
         updateUsageNotification();
       }
-      
+
       // Also do delayed scans to catch fully completed responses
       setTimeout(async () => {
         await scanMessages();
@@ -425,12 +474,12 @@ function setupObserver() {
       }, 1000);
     }
   });
-  
+
   // Observe the entire document for changes, including text changes
   observer.observe(document.body, {
     childList: true,
     subtree: true,
-    characterData: true
+    characterData: true,
   });
 }
 
@@ -439,17 +488,17 @@ function setupObserver() {
  */
 function createUsageNotification() {
   // Check if notification already exists
-  if (document.getElementById('ai-impact-notification')) {
+  if (document.getElementById("ai-impact-notification")) {
     return;
   }
-  
+
   // Create the notification element
-  const notification = document.createElement('div');
-  notification.id = 'ai-impact-notification';
-  notification.className = 'ai-impact-notification';
-  
+  const notification = document.createElement("div");
+  notification.id = "ai-impact-notification";
+  notification.className = "ai-impact-notification";
+
   // Create the styles for the notification
-  const styles = document.createElement('style');
+  const styles = document.createElement("style");
   styles.textContent = `
     .ai-impact-notification {
       position: fixed;
@@ -504,7 +553,7 @@ function createUsageNotification() {
     
     .ai-impact-emoji {
       margin: 0 4px 0 0;
-      color: #3E7B67;
+      color: #1e4d2b;
     }
     
     /* Make the notification adapt to the dark mode of ChatGPT */
@@ -529,112 +578,115 @@ function createUsageNotification() {
       }
     }
   `;
-  
+
   // Default basic message (will be updated by updateUsageNotification)
-  let message = "AI models have an environmental impact";
-  
+  let message = "Track AI impact, support forest restoration";
+
   // Initially populate with basic message
   notification.innerHTML = `
     <div class="ai-impact-content">
       <div id="ai-impact-message" class="ai-impact-message">${message}</div>
     </div>
   `;
-  
+
   // Make the notification draggable
   let isDragging = false;
   let offsetX, offsetY;
-  
+
   // Mouse events for dragging
-  notification.addEventListener('mousedown', startDrag);
-  document.addEventListener('mousemove', moveDrag);
-  document.addEventListener('mouseup', endDrag);
-  
+  notification.addEventListener("mousedown", startDrag);
+  document.addEventListener("mousemove", moveDrag);
+  document.addEventListener("mouseup", endDrag);
+
   // Touch events for mobile dragging
-  notification.addEventListener('touchstart', (e) => {
+  notification.addEventListener("touchstart", (e) => {
     const touch = e.touches[0];
     e.clientX = touch.clientX;
     e.clientY = touch.clientY;
     startDrag(e);
   });
-  
-  document.addEventListener('touchmove', (e) => {
+
+  document.addEventListener("touchmove", (e) => {
     if (!isDragging) return;
     const touch = e.touches[0];
     e.clientX = touch.clientX;
     e.clientY = touch.clientY;
     moveDrag(e);
   });
-  
-  document.addEventListener('touchend', endDrag);
-  
+
+  document.addEventListener("touchend", endDrag);
+
   // Start dragging
   function startDrag(e) {
     isDragging = true;
-    
+
     // Calculate the offset of the cursor/touch from the notification's top-left corner
     const rect = notification.getBoundingClientRect();
     offsetX = e.clientX - rect.left;
     offsetY = e.clientY - rect.top;
-    
+
     // Change cursor to grabbing during drag
-    notification.style.cursor = 'grabbing';
-    
+    notification.style.cursor = "grabbing";
+
     // Prevent default behaviors
     e.preventDefault();
   }
-  
+
   // Handle drag movement
   function moveDrag(e) {
     if (!isDragging) return;
-    
+
     // Calculate new position
     const x = e.clientX - offsetX;
     const y = e.clientY - offsetY;
-    
+
     // Keep notification within viewport bounds
     const notifWidth = notification.offsetWidth;
     const notifHeight = notification.offsetHeight;
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
-    
+
     // Constrain horizontal position
     const boundedX = Math.max(0, Math.min(x, windowWidth - notifWidth));
-    
+
     // Constrain vertical position
     const boundedY = Math.max(0, Math.min(y, windowHeight - notifHeight));
-    
+
     // Update position styles - remove the transform property
-    notification.style.left = boundedX + 'px';
-    notification.style.top = boundedY + 'px';
-    notification.style.transform = 'none';
-    
+    notification.style.left = boundedX + "px";
+    notification.style.top = boundedY + "px";
+    notification.style.transform = "none";
+
     // Prevent default to avoid page scrolling during drag
     e.preventDefault();
   }
-  
+
   // End dragging
   function endDrag() {
     if (isDragging) {
       isDragging = false;
       // Change cursor back to move
-      notification.style.cursor = 'move';
-      
+      notification.style.cursor = "move";
+
       // Save position to localStorage for persistence
       try {
         const rect = notification.getBoundingClientRect();
         const position = {
           x: rect.left,
-          y: rect.top
+          y: rect.top,
         };
-        localStorage.setItem('aiImpactNotificationPosition', JSON.stringify(position));
+        localStorage.setItem(
+          "aiImpactNotificationPosition",
+          JSON.stringify(position)
+        );
       } catch (e) {
         console.error("Error saving notification position:", e);
       }
     }
   }
-  
+
   // Add event listener to open extension popup (now on double click to avoid conflicts with dragging)
-  notification.addEventListener('dblclick', () => {
+  notification.addEventListener("dblclick", () => {
     // Try to open the extension popup programmatically
     try {
       chrome.runtime.sendMessage({ action: "openPopup" });
@@ -642,7 +694,7 @@ function createUsageNotification() {
       console.error("Failed to open popup:", e);
     }
   });
-  
+
   // Add the styles to the head with error handling
   try {
     if (document.head) {
@@ -659,10 +711,10 @@ function createUsageNotification() {
   } catch (e) {
     console.error("Error appending styles:", e);
   }
-  
+
   // Find the right position in ChatGPT's UI to insert the notification
   try {
-    const mainHeader = document.querySelector('header');
+    const mainHeader = document.querySelector("header");
     if (mainHeader && mainHeader.parentNode) {
       // Try to insert after the header for better integration
       mainHeader.parentNode.insertBefore(notification, mainHeader.nextSibling);
@@ -670,28 +722,30 @@ function createUsageNotification() {
       // Fallback to body if header not found
       document.body.appendChild(notification);
     } else {
-      console.warn("Neither header nor body available for notification insertion");
+      console.warn(
+        "Neither header nor body available for notification insertion"
+      );
     }
   } catch (e) {
     console.error("Error inserting notification:", e);
   }
-  
+
   // Remember position if dragged, using localStorage to persist across page refreshes
   try {
     // Check if we have saved position in localStorage
-    const savedPosition = localStorage.getItem('aiImpactNotificationPosition');
+    const savedPosition = localStorage.getItem("aiImpactNotificationPosition");
     if (savedPosition) {
       const position = JSON.parse(savedPosition);
-      notification.style.left = position.x + 'px';
-      notification.style.top = position.y + 'px';
-      notification.style.transform = 'none'; // Remove the default centering
+      notification.style.left = position.x + "px";
+      notification.style.top = position.y + "px";
+      notification.style.transform = "none"; // Remove the default centering
     }
   } catch (e) {
     console.error("Error restoring notification position:", e);
   }
-  
+
   console.log("AI Impact notification added to page");
-  
+
   // Initial update
   updateUsageNotification();
 }
@@ -701,26 +755,26 @@ function createUsageNotification() {
  */
 function updateUsageNotification() {
   try {
-    const messageElement = document.getElementById('ai-impact-message');
-    
+    const messageElement = document.getElementById("ai-impact-message");
+
     if (!messageElement) {
       // Element not found, which could be normal if notification isn't created yet
       return;
     }
-    
+
     // Get today's usage
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Filter logs for today only - with error handling
     let todayLogs = [];
     let todayEnergyUsage = 0;
     let todayMessages = 0;
-    
+
     try {
       // Safely filter logs
       if (Array.isArray(logs)) {
-        todayLogs = logs.filter(log => {
+        todayLogs = logs.filter((log) => {
           try {
             // Handle potentially invalid log entries
             return log && log.timestamp && new Date(log.timestamp) >= today;
@@ -729,11 +783,11 @@ function updateUsageNotification() {
             return false;
           }
         });
-        
+
         todayMessages = todayLogs.length;
-        
+
         // Safely calculate energy
-        todayLogs.forEach(log => {
+        todayLogs.forEach((log) => {
           try {
             todayEnergyUsage += log.energyUsage || 0;
           } catch (energyError) {
@@ -745,19 +799,23 @@ function updateUsageNotification() {
       console.error("Error processing logs for notification:", logsError);
       // Continue with defaults (zeros) if logs processing fails
     }
-    
+
     // Format energy usage for display (1 decimal place)
     const formattedEnergy = todayEnergyUsage.toFixed(1);
-    
+
     // Add a timestamp for debugging
     const updateTime = new Date().toLocaleTimeString();
-    
-    // One-line message with energy usage information
-    let message = `<span class="ai-impact-emoji">⚡️</span> <span class="ai-impact-energy">${formattedEnergy} Wh consumed today</span>`;
-    
+
+    // Determine icon based on user state
+    const userState = getUserState();
+    const icon = userState === "donor" ? "🌿" : "⚡️";
+    let message = `<span class="ai-impact-emoji">${icon}</span> <span class="ai-impact-energy">${formattedEnergy} Wh today</span>`;
+
     // Log for debugging how frequently updates occur
-    console.log(`[${updateTime}] Updating energy notification: ${formattedEnergy} Wh`);
-    
+    console.log(
+      `[${updateTime}] Updating energy notification: ${formattedEnergy} Wh`
+    );
+
     // Update the UI with error handling
     try {
       messageElement.innerHTML = message;
@@ -775,36 +833,39 @@ function updateUsageNotification() {
 function initialize() {
   // Load existing logs from storage with improved error handling and retry
   initializeWithRetry(3);
-  
+
   // Setup periodic storage validation to fix potential issues
   setInterval(validateAndRepairStorage, 5 * 60 * 1000); // Every 5 minutes
-  
+
   // Setup when DOM is ready
   const setupUI = async () => {
     setupFetchInterceptor();
     setupObserver();
     await scanMessages(); // Initial scan
-    
+
     // Create notification if not created yet
-    if (!document.getElementById('ai-impact-notification')) {
+    if (!document.getElementById("ai-impact-notification")) {
       createUsageNotification();
     }
   };
-  
-  if (document.readyState === "complete" || document.readyState === "interactive") {
+
+  if (
+    document.readyState === "complete" ||
+    document.readyState === "interactive"
+  ) {
     setTimeout(setupUI, 1000);
   } else {
     document.addEventListener("DOMContentLoaded", () => {
       setTimeout(setupUI, 1000);
     });
   }
-  
+
   // Monitor URL changes to detect new conversations
   let lastUrl = window.location.href;
   const urlMonitorInterval = setInterval(() => {
     if (lastUrl !== window.location.href) {
       lastUrl = window.location.href;
-      
+
       // Extract conversation ID from URL
       try {
         const match = window.location.href.match(/\/c\/([a-zA-Z0-9-]+)/);
@@ -814,18 +875,18 @@ function initialize() {
       } catch {
         // Ignore URL parsing errors
       }
-      
+
       // Scan after URL change
       setTimeout(async () => await scanMessages(), 1000);
     }
   }, 1000);
   intervalIds.push(urlMonitorInterval);
-  
+
   // Setup periodic notification updates (every 2 minutes)
   // This ensures the notification reflects current usage even if the user
   // has the page open for a long time
   setInterval(() => {
-    if (document.getElementById('ai-impact-notification')) {
+    if (document.getElementById("ai-impact-notification")) {
       updateUsageNotification();
     } else {
       // In case the notification has been removed from the DOM for some reason
@@ -833,7 +894,6 @@ function initialize() {
     }
   }, 2 * 60 * 1000); // 2 minutes in milliseconds
 }
-
 
 /**
  * Reloads logs from Chrome storage to sync with popup changes
@@ -844,11 +904,14 @@ function reloadLogsFromStorage() {
       resolve();
       return;
     }
-    
+
     try {
-      chrome.storage.local.get(['chatgptLogs'], function(result) {
+      chrome.storage.local.get(["chatgptLogs"], function (result) {
         if (chrome.runtime.lastError) {
-          console.error('Error reloading logs from storage:', chrome.runtime.lastError);
+          console.error(
+            "Error reloading logs from storage:",
+            chrome.runtime.lastError
+          );
           resolve();
         } else {
           const storedLogs = result.chatgptLogs || [];
@@ -860,85 +923,95 @@ function reloadLogsFromStorage() {
         }
       });
     } catch (error) {
-      console.error('Error accessing storage for log reload:', error);
+      console.error("Error accessing storage for log reload:", error);
       resolve();
     }
   });
 }
 
 // Listen for messages from popup
-if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+if (
+  typeof chrome !== "undefined" &&
+  chrome.runtime &&
+  chrome.runtime.onMessage
+) {
   try {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "updateNotification") {
-    if (message.enabled) {
-      // Show the notification if it doesn't exist
-      if (!document.getElementById('ai-impact-notification')) {
-        createUsageNotification();
+      if (message.action === "updateNotification") {
+        if (message.enabled) {
+          // Show the notification if it doesn't exist
+          if (!document.getElementById("ai-impact-notification")) {
+            createUsageNotification();
+          }
+        } else {
+          // Hide the notification if it exists
+          const notification = document.getElementById(
+            "ai-impact-notification"
+          );
+          if (notification) {
+            notification.parentNode.removeChild(notification);
+          }
+        }
+        return true;
+      } else if (message.type === "estimationMethodChanged") {
+        // Acknowledge the change and reload logs from storage after a brief delay
+        console.log(
+          "Content script: Estimation method changed to:",
+          message.method
+        );
+
+        // Wait a moment to ensure popup has finished saving, then reload
+        setTimeout(() => {
+          reloadLogsFromStorage().then(() => {
+            // Update the notification with the new calculations
+            updateUsageNotification();
+            console.log(
+              "Content script: Notification updated with new estimation method"
+            );
+          });
+        }, 100);
+
+        sendResponse({ success: true });
+        return true;
       }
-    } else {
-      // Hide the notification if it exists
-      const notification = document.getElementById('ai-impact-notification');
-      if (notification) {
-        notification.parentNode.removeChild(notification);
-      }
-    }
-    return true;
-  } else if (message.type === 'estimationMethodChanged') {
-    // Acknowledge the change and reload logs from storage after a brief delay
-    console.log('Content script: Estimation method changed to:', message.method);
-    
-    // Wait a moment to ensure popup has finished saving, then reload
-    setTimeout(() => {
-      reloadLogsFromStorage().then(() => {
-        // Update the notification with the new calculations
-        updateUsageNotification();
-        console.log('Content script: Notification updated with new estimation method');
-      });
-    }, 100);
-    
-    sendResponse({ success: true });
-    return true;
-  }
-});
+    });
   } catch (e) {
-    console.warn('Failed to add message listener:', e);
+    console.warn("Failed to add message listener:", e);
   }
 }
 
-
 /**
  * Calculates energy usage and CO2 emissions based on selected methodology
- * 
+ *
  * This implements either:
  * 1. EcoLogits methodology (community estimates) from https://arxiv.org/abs/2309.12456
  * 2. Sam Altman's estimation (0.34 Wh per query, scaled by tokens)
- * 
+ *
  * @param {number} outputTokens - Number of tokens in the assistant's response
  * @param {string} method - 'community' or 'altman'
  * @returns {Object} Energy usage and emissions data
  */
-function calculateEnergyAndEmissions(outputTokens, method = 'community') {
-  if (method === 'altman') {
+function calculateEnergyAndEmissions(outputTokens, method = "community") {
+  if (method === "altman") {
     // Sam Altman's estimation: 0.34 Wh per query with 781 average output tokens
     const altmanEnergyPerToken = 0.34 / 781; // ~0.000435 Wh per token
     const totalEnergy = outputTokens * altmanEnergyPerToken;
-    
+
     // Ensure minimum energy value for visibility in UI
     const minEnergy = 0.01;
     const normalizedEnergy = Math.max(totalEnergy, minEnergy);
-    
+
     // Calculate CO2 emissions (grams)
     const co2Emissions = normalizedEnergy * WORLD_EMISSION_FACTOR;
-    
+
     return {
       numGPUs: 1, // Simplified for Altman estimate
       totalEnergy: normalizedEnergy,
       co2Emissions,
       modelDetails: {
-        method: 'altman',
-        energyPerToken: altmanEnergyPerToken
-      }
+        method: "altman",
+        energyPerToken: altmanEnergyPerToken,
+      },
     };
   } else {
     // Community estimates using EcoLogits methodology
@@ -947,42 +1020,46 @@ function calculateEnergyAndEmissions(outputTokens, method = 'community') {
     const activeRatio = 0.125; // 12.5% activation ratio for MoE models
     const activeParams = 55e9; // 55B active parameters
     const activeParamsBillions = activeParams / 1e9; // Convert to billions for calculations
-    
+
     // Energy consumption per token (Wh/token) - based on ACTIVE parameters
-    // This is because energy consumption during inference is primarily determined by compute, 
+    // This is because energy consumption during inference is primarily determined by compute,
     // which is proportional to active parameters in MoE models
     const energyPerToken = ENERGY_ALPHA * activeParamsBillions + ENERGY_BETA;
-    
+
     // Calculate GPU memory requirements - based on TOTAL parameters
     // Memory footprint is determined by the total model size, not just active parameters
-    const memoryRequired = 1.2 * totalParams * GPU_BITS / 8; // in bytes
+    const memoryRequired = (1.2 * totalParams * GPU_BITS) / 8; // in bytes
     const numGPUs = Math.ceil(memoryRequired / (GPU_MEMORY * 1e9));
-    
+
     // Calculate inference latency - based on ACTIVE parameters
     // Latency is determined by compute, which is proportional to active parameters in MoE models
     const latencyPerToken = LATENCY_ALPHA * activeParamsBillions + LATENCY_BETA;
     const totalLatency = outputTokens * latencyPerToken;
-    
+
     // Calculate GPU energy consumption (Wh) - using active parameters for computation
     const gpuEnergy = outputTokens * energyPerToken * numGPUs;
-    
+
     // Calculate server energy excluding GPUs (Wh)
     // Converting kW to Wh by multiplying by hours (latency / 3600)
-    const serverEnergyWithoutGPU = totalLatency * SERVER_POWER_WITHOUT_GPU * numGPUs / INSTALLED_GPUS / 3600 * 1000;
-    
+    const serverEnergyWithoutGPU =
+      ((totalLatency * SERVER_POWER_WITHOUT_GPU * numGPUs) /
+        INSTALLED_GPUS /
+        3600) *
+      1000;
+
     // Total server energy (Wh)
     const serverEnergy = serverEnergyWithoutGPU + gpuEnergy;
-    
+
     // Apply data center overhead (PUE)
     const totalEnergy = PUE * serverEnergy;
-    
+
     // Ensure minimum energy value for visibility in UI
     const minEnergy = 0.01; // Minimum 0.01 Wh to ensure visibility
     const normalizedEnergy = Math.max(totalEnergy, minEnergy);
-    
+
     // Calculate CO2 emissions (grams)
     const co2Emissions = normalizedEnergy * WORLD_EMISSION_FACTOR;
-    
+
     return {
       numGPUs,
       totalEnergy: normalizedEnergy,
@@ -991,8 +1068,8 @@ function calculateEnergyAndEmissions(outputTokens, method = 'community') {
         totalParams: totalParams / 1e9,
         activeParams: activeParams / 1e9,
         activationRatio: activeRatio,
-        method: 'community'
-      }
+        method: "community",
+      },
     };
   }
 }
@@ -1004,60 +1081,60 @@ function calculateEnergyAndEmissions(outputTokens, method = 'community') {
 function validateAndRepairStorage() {
   // Check if extension context is still valid
   if (!isExtensionContextValid || !checkExtensionContext()) {
-    console.log('Extension context invalidated, skipping storage validation');
+    console.log("Extension context invalidated, skipping storage validation");
     return;
   }
-  
+
   console.log("Running storage validation check...");
-  
+
   try {
-    chrome.storage.local.get(['chatgptLogs', 'extensionVersion'], (result) => {
-    if (chrome.runtime.lastError) {
-      console.error("Error checking storage:", chrome.runtime.lastError);
-      return;
-    }
-    
-    let needsRepair = false;
-    
-    // Check if logs exists and is an array
-    if (!result.chatgptLogs || !Array.isArray(result.chatgptLogs)) {
-      console.warn("Invalid logs format in storage, needs repair");
-      needsRepair = true;
-    }
-    
-    // Check if version is missing
-    if (!result.extensionVersion) {
-      console.warn("Missing extension version in storage, will repair");
-      needsRepair = true;
-    }
-    
-    if (needsRepair) {
-      // Use in-memory logs if they exist and are valid
-      if (logs && Array.isArray(logs) && logs.length > 0) {
-        console.log("Repairing storage with in-memory logs");
-        chrome.storage.local.set({ 
-          chatgptLogs: logs,
-          extensionVersion: chrome.runtime.getManifest().version
-        });
-      } else {
-        // Otherwise initialize fresh (last resort)
-        console.log("Initializing fresh logs in storage");
-        chrome.storage.local.set({ 
-          chatgptLogs: [],
-          extensionVersion: chrome.runtime.getManifest().version
-        });
+    chrome.storage.local.get(["chatgptLogs", "extensionVersion"], (result) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error checking storage:", chrome.runtime.lastError);
+        return;
       }
-    } else {
-      // Log storage is healthy
-      console.log("Storage validation passed - data is healthy");
-    }
-  });
+
+      let needsRepair = false;
+
+      // Check if logs exists and is an array
+      if (!result.chatgptLogs || !Array.isArray(result.chatgptLogs)) {
+        console.warn("Invalid logs format in storage, needs repair");
+        needsRepair = true;
+      }
+
+      // Check if version is missing
+      if (!result.extensionVersion) {
+        console.warn("Missing extension version in storage, will repair");
+        needsRepair = true;
+      }
+
+      if (needsRepair) {
+        // Use in-memory logs if they exist and are valid
+        if (logs && Array.isArray(logs) && logs.length > 0) {
+          console.log("Repairing storage with in-memory logs");
+          chrome.storage.local.set({
+            chatgptLogs: logs,
+            extensionVersion: chrome.runtime.getManifest().version,
+          });
+        } else {
+          // Otherwise initialize fresh (last resort)
+          console.log("Initializing fresh logs in storage");
+          chrome.storage.local.set({
+            chatgptLogs: [],
+            extensionVersion: chrome.runtime.getManifest().version,
+          });
+        }
+      } else {
+        // Log storage is healthy
+        console.log("Storage validation passed - data is healthy");
+      }
+    });
   } catch (e) {
-    console.error('Error accessing Chrome storage:', e);
-    if (e.message && e.message.includes('Extension context invalidated')) {
+    console.error("Error accessing Chrome storage:", e);
+    if (e.message && e.message.includes("Extension context invalidated")) {
       isExtensionContextValid = false;
       // Clear all intervals
-      intervalIds.forEach(id => clearInterval(id));
+      intervalIds.forEach((id) => clearInterval(id));
       intervalIds = [];
     }
   }
@@ -1070,34 +1147,40 @@ function validateAndRepairStorage() {
 function initializeWithRetry(retryCount = 3) {
   console.log(`Initializing with ${retryCount} retries remaining`);
   try {
-    chrome.storage.local.get(['chatgptLogs', 'extensionVersion'], (result) => {
+    chrome.storage.local.get(["chatgptLogs", "extensionVersion"], (result) => {
       // Check for runtime error
       if (chrome.runtime.lastError) {
         console.error("Error loading logs:", chrome.runtime.lastError);
-        
+
         // Check if it's a context invalidation error
-        if (chrome.runtime.lastError.message && 
-            chrome.runtime.lastError.message.includes('Extension context invalidated')) {
-          console.warn('Extension context invalidated during initialization');
+        if (
+          chrome.runtime.lastError.message &&
+          chrome.runtime.lastError.message.includes(
+            "Extension context invalidated"
+          )
+        ) {
+          console.warn("Extension context invalidated during initialization");
           isExtensionContextValid = false;
           // Clear all intervals
-          intervalIds.forEach(id => clearInterval(id));
+          intervalIds.forEach((id) => clearInterval(id));
           intervalIds = [];
           return; // Don't retry if context is invalidated
         }
-        
+
         if (retryCount > 0) {
           console.log(`Retrying in 1 second (${retryCount} attempts left)...`);
           setTimeout(() => initializeWithRetry(retryCount - 1), 1000);
           return;
         }
       }
-      
+
       // Store extension version for reference
       const currentVersion = chrome.runtime.getManifest().version;
-      const storedVersion = result.extensionVersion || '0.0';
-      console.log(`Extension version: Current=${currentVersion}, Stored=${storedVersion}`);
-      
+      const storedVersion = result.extensionVersion || "0.0";
+      console.log(
+        `Extension version: Current=${currentVersion}, Stored=${storedVersion}`
+      );
+
       // Load logs with validation
       if (result && result.chatgptLogs && Array.isArray(result.chatgptLogs)) {
         try {
@@ -1113,23 +1196,23 @@ function initializeWithRetry(retryCount = 3) {
         console.log("No existing logs found or invalid format, starting fresh");
         logs.length = 0;
       }
-      
+
       // Create notification after logs are loaded
       setTimeout(createUsageNotification, 500);
     });
   } catch (e) {
     console.error("Critical initialization error:", e);
-    
+
     // Check if it's a context invalidation error
-    if (e.message && e.message.includes('Extension context invalidated')) {
-      console.warn('Extension context invalidated during initialization');
+    if (e.message && e.message.includes("Extension context invalidated")) {
+      console.warn("Extension context invalidated during initialization");
       isExtensionContextValid = false;
       // Clear all intervals
-      intervalIds.forEach(id => clearInterval(id));
+      intervalIds.forEach((id) => clearInterval(id));
       intervalIds = [];
       return; // Don't continue if context is invalidated
     }
-    
+
     if (retryCount > 0) {
       console.log(`Retrying in 1 second (${retryCount} attempts left)...`);
       setTimeout(() => initializeWithRetry(retryCount - 1), 1000);
@@ -1142,11 +1225,16 @@ function initializeWithRetry(retryCount = 3) {
 }
 
 // Handle page unload to clean up
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   // Clear all intervals
-  intervalIds.forEach(id => clearInterval(id));
+  intervalIds.forEach((id) => clearInterval(id));
   intervalIds = [];
 });
 
 // Start the extension
 initialize();
+
+function getUserState() {
+  // For demo: get from localStorage, default to 'notOptedIn'
+  return localStorage.getItem("userState") || "notOptedIn";
+}
