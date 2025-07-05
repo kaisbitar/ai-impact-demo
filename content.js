@@ -507,18 +507,19 @@ function createUsageNotification() {
   // Create the styles for the notification
   const styles = document.createElement("style");
   styles.textContent = `
+    /* Notification box styles */
     .ai-impact-notification {
       position: fixed;
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      touch-action: none; /* Prevent scrolling when dragging on mobile */
-      background-color: white;
-      color: #333;
-      padding: 4px 12px;
-      border-radius: 6px;
+      touch-action: none;
+      background: #f0fdf4;
+      color: #166534;
+      padding: 10px 24px;
+      border-radius: 32px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      font-size: 12px;
+      font-size: 20px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       display: inline-flex;
       align-items: center;
@@ -528,15 +529,35 @@ function createUsageNotification() {
       cursor: move;
       line-height: 1.2;
       text-align: center;
-      width: auto;
-      min-width: auto;
-      max-width: auto;
+      border: 3px solid #4ade80;
+      font-weight: 600;
+      min-width: 0;
+      max-width: none;
       height: auto;
-      user-select: none; /* Prevent text selection when dragging */
+      user-select: none;
     }
-    
-    .ai-impact-notification:hover {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    .ai-impact-notification.low-usage-notification {
+      background: #f0fdf4;
+      color: #166534;
+      border: 3px solid #4ade80;
+    }
+    .ai-impact-notification.medium-usage-notification {
+      background: #fefce8;
+      color: #92400e;
+      border: 3px solid #fbbf24;
+    }
+    .ai-impact-notification.high-usage-notification {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 3px solid #ef4444;
+    }
+    .ai-impact-emoji {
+      margin: 0 12px 0 0;
+      font-size: 24px;
+      color: inherit;
+      background: none;
+      display: flex;
+      align-items: center;
     }
     
     .ai-impact-content {
@@ -558,9 +579,18 @@ function createUsageNotification() {
       margin-left: 4px;
     }
     
-    .ai-impact-emoji {
-      margin: 0 4px 0 0;
-      color: #1e4d2b;
+    /* Usage level colors for spark emoji - more specific selectors */
+    .ai-impact-notification .ai-impact-emoji.low-usage {
+      background: #000; /* Grey for low usage */
+    }
+    
+    .ai-impact-notification .ai-impact-emoji.medium-usage {
+      
+      background: #000; /* Amber for medium usage */
+    }
+    
+    .ai-impact-notification .ai-impact-emoji.high-usage {
+      background: red;/* Red for high usage */
     }
     
     /* Make the notification adapt to the dark mode of ChatGPT */
@@ -813,14 +843,40 @@ function updateUsageNotification() {
     // Add a timestamp for debugging
     const updateTime = new Date().toLocaleTimeString();
 
-    // Determine icon based on user state
+    // Determine icon and color based on user state and usage level
     const userState = getUserState();
     const icon = userState === "donor" ? "🌿" : "⚡️";
+
+    // Define usage thresholds (in Wh)
+    const LOW_USAGE_THRESHOLD = 5.0; // Green: 0-5 Wh
+    const MEDIUM_USAGE_THRESHOLD = 15.0; // Yellow: 5-15 Wh
+    // Red: 15+ Wh
+
+    // Determine usage level and notification class
+    let notificationClass = "low-usage-notification";
+    if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
+      notificationClass = "high-usage-notification";
+    } else if (todayEnergyUsage > LOW_USAGE_THRESHOLD) {
+      notificationClass = "medium-usage-notification";
+    }
+
+    // Update the notification box class
+    const notificationBox = document.getElementById("ai-impact-notification");
+    if (notificationBox) {
+      notificationBox.classList.remove(
+        "low-usage-notification",
+        "medium-usage-notification",
+        "high-usage-notification"
+      );
+      notificationBox.classList.add(notificationClass);
+    }
+
+    // Set the icon and message as before
     let message = `<span class="ai-impact-emoji">${icon}</span> <span class="ai-impact-energy">${formattedEnergy} Wh today</span>`;
 
     // Log for debugging how frequently updates occur
     console.log(
-      `[${updateTime}] Updating energy notification: ${formattedEnergy} Wh`
+      `[${updateTime}] Updating energy notification: ${formattedEnergy} Wh (${notificationClass})`
     );
 
     // Update the UI with error handling
