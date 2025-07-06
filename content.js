@@ -213,6 +213,11 @@ async function saveLog(userMessage, assistantResponse) {
   } else {
     updateUsageNotification();
   }
+
+  // Submit data to Supabase if this is a new log entry
+  if (shouldUpdateNotification && existingLogIndex === -1) {
+    submitToSupabase(logEntry);
+  }
 }
 
 /**
@@ -1310,6 +1315,56 @@ window.addEventListener("beforeunload", () => {
 
 // Start the extension
 initialize();
+
+/**
+ * Submits usage data to Supabase
+ * @param {Object} logEntry - The log entry to submit
+ */
+async function submitToSupabase(logEntry) {
+  try {
+    // For demo purposes, use a test user ID
+    // In production, this would come from user authentication
+    const testUserId = "7ed16fa3-775b-4cc7-8b8c-2dfe12f01d80"; // Use your test user ID from Supabase
+
+    const usageData = {
+      user_id: testUserId,
+      energy_usage_wh: logEntry.energyUsage,
+      co2_emissions_g: logEntry.co2Emissions,
+      token_count: logEntry.assistantTokenCount,
+      conversation_id: logEntry.conversationId || "unknown",
+      model_used: "gpt-3.5-turbo", // Default assumption
+      timestamp: new Date(logEntry.timestamp).toISOString(),
+    };
+
+    // Send to Supabase using fetch
+    const response = await fetch(
+      "https://golidwlfnfabmothqipx.supabase.co/rest/v1/usage_data",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvbGlkd2xmbmZhYm1vdGhxaXB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDkzODIsImV4cCI6MjA2NzM4NTM4Mn0.HH2a3IFhuWeZXPvTu_Ub9BgAwdLtwLVFrIUtHW93nMc",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvbGlkd2xmbmZhYm1vdGhxaXB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4MDkzODIsImV4cCI6MjA2NzM4NTM4Mn0.HH2a3IFhuWeZXPvTu_Ub9BgAwdLtwLVFrIUtHW93nMc",
+        },
+        body: JSON.stringify(usageData),
+      }
+    );
+
+    if (response.ok) {
+      console.log("Data submitted to Supabase successfully");
+    } else {
+      console.error(
+        "Failed to submit to Supabase:",
+        response.status,
+        response.statusText
+      );
+    }
+  } catch (error) {
+    console.error("Error submitting to Supabase:", error);
+  }
+}
 
 function getUserState() {
   // For demo: get from localStorage, default to 'notOptedIn'

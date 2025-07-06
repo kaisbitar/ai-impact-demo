@@ -64,6 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Try to load logs, but don't fail if storage is unavailable
     loadLogs();
 
+    // Test Supabase connection first, then load data
+    testAndLoadSupabaseData();
+
     // Set subtitle and metric label based on user state
     const userState = localStorage.getItem("userState") || "notOptedIn";
     const subtitle = document.getElementById("user-state-subtitle");
@@ -797,6 +800,69 @@ function calculateEnergyAndEmissionsInPopup(
       totalEnergy: normalizedEnergy,
       co2Emissions,
     };
+  }
+}
+
+/**
+ * Tests Supabase connection and loads data if successful
+ */
+async function testAndLoadSupabaseData() {
+  try {
+    if (window.supabaseClient && window.supabaseClient.testSupabaseConnection) {
+      const isConnected = await window.supabaseClient.testSupabaseConnection();
+      if (isConnected) {
+        await loadSupabaseData();
+      } else {
+        const subtitle = document.getElementById("user-state-subtitle");
+        if (subtitle) {
+          subtitle.textContent = "Supabase connection failed";
+          subtitle.style.color = "#dc2626";
+        }
+      }
+    }
+  } catch (error) {
+    const subtitle = document.getElementById("user-state-subtitle");
+    if (subtitle) {
+      subtitle.textContent = "Supabase connection failed";
+      subtitle.style.color = "#dc2626";
+    }
+  }
+}
+
+/**
+ * Loads data from Supabase for demo purposes
+ */
+async function loadSupabaseData() {
+  try {
+    const testUserId = "7ed16fa3-775b-4cc7-8b8c-2dfe12f01d80";
+    if (window.supabaseClient && window.supabaseClient.getUserUsageData) {
+      const supabaseData = await window.supabaseClient.getUserUsageData(
+        testUserId
+      );
+      const totalEnergy = supabaseData.reduce(
+        (sum, record) => sum + (record.energy_usage_wh || 0),
+        0
+      );
+      const todayEnergyElement = document.getElementById("today-energy");
+      if (todayEnergyElement) {
+        todayEnergyElement.textContent = formatNumber(
+          totalEnergy.toFixed(2),
+          true
+        );
+      }
+      const subtitle = document.getElementById("user-state-subtitle");
+      if (subtitle) {
+        subtitle.textContent = "Data from Supabase (Demo)";
+        subtitle.style.color = "#059669";
+      }
+    }
+  } catch (error) {
+    // Optionally, show a user-friendly error in the UI
+    const subtitle = document.getElementById("user-state-subtitle");
+    if (subtitle) {
+      subtitle.textContent = "Error loading data from Supabase";
+      subtitle.style.color = "#dc2626";
+    }
   }
 }
 
