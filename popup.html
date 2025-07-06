@@ -230,7 +230,7 @@
 
       .usage-stats-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
         gap: 12px;
         margin-bottom: 18px;
       }
@@ -346,6 +346,7 @@
         font-weight: 500;
         margin-bottom: 12px;
         color: var(--header-text);
+        margin-top: 12px;
       }
 
       .equivalence-grid {
@@ -353,13 +354,22 @@
         grid-template-columns: 1fr 1fr;
         gap: 10px;
       }
-
+      .green-background {
+        background: #ebffeb;
+        border: 1px solid #1adc1a;
+        color: #1adc1a;
+      }
+      .red-background {
+        background: #ffebeb;
+        border: 1px solid #ff0000;
+        color: #ff0000;
+      }
       .equivalence-item {
         display: flex;
         align-items: center;
         gap: 8px;
         padding: 10px;
-        background-color: var(--equiv-item-background);
+        /* background-color: var(--equiv-item-background); */
         border-radius: 6px;
       }
 
@@ -544,10 +554,10 @@
         <div class="icon"><i class="ri-leaf-line"></i></div>
         <div>Green AI Impact</div>
       </div>
-      <select id="estimation-method" class="estimation-select">
+      <!-- <select id="estimation-method" class="estimation-select">
         <option value="community">Community estimates</option>
         <option value="altman">Sam Altman's estimation</option>
-      </select>
+      </select> -->
     </div>
     <div
       id="user-state-subtitle"
@@ -572,49 +582,10 @@
       >
     </div>
 
-    <!-- Mission Statement -->
-    <div
-      style="
-        margin: 8px 10px;
-        padding: 10px;
-        background: linear-gradient(
-          135deg,
-          rgba(30, 77, 43, 0.05) 0%,
-          rgba(139, 90, 60, 0.05) 100%
-        );
-        border-radius: 6px;
-        border: 1px solid rgba(30, 77, 43, 0.1);
-      "
-    >
-      <div
-        style="
-          font-size: 11px;
-          color: var(--muted-text);
-          line-height: 1.4;
-          text-align: center;
-        "
-      >
-        <strong style="color: var(--primary-color)">Mission:</strong> Making AI
-        usage transparent and supporting ecosystem restoration through conscious
-        technology use.
-      </div>
-    </div>
-
     <!-- Today Stats Container -->
     <div id="today-stats" class="stats-container active">
       <div class="content-section">
         <div class="usage-stats-grid">
-          <div id="main-metric-tile">
-            <div class="stat-box">
-              <div class="emoji">💬</div>
-              <div class="stat-data">
-                <div class="message-value" id="today-messages">0</div>
-                <div class="stat-label" id="main-metric-label">
-                  Messages sent
-                </div>
-              </div>
-            </div>
-          </div>
           <div class="stat-box">
             <div class="emoji">⚡️</div>
             <div class="stat-data">
@@ -638,29 +609,44 @@
           <div class="equivalence-header">Environmental equivalents:</div>
 
           <div class="equivalence-grid">
-            <div class="equivalence-item">
+            <div class="equivalence-item red-background">
               <div class="emoji">🌍</div>
               <div class="equivalence-data">
                 <div class="equivalence-value" id="co2-eq">0</div>
                 <div class="equivalence-label">CO₂-eq (g)</div>
               </div>
             </div>
-            <div class="equivalence-item">
+            <div class="equivalence-item red-background">
               <div class="emoji">💧</div>
               <div class="equivalence-data">
                 <div class="equivalence-value" id="today-toasts">0</div>
                 <div class="equivalence-label">Water evaporated</div>
               </div>
             </div>
+          </div>
+
+          <div class="equivalence-header">Restored:</div>
+          <div class="equivalence-grid">
             <div
-              class="equivalence-item"
+              class="equivalence-item green-background"
               id="m2-restored-item"
               style="display: none"
             >
               <div class="emoji">🟩</div>
               <div class="equivalence-data">
-                <div class="equivalence-value" id="m2-restored">0</div>
+                <div class="equivalence-value" id="m2-restored">1</div>
                 <div class="equivalence-label">m² restored</div>
+              </div>
+            </div>
+            <div
+              class="equivalence-item green-background"
+              id="trees-planted-item"
+              style="display: none"
+            >
+              <div class="emoji">🌳</div>
+              <div class="equivalence-data">
+                <div class="equivalence-value" id="trees-planted">0</div>
+                <div class="equivalence-label">trees planted</div>
               </div>
             </div>
           </div>

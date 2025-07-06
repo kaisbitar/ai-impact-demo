@@ -178,7 +178,6 @@ function loadLogs() {
         console.error("Error loading logs:", lastError);
         // Retry once after a short delay
         setTimeout(() => {
-          console.log("Retrying log load after error...");
           tryLoadLogsAgain();
         }, 500);
         return;
@@ -186,47 +185,6 @@ function loadLogs() {
 
       const logs = result.chatgptLogs || [];
       const version = result.extensionVersion || "unknown";
-      console.log(
-        `Loaded ${logs.length} logs from storage (extension version: ${version})`
-      );
-
-      // Validate logs format
-      if (!Array.isArray(logs)) {
-        console.error("Invalid logs format in storage!");
-        // Initialize with empty array as fallback
-        updateTodayStats([]);
-        updateLifetimeStats([]);
-
-        // Attempt to repair storage
-        chrome.storage.local.set({
-          chatgptLogs: [],
-          extensionVersion: chrome.runtime.getManifest().version,
-        });
-        return;
-      }
-
-      // Log some details about the logs if any exist
-      if (logs.length > 0) {
-        console.log("First log:", logs[0]);
-        console.log("Last log:", logs[logs.length - 1]);
-
-        // Calculate total energy usage
-        const totalEnergy = logs.reduce(
-          (sum, log) => sum + (log.energyUsage || 0),
-          0
-        );
-        console.log(`Total energy usage in logs: ${totalEnergy.toFixed(2)} Wh`);
-
-        // Check for logs with missing energy values
-        const logsWithoutEnergy = logs.filter(
-          (log) => log.energyUsage === undefined || log.energyUsage === null
-        );
-        if (logsWithoutEnergy.length > 0) {
-          console.warn(
-            `${logsWithoutEnergy.length} logs have missing energy usage values`
-          );
-        }
-      }
 
       updateTodayStats(logs);
       updateLifetimeStats(logs);
@@ -256,7 +214,6 @@ function tryLoadLogsAgain() {
       }
 
       const logs = Array.isArray(result.chatgptLogs) ? result.chatgptLogs : [];
-      console.log(`Retry loaded ${logs.length} logs from storage`);
 
       updateTodayStats(logs);
       updateLifetimeStats(logs);
@@ -297,19 +254,17 @@ function updateTodayStats(logs) {
     todayEnergyUsage = todayEnergyUsage;
   }
 
-  // Update the UI
-  document.getElementById("today-messages").textContent =
-    formatNumber(todayMessages);
-  document.getElementById("today-energy").textContent = formatNumber(
-    todayEnergyUsage.toFixed(2),
-    true
-  );
-
   // Calculate and update today's environmental equivalents
   const equivalents = calculateEnvironmentalEquivalents(todayEnergyUsage);
 
   // Update the DOM with the calculated values, ensure we have proper formatting
   try {
+    // Update the main energy usage display
+    document.getElementById("today-energy").textContent = formatNumber(
+      todayEnergyUsage.toFixed(2),
+      true
+    );
+
     // Update each element individually with error handling
     // Calculate CO₂-eq (g) using EU grid average: Wh × 0.475
     const todayCO2eq = todayEnergyUsage * 0.475;
@@ -320,12 +275,6 @@ function updateTodayStats(logs) {
     // Special handling for water consumption with explicit debugging
     const todayWaterElement = document.getElementById("today-toasts");
     if (todayWaterElement) {
-      console.log(
-        "Updating today water consumption element:",
-        todayWaterElement,
-        "with value:",
-        equivalents.water
-      );
       // Format water in ml if small, otherwise in L with simpler format
       if (equivalents.water < 0.01) {
         todayWaterElement.textContent = `${formatNumber(
@@ -346,6 +295,9 @@ function updateTodayStats(logs) {
       );
     }
 
+    const treesPlantedItem = document.getElementById("trees-planted-item");
+    const treesPlantedValue = document.getElementById("trees-planted");
+
     const userState = localStorage.getItem("userState") || "notOptedIn";
     const m2RestoredItem = document.getElementById("m2-restored-item");
     const m2RestoredValue = document.getElementById("m2-restored");
@@ -354,16 +306,20 @@ function updateTodayStats(logs) {
       const m2Restored = todayEnergyUsage * 0.0025;
       m2RestoredValue.textContent = m2Restored.toFixed(2);
       m2RestoredItem.style.display = "";
+
+      // Trees planted: example formula, adjust as needed
+      const treesPlanted = todayEnergyUsage * 0.01;
+      treesPlantedValue.textContent = treesPlanted.toFixed(2);
+      treesPlantedItem.style.display = "";
     } else {
       m2RestoredValue.textContent = "0";
       m2RestoredItem.style.display = "none";
+      treesPlantedValue.textContent = "0";
+      treesPlantedItem.style.display = "none";
     }
   } catch (error) {
     console.error("Error updating today environmental equivalents:", error);
   }
-
-  // Log the values for debugging
-  console.log("Today environmental equivalents:", equivalents);
 }
 
 /**
@@ -429,12 +385,6 @@ function updateLifetimeStats(logs) {
     // Special handling for water consumption with explicit debugging
     const waterElement = document.getElementById("lifetime-toasts");
     if (waterElement) {
-      console.log(
-        "Updating water consumption element:",
-        waterElement,
-        "with value:",
-        equivalents.water
-      );
       // Format water in ml if small, otherwise in L with simpler format
       if (equivalents.water < 0.01) {
         waterElement.textContent = `${formatNumber(
@@ -469,9 +419,6 @@ function updateLifetimeStats(logs) {
   } catch (error) {
     console.error("Error updating environmental equivalents:", error);
   }
-
-  // Log the values for debugging
-  console.log("Lifetime environmental equivalents:", equivalents);
 }
 
 /**
@@ -506,11 +453,6 @@ function calculateEnvironmentalEquivalents(energyUsageWh) {
   // Water_Consumption_Liters = (Energy_Wh / 1000) * WUE_L_per_kWh
   // Using WUE of 0.2 L/kWh for Azure data centers
   const waterConsumptionLiters = Math.max(0, (validEnergyUsage / 1000) * 0.2);
-  console.log(
-    `Calculated water consumption: (${validEnergyUsage} Wh / 1000) * 0.2 = ${waterConsumptionLiters.toFixed(
-      6
-    )} liters`
-  );
 
   // Phone charges (10-15 Wh per full charge)
   const phoneCharges = Math.max(
@@ -520,16 +462,6 @@ function calculateEnvironmentalEquivalents(energyUsageWh) {
 
   // Elevator rides (6.25 Wh per person per floor - assuming 2 people per elevator)
   const elevatorFloors = Math.max(0, Math.round(validEnergyUsage / 6.25));
-
-  console.log(
-    `Calculating equivalents for ${validEnergyUsage}Wh (${energyUsageKwh}kWh):`,
-    {
-      movies: movieMinutes,
-      water: waterConsumptionLiters,
-      phones: phoneCharges,
-      elevator: elevatorFloors,
-    }
-  );
 
   // Convert to numbers and apply sensible defaults to prevent NaN
   return {
@@ -658,10 +590,6 @@ function saveUserEmail(email, marketingConsent = false) {
           : null,
       },
       function () {
-        console.log("User email saved with consent:", {
-          email,
-          marketingConsent,
-        });
         sendEmailToBackend(email, marketingConsent);
       }
     );
@@ -731,17 +659,21 @@ function sendEmailToBackend(email, marketingConsent = false) {
 function setupEstimationMethodToggle() {
   const estimationSelect = document.getElementById("estimation-method");
 
+  // Check if the estimation select element exists (it might be commented out)
+  if (!estimationSelect) {
+    console.log("Estimation method select not found - skipping setup");
+    return;
+  }
+
   // Load saved estimation method and ensure consistency
   loadEstimationMethod().then((method) => {
     const selectedMethod = method || "community";
     estimationSelect.value = selectedMethod;
-    console.log("Popup loaded with estimation method:", selectedMethod);
   });
 
   // Handle estimation method change
   estimationSelect.addEventListener("change", function () {
     const selectedMethod = this.value;
-    console.log("Estimation method changed to:", selectedMethod);
 
     // Save the method first
     saveEstimationMethod(selectedMethod);
@@ -763,11 +695,9 @@ function loadEstimationMethod() {
     if (storage) {
       storage.get(["estimationMethod"], function (result) {
         const method = result.estimationMethod || "community";
-        console.log("Loaded estimation method from storage:", method);
         resolve(method);
       });
     } else {
-      console.log("No storage available, defaulting to community");
       resolve("community");
     }
   });
@@ -779,13 +709,7 @@ function loadEstimationMethod() {
 function saveEstimationMethod(method) {
   const storage = getChromeStorage();
   if (storage) {
-    storage.set({ estimationMethod: method }, function () {
-      console.log("Popup: Estimation method saved to storage:", method);
-    });
-  } else {
-    console.error(
-      "Popup: Cannot save estimation method - no storage available"
-    );
+    storage.set({ estimationMethod: method });
   }
 }
 
@@ -819,7 +743,6 @@ function recalculateLogsInPopup(method, callback) {
       // Update the UI with recalculated data
       updateTodayStats(logs);
       updateLifetimeStats(logs);
-      console.log(`Recalculated ${logs.length} logs with ${method} method`);
 
       // Call the callback when everything is complete
       if (callback) callback();

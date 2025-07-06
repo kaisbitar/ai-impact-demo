@@ -516,7 +516,7 @@ function createUsageNotification() {
       touch-action: none;
       background: #f0fdf4;
       color: #166534;
-      padding: 10px 24px;
+      padding: 3px 10px;
       border-radius: 32px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       font-size: 20px;
@@ -539,17 +539,17 @@ function createUsageNotification() {
     .ai-impact-notification.low-usage-notification {
       background: #f0fdf4;
       color: #166534;
-      border: 3px solid #4ade80;
+      border: 1px solid #4ade80;
     }
     .ai-impact-notification.medium-usage-notification {
       background: #fefce8;
       color: #92400e;
-      border: 3px solid #fbbf24;
+      border: 1px solid #fbbf24;
     }
     .ai-impact-notification.high-usage-notification {
       background: #fef2f2;
       color: #991b1b;
-      border: 3px solid #ef4444;
+      border: 1px solid #ef4444;
     }
     .ai-impact-emoji {
       margin: 0 12px 0 0;
