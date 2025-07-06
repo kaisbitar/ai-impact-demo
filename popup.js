@@ -311,28 +311,11 @@ function updateTodayStats(logs) {
   // Update the DOM with the calculated values, ensure we have proper formatting
   try {
     // Update each element individually with error handling
-    // Format YouTube streaming time - show in hours if over 60 minutes
-    const todayMovieMinutes = equivalents.movies;
-    let todayFormattedMovieTime;
+    // Calculate CO₂-eq (g) using EU grid average: Wh × 0.475
+    const todayCO2eq = todayEnergyUsage * 0.475;
+    const todayFormattedCO2eq = `${formatNumber(todayCO2eq.toFixed(1))} g`;
 
-    if (todayMovieMinutes >= 60) {
-      const todayMovieHours = todayMovieMinutes / 60;
-      // One decimal place for 1-10 hours, no decimals above 10 hours
-      if (todayMovieHours < 10) {
-        todayFormattedMovieTime = `${formatNumber(
-          todayMovieHours.toFixed(1)
-        )} hours`;
-      } else {
-        todayFormattedMovieTime = `${formatNumber(
-          Math.round(todayMovieHours)
-        )} hours`;
-      }
-    } else {
-      todayFormattedMovieTime = `${formatNumber(todayMovieMinutes)} mins`;
-    }
-
-    document.getElementById("today-movies").textContent =
-      todayFormattedMovieTime;
+    document.getElementById("co2-eq").textContent = todayFormattedCO2eq;
 
     // Special handling for water consumption with explicit debugging
     const todayWaterElement = document.getElementById("today-toasts");
@@ -363,12 +346,18 @@ function updateTodayStats(logs) {
       );
     }
 
-    document.getElementById("today-phones").textContent = formatNumber(
-      equivalents.phones
-    );
-    document.getElementById("today-elevator").textContent = `${formatNumber(
-      equivalents.elevator
-    )} floors`;
+    const userState = localStorage.getItem("userState") || "notOptedIn";
+    const m2RestoredItem = document.getElementById("m2-restored-item");
+    const m2RestoredValue = document.getElementById("m2-restored");
+
+    if (userState === "donor") {
+      const m2Restored = todayEnergyUsage * 0.0025;
+      m2RestoredValue.textContent = m2Restored.toFixed(2);
+      m2RestoredItem.style.display = "";
+    } else {
+      m2RestoredValue.textContent = "0";
+      m2RestoredItem.style.display = "none";
+    }
   } catch (error) {
     console.error("Error updating today environmental equivalents:", error);
   }

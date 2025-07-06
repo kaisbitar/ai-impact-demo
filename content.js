@@ -553,7 +553,7 @@ function createUsageNotification() {
     }
     .ai-impact-emoji {
       margin: 0 12px 0 0;
-      font-size: 24px;
+      font-size: 16px;
       color: inherit;
       background: none;
       display: flex;
@@ -852,12 +852,24 @@ function updateUsageNotification() {
     const MEDIUM_USAGE_THRESHOLD = 15.0; // Yellow: 5-15 Wh
     // Red: 15+ Wh
 
-    // Determine usage level and notification class
-    let notificationClass = "low-usage-notification";
-    if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
-      notificationClass = "high-usage-notification";
-    } else if (todayEnergyUsage > LOW_USAGE_THRESHOLD) {
-      notificationClass = "medium-usage-notification";
+    // Determine notification class based on user state and usage
+    let notificationClass = "";
+    if (userState === "donor") {
+      // Donor: high usage = green, else default
+      if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
+        notificationClass = "low-usage-notification";
+      } else {
+        notificationClass = ""; // default style
+      }
+    } else {
+      // Non-donor: normal logic
+      if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
+        notificationClass = "high-usage-notification";
+      } else if (todayEnergyUsage > LOW_USAGE_THRESHOLD) {
+        notificationClass = "medium-usage-notification";
+      } else {
+        notificationClass = "low-usage-notification";
+      }
     }
 
     // Update the notification box class
@@ -868,7 +880,9 @@ function updateUsageNotification() {
         "medium-usage-notification",
         "high-usage-notification"
       );
-      notificationBox.classList.add(notificationClass);
+      if (notificationClass) {
+        notificationBox.classList.add(notificationClass);
+      }
     }
 
     // Set the icon and message as before
