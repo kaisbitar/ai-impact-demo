@@ -21,47 +21,50 @@
     <style>
       :root {
         /* Revolutionary Color Psychology Palette */
-        --primary-green: #2E7D32;      /* Growth, renewal, environmental consciousness */
-        --primary-green-hover: #1B5E20; /* Deeper commitment */
-        --accent-blue: #1976D2;        /* Trust, technology, water */
-        --accent-blue-hover: #1565C0;  /* Deeper trust */
-        --energy-orange: #FF9800;      /* Energy, action, urgency */
-        --energy-orange-hover: #F57C00; /* Deeper urgency */
-        --success-green: #4CAF50;      /* Achievement, positive impact */
-        --success-green-hover: #388E3C; /* Deeper achievement */
-        
+        --primary-green: #2e7d32; /* Growth, renewal, environmental consciousness */
+        --primary-green-hover: #1b5e20; /* Deeper commitment */
+        --accent-blue: #1976d2; /* Trust, technology, water */
+        --accent-blue-hover: #1565c0; /* Deeper trust */
+        --energy-orange: #ff9800; /* Energy, action, urgency */
+        --energy-orange-hover: #f57c00; /* Deeper urgency */
+        --success-green: #4caf50; /* Achievement, positive impact */
+        --success-green-hover: #388e3c; /* Deeper achievement */
+
         /* Neutral Psychology Colors */
-        --neutral-50: #FAFAFA;         /* Clean, minimal */
-        --neutral-100: #F5F5F5;        /* Subtle background */
-        --neutral-200: #EEEEEE;        /* Light borders */
-        --neutral-300: #E0E0E0;        /* Medium borders */
-        --neutral-400: #BDBDBD;        /* Muted text */
-        --neutral-500: #9E9E9E;        /* Secondary text */
-        --neutral-600: #757575;        /* Primary text */
-        --neutral-700: #616161;        /* Strong text */
-        --neutral-800: #424242;        /* Headers */
-        --neutral-900: #212121;        /* Strongest text */
-        
+        --neutral-50: #fafafa; /* Clean, minimal */
+        --neutral-100: #f5f5f5; /* Subtle background */
+        --neutral-200: #eeeeee; /* Light borders */
+        --neutral-300: #e0e0e0; /* Medium borders */
+        --neutral-400: #bdbdbd; /* Muted text */
+        --neutral-500: #9e9e9e; /* Secondary text */
+        --neutral-600: #757575; /* Primary text */
+        --neutral-700: #616161; /* Strong text */
+        --neutral-800: #424242; /* Headers */
+        --neutral-900: #212121; /* Strongest text */
+
         /* Semantic Colors */
-        --background: #FFFFFF;
-        --card-background: #FFFFFF;
+        --background: #ffffff;
+        --card-background: #ffffff;
         --surface-background: var(--neutral-50);
         --border-color: var(--neutral-200);
         --text-primary: var(--neutral-800);
         --text-secondary: var(--neutral-600);
         --text-muted: var(--neutral-500);
-        
+
         /* Interactive States */
         --hover-background: rgba(46, 125, 50, 0.08);
         --active-background: rgba(46, 125, 50, 0.12);
         --focus-ring: rgba(46, 125, 50, 0.2);
-        
+
         /* Shadows for Depth */
         --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
         /* Transitions */
         --transition-fast: 150ms ease-in-out;
         --transition-normal: 250ms ease-in-out;
@@ -73,26 +76,34 @@
       }
 
       body {
-        width: 650px;
+        width: 401px;
         min-height: 600px;
         font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
         margin: 0;
         padding: 0;
-        background: linear-gradient(135deg, var(--background) 0%, var(--surface-background) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--background) 0%,
+          var(--surface-background) 100%
+        );
         color: var(--text-primary);
         overflow-x: hidden;
       }
 
       /* Revolutionary Header with Nature Connection */
       .header {
-        background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-blue) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
         padding: 20px 24px;
         position: relative;
         overflow: hidden;
       }
 
       .header::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -215,7 +226,11 @@
       }
 
       .impact-hero {
-        background: linear-gradient(135deg, var(--success-green) 0%, var(--primary-green) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--success-green) 0%,
+          var(--primary-green) 100%
+        );
         border-radius: 16px;
         padding: 24px;
         color: white;
@@ -225,19 +240,28 @@
       }
 
       .impact-hero::before {
-        content: '';
+        content: "";
         position: absolute;
         top: -50%;
         right: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
         animation: float 6s ease-in-out infinite;
       }
 
       @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-10px) rotate(180deg); }
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(180deg);
+        }
       }
 
       .hero-content {
@@ -301,13 +325,17 @@
       }
 
       .stat-card::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary-green) 0%, var(--accent-blue) 100%);
+        background: linear-gradient(
+          90deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
       }
 
       .stat-header {
@@ -328,10 +356,18 @@
         color: white;
       }
 
-      .stat-icon.energy { background: var(--energy-orange); }
-      .stat-icon.water { background: var(--accent-blue); }
-      .stat-icon.co2 { background: var(--neutral-600); }
-      .stat-icon.trees { background: var(--success-green); }
+      .stat-icon.energy {
+        background: var(--energy-orange);
+      }
+      .stat-icon.water {
+        background: var(--accent-blue);
+      }
+      .stat-icon.co2 {
+        background: var(--neutral-600);
+      }
+      .stat-icon.trees {
+        background: var(--success-green);
+      }
 
       .stat-label {
         font-size: 12px;
@@ -385,13 +421,17 @@
       }
 
       .action-card::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(25, 118, 210, 0.05) 100%);
+        background: linear-gradient(
+          135deg,
+          rgba(46, 125, 50, 0.05) 0%,
+          rgba(25, 118, 210, 0.05) 100%
+        );
         opacity: 0;
         transition: var(--transition-normal);
       }
@@ -416,7 +456,11 @@
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-blue) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
         display: flex;
         align-items: center;
         justify-content: center;
@@ -452,26 +496,39 @@
 
       .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--primary-green) 0%, var(--accent-blue) 100%);
+        background: linear-gradient(
+          90deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
         border-radius: 3px;
         transition: var(--transition-slow);
         position: relative;
       }
 
       .progress-fill::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.3) 50%,
+          transparent 100%
+        );
         animation: shimmer 2s ease-in-out infinite;
       }
 
       @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
       }
 
       .progress-text {
@@ -498,13 +555,18 @@
       }
 
       .btn::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
         transition: var(--transition-normal);
       }
 
@@ -513,7 +575,11 @@
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--primary-green) 0%, var(--accent-blue) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
         color: white;
         box-shadow: var(--shadow-md);
       }
@@ -586,7 +652,11 @@
         width: 60px;
         height: 60px;
         border-radius: 16px;
-        background: linear-gradient(135deg, var(--success-green) 0%, var(--primary-green) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--success-green) 0%,
+          var(--primary-green) 100%
+        );
         display: flex;
         align-items: center;
         justify-content: center;
@@ -701,7 +771,7 @@
         body {
           width: 100%;
         }
-        
+
         .stats-grid {
           grid-template-columns: 1fr;
         }
@@ -719,7 +789,9 @@
       }
 
       @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       /* Revolutionary Tooltips */
@@ -844,7 +916,9 @@
       <div class="impact-hero fade-in-up">
         <div class="hero-content">
           <div class="hero-title">Your AI Impact</div>
-          <div class="hero-subtitle" id="user-state-subtitle">Track your AI footprint</div>
+          <div class="hero-subtitle" id="user-state-subtitle">
+            Track your AI footprint
+          </div>
           <div class="hero-metric">
             <span class="hero-number" id="main-metric-value">0</span>
             <span class="hero-unit" id="main-metric-label">Tokens</span>
@@ -865,21 +939,27 @@
           </div>
           <div class="stat-card fade-in-up-delay-1">
             <div class="stat-header">
-              <div class="stat-icon"><i class="ri-arrow-left-right-line"></i></div>
+              <div class="stat-icon">
+                <i class="ri-arrow-left-right-line"></i>
+              </div>
               <div class="stat-label">Tokens In</div>
             </div>
             <div class="stat-value" id="tokens-in-value">0</div>
           </div>
           <div class="stat-card fade-in-up-delay-1">
             <div class="stat-header">
-              <div class="stat-icon"><i class="ri-arrow-right-left-line"></i></div>
+              <div class="stat-icon">
+                <i class="ri-arrow-right-left-line"></i>
+              </div>
               <div class="stat-label">Tokens Out</div>
             </div>
             <div class="stat-value" id="tokens-out-value">0</div>
           </div>
           <div class="stat-card fade-in-up-delay-1">
             <div class="stat-header">
-              <div class="stat-icon"><i class="ri-bar-chart-grouped-line"></i></div>
+              <div class="stat-icon">
+                <i class="ri-bar-chart-grouped-line"></i>
+              </div>
               <div class="stat-label">Total Tokens</div>
             </div>
             <div class="stat-value" id="total-tokens-value">0</div>
@@ -893,14 +973,18 @@
         <div class="metrics-row">
           <div class="stat-card fade-in-up-delay-2">
             <div class="stat-header">
-              <div class="stat-icon energy"><i class="ri-flashlight-line"></i></div>
+              <div class="stat-icon energy">
+                <i class="ri-flashlight-line"></i>
+              </div>
               <div class="stat-label">Energy</div>
             </div>
             <div class="stat-value" id="energy-value">0 kWh</div>
           </div>
           <div class="stat-card fade-in-up-delay-2">
             <div class="stat-header">
-              <div class="stat-icon water"><i class="ri-water-flash-line"></i></div>
+              <div class="stat-icon water">
+                <i class="ri-water-flash-line"></i>
+              </div>
               <div class="stat-label">Water</div>
             </div>
             <div class="stat-value" id="water-value">0 L</div>
@@ -912,7 +996,11 @@
             </div>
             <div class="stat-value" id="co2-value">0 kg</div>
           </div>
-          <div class="stat-card fade-in-up-delay-2" id="main-metric-tile" style="display: none;">
+          <div
+            class="stat-card fade-in-up-delay-2"
+            id="main-metric-tile"
+            style="display: none"
+          >
             <div class="stat-header">
               <div class="stat-icon trees"><i class="ri-plant-line"></i></div>
               <div class="stat-label">Restored</div>
@@ -928,7 +1016,9 @@
         <div class="metrics-row">
           <div class="stat-card fade-in-up-delay-3">
             <div class="stat-header">
-              <div class="stat-icon"><i class="ri-battery-charge-line"></i></div>
+              <div class="stat-icon">
+                <i class="ri-battery-charge-line"></i>
+              </div>
               <div class="stat-label">Phones</div>
             </div>
             <div class="stat-value" id="phones-value">0</div>
@@ -961,15 +1051,22 @@
               <div>
                 <div class="action-title">Support Forest Restoration</div>
                 <div class="action-description">
-                  Offset your AI impact by contributing to Bergwaldprojekt's reforestation efforts
+                  Offset your AI impact by contributing to Bergwaldprojekt's
+                  reforestation efforts
                 </div>
               </div>
             </div>
             <div class="action-progress">
               <div class="progress-bar">
-                <div class="progress-fill" id="donation-progress" style="width: 0%"></div>
+                <div
+                  class="progress-fill"
+                  id="donation-progress"
+                  style="width: 0%"
+                ></div>
               </div>
-              <div class="progress-text" id="donation-text">Ready to make a difference</div>
+              <div class="progress-text" id="donation-text">
+                Ready to make a difference
+              </div>
             </div>
           </div>
         </div>
@@ -993,7 +1090,8 @@
           </div>
           <div class="overlay-title">Join Regen-AI</div>
           <div class="overlay-description">
-            Get personalized impact insights and track your forest restoration contributions
+            Get personalized impact insights and track your forest restoration
+            contributions
           </div>
         </div>
         <form class="overlay-form" id="email-form">
@@ -1028,10 +1126,10 @@
 
     <!-- Estimation Disclaimer -->
     <div class="estimation-disclaimer">
-      Impact estimates are based on community research and may vary. 
+      Impact estimates are based on community research and may vary.
       <a href="#" class="methodology-link">Learn more</a>
     </div>
-    
+
     <!-- Scripts -->
     <script src="supabase.js"></script>
     <script src="popup.js"></script>
