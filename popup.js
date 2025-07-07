@@ -241,88 +241,38 @@ function updateTodayStats(logs) {
 
   // Calculate today's statistics
   let todayMessages = todayLogs.length;
+  let todayTokensIn = 0;
+  let todayTokensOut = 0;
   let todayEnergyUsage = 0;
+  let todayWater = 0;
+  let todayPhones = 0;
+  let todayYoutube = 0;
+  let todayElevator = 0;
 
-  // Only use actual log data, don't add minimum values
-  if (todayLogs.length === 0) {
-    todayEnergyUsage = 0;
-  } else {
-    todayLogs.forEach((log) => {
-      // Ensure we have at least a minimum energy value
-      const logEnergy = log.energyUsage || 0;
-      todayEnergyUsage += logEnergy;
-    });
+  todayLogs.forEach((log) => {
+    todayTokensIn += log.userTokenCount || 0;
+    todayTokensOut += log.assistantTokenCount || 0;
+    todayEnergyUsage += log.energyUsage || 0;
+  });
 
-    // Use actual value, no minimum threshold
-    todayEnergyUsage = todayEnergyUsage;
-  }
+  // Simple demo calculation for water (0.2L per kWh)
+  todayWater = (todayEnergyUsage / 1000) * 0.2;
+  // Phones charged (13.5 Wh per charge)
+  todayPhones = Math.round((todayEnergyUsage / 13.5) * 10) / 10;
+  // YouTube streamed (0.25 Wh per min)
+  todayYoutube = Math.round(todayEnergyUsage / 0.25);
+  // Elevator travel (6.25 Wh per floor)
+  todayElevator = Math.round(todayEnergyUsage / 6.25);
 
-  // Calculate and update today's environmental equivalents
-  const equivalents = calculateEnvironmentalEquivalents(todayEnergyUsage);
-
-  // Update the DOM with the calculated values, ensure we have proper formatting
-  try {
-    // Update the main energy usage display
-    document.getElementById("today-energy").textContent = formatNumber(
-      todayEnergyUsage.toFixed(2),
-      true
-    );
-
-    // Update each element individually with error handling
-    // Calculate CO₂-eq (g) using EU grid average: Wh × 0.475
-    const todayCO2eq = todayEnergyUsage * 0.475;
-    const todayFormattedCO2eq = `${formatNumber(todayCO2eq.toFixed(1))} g`;
-
-    document.getElementById("co2-eq").textContent = todayFormattedCO2eq;
-
-    // Special handling for water consumption with explicit debugging
-    const todayWaterElement = document.getElementById("today-toasts");
-    if (todayWaterElement) {
-      // Format water in ml if small, otherwise in L with simpler format
-      if (equivalents.water < 0.01) {
-        todayWaterElement.textContent = `${formatNumber(
-          (equivalents.water * 1000).toFixed(0)
-        )} ml`;
-      } else if (equivalents.water < 1) {
-        todayWaterElement.textContent = `${formatNumber(
-          (equivalents.water * 1000).toFixed(0)
-        )} ml`;
-      } else {
-        todayWaterElement.textContent = `${formatNumber(
-          equivalents.water.toFixed(1)
-        )} L`;
-      }
-    } else {
-      console.error(
-        "Today water consumption element not found! Check the ID in HTML."
-      );
-    }
-
-    const treesPlantedItem = document.getElementById("trees-planted-item");
-    const treesPlantedValue = document.getElementById("trees-planted");
-
-    const userState = localStorage.getItem("userState") || "notOptedIn";
-    const m2RestoredItem = document.getElementById("m2-restored-item");
-    const m2RestoredValue = document.getElementById("m2-restored");
-
-    if (userState === "donor") {
-      const m2Restored = todayEnergyUsage * 0.0025;
-      m2RestoredValue.textContent = m2Restored.toFixed(2);
-      m2RestoredItem.style.display = "";
-
-      // Trees planted: example formula, adjust as needed
-      const treesPlanted = todayEnergyUsage * 0.01;
-      treesPlantedValue.textContent = treesPlanted.toFixed(2);
-      treesPlantedItem.style.display = "";
-    } else {
-      m2RestoredValue.textContent = "0";
-      m2RestoredItem.style.display = "none";
-      treesPlantedValue.textContent = "0";
-      treesPlantedItem.style.display = "none";
-    }
-  } catch (error) {
-    console.error("Error updating today environmental equivalents:", error);
-  }
+  // Update the DOM
+  document.getElementById("today-messages").textContent = todayMessages;
+  document.getElementById("today-tokens-in").textContent = todayTokensIn;
+  document.getElementById("today-tokens-out").textContent = todayTokensOut;
+  document.getElementById("today-energy").textContent = formatNumber(todayEnergyUsage.toFixed(2), true);
+  document.getElementById("today-water").textContent = todayWater < 1 ? `${Math.round(todayWater * 1000)} ml` : `${todayWater.toFixed(2)} L`;
+  document.getElementById("today-phones").textContent = todayPhones;
+  document.getElementById("today-youtube").textContent = todayYoutube < 60 ? `${todayYoutube} min` : `${(todayYoutube/60).toFixed(1)} h`;
+  document.getElementById("today-elevator").textContent = todayElevator;
 }
 
 /**

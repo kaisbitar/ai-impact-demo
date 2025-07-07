@@ -538,6 +538,56 @@
         flex: 1;
         user-select: none;
       }
+
+      .stats-row {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin-bottom: 10px;
+        justify-content: space-between;
+      }
+      .stat-box.compact {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 8px 6px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--border-color);
+        background: var(--stat-box-background);
+        box-shadow: none;
+        margin: 0;
+      }
+      .stat-box.compact .emoji {
+        font-size: 18px;
+        margin-right: 4px;
+      }
+      .stat-data {
+        flex: 1;
+        min-width: 0;
+      }
+      .message-value.small, .token-value.small {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+      .stat-label.small {
+        font-size: 10px;
+        color: var(--muted-text);
+        margin-top: 2px;
+      }
+      .token-item {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      .token-divider {
+        height: 14px;
+        width: 1px;
+        background-color: var(--divider-color);
+        margin: 0 4px;
+      }
     </style>
     <script src="supabase.js"></script>
     <script src="popup.js"></script>
@@ -579,69 +629,68 @@
     <!-- Today Stats Container -->
     <div id="today-stats" class="stats-container active">
       <div class="content-section">
-        <div class="usage-stats-grid">
-          <div class="stat-box">
-            <div class="emoji">⚡️</div>
+        <!-- MESSAGES & TOKENS SECTION -->
+        <div class="section-header">Messages & Tokens</div>
+        <div class="stats-row">
+          <div class="stat-box compact">
+            <div class="emoji">💬</div>
             <div class="stat-data">
-              <div class="message-value" id="today-energy">0</div>
-              <div class="stat-label">
-                <span>Watt-hours used</span>
-                <span class="info-tooltip"
-                  ><i class="ri-question-line"></i>
-                  <div class="tooltip-text">
-                    This is an estimate based on energy usage patterns for large
-                    Mixture of Experts (MoE) models with 440B total parameters
-                    and 55B active parameters per inference.
-                  </div>
-                </span>
+              <div class="message-value small" id="today-messages">0</div>
+              <div class="stat-label small">Messages</div>
+            </div>
+          </div>
+          <div class="stat-box compact">
+            <div class="emoji">🔢</div>
+            <div class="stat-data">
+              <div class="token-item">
+                <span class="token-value small" id="today-tokens-in">0</span>
+                <span class="token-divider"></span>
+                <span class="token-value small" id="today-tokens-out">0</span>
               </div>
+              <div class="stat-label small">Tokens (in / out)</div>
             </div>
           </div>
         </div>
-
-        <div class="equivalence-section">
-          <div class="equivalence-header">Environmental equivalents:</div>
-
-          <div class="equivalence-grid">
-            <div class="equivalence-item red-background">
-              <div class="emoji">🌍</div>
-              <div class="equivalence-data">
-                <div class="equivalence-value" id="co2-eq">0</div>
-                <div class="equivalence-label">CO₂-eq (g)</div>
-              </div>
-            </div>
-            <div class="equivalence-item red-background">
-              <div class="emoji">💧</div>
-              <div class="equivalence-data">
-                <div class="equivalence-value" id="today-toasts">0</div>
-                <div class="equivalence-label">Water evaporated</div>
-              </div>
+        <!-- ENVIRONMENTAL IMPACT SECTION -->
+        <div class="section-header">Environmental Impact</div>
+        <div class="stats-row">
+          <div class="stat-box compact">
+            <div class="emoji">⚡️</div>
+            <div class="stat-data">
+              <div class="message-value small" id="today-energy">0</div>
+              <div class="stat-label small">Wh used</div>
             </div>
           </div>
-
-          <div class="equivalence-header">🎉 You restored:</div>
-          <div class="equivalence-grid">
-            <div
-              class="equivalence-item green-background"
-              id="m2-restored-item"
-              style="display: none"
-            >
-              <div class="emoji">🟩</div>
-              <div class="equivalence-data">
-                <div class="equivalence-value" id="m2-restored">1</div>
-                <div class="equivalence-label">m² restored</div>
-              </div>
+          <div class="stat-box compact">
+            <div class="emoji">💧</div>
+            <div class="stat-data">
+              <div class="message-value small" id="today-water">0</div>
+              <div class="stat-label small">Water</div>
             </div>
-            <div
-              class="equivalence-item green-background"
-              id="trees-planted-item"
-              style="display: none"
-            >
-              <div class="emoji">🌳</div>
-              <div class="equivalence-data">
-                <div class="equivalence-value" id="trees-planted">0</div>
-                <div class="equivalence-label">trees planted</div>
-              </div>
+          </div>
+        </div>
+        <!-- ENVIRONMENTAL EQUIVALENTS SECTION -->
+        <div class="section-header">Environmental Equivalents</div>
+        <div class="stats-row">
+          <div class="stat-box compact">
+            <div class="emoji">📱</div>
+            <div class="stat-data">
+              <div class="message-value small" id="today-phones">0</div>
+              <div class="stat-label small">Phones</div>
+            </div>
+          </div>
+          <div class="stat-box compact">
+            <div class="emoji">📺</div>
+            <div class="stat-data">
+              <div class="message-value small" id="today-youtube">0</div>
+              <div class="stat-label small">YouTube</div>
+            </div>
+          </div>
+          <div class="stat-box compact">
+            <div class="emoji">🛗</div>
+            <div class="stat-data">
+              <div class="message-value small" id="today-elevator">0</div>
+              <div class="stat-label small">Elevator</div>
             </div>
           </div>
         </div>
@@ -776,38 +825,37 @@
         background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f4 100%);
         border-radius: 8px;
         border: 1px solid var(--border-color);
-        /* border-left: 4px solid var(--primary-color); */
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       "
     >
-      <div
+      <div style="font-size: 15px; font-weight: 700; color: var(--primary-color); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span style="font-size: 18px">🌳</span>
+        <span>Make a Positive Impact</span>
+      </div>
+      <div style="font-size: 12px; color: var(--header-text); margin-bottom: 10px;">
+        Your AI usage has an environmental footprint.<br/>
+        <b>Help restore forests and ecosystems to compensate for your impact.</b>
+      </div>
+      <a
+        href="https://www.bergwaldprojekt.de/"
+        target="_blank"
         style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          margin-bottom: 4px;
+          display: inline-block;
+          background: var(--primary-color);
+          color: #fff;
+          font-weight: 600;
+          padding: 8px 20px;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 13px;
+          margin-top: 4px;
+          transition: background 0.2s;
         "
+        onmouseover="this.style.background='#0f2e1a'"
+        onmouseout="this.style.background='#1e4d2b'"
       >
-        <span style="font-size: 16px">🌲</span>
-        <span style="font-weight: 600; color: var(--primary-color)"
-          >Partnered with Bergwaldprojekt</span
-        >
-      </div>
-      <div style="font-size: 11px; line-height: 1.4">
-        Support forest restoration and ecosystem protection with your AI usage
-        <br />
-        <a
-          href="https://www.bergwaldprojekt.de/"
-          target="_blank"
-          style="
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-          "
-          >Learn more →</a
-        >
-      </div>
+        Be Part of the Solution
+      </a>
     </div>
   </body>
 </html>
