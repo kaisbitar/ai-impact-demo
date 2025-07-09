@@ -57,7 +57,7 @@ const RegenAIState = {
   },
   
   updateHeroSection() {
-    const subtitle = document.getElementById("user-state-subtitle");
+    const subtitle = document.getElementById("impact-subtitle");
     const metricLabel = document.getElementById("main-metric-label");
     const mainMetricTile = document.getElementById("main-metric-tile");
     
@@ -388,8 +388,16 @@ function updateTodayStatsWithAnimation(logs) {
   const elevatorValue = document.getElementById("elevator-value");
   if (elevatorValue) elevatorValue.textContent = `${stats.elevatorFloors} floors`;
 
-  // Update change indicators
+  // Update all visual elements
   updateChangeIndicators(stats);
+  updateTokenUsageVisual(stats);
+  updateImpactBalance(stats);
+  
+  // Ensure main metric shows total tokens
+  const mainMetricValue = document.getElementById('main-metric-value');
+  if (mainMetricValue) {
+    mainMetricValue.textContent = stats.totalTokens || 0;
+  }
 }
 
 /**
@@ -400,6 +408,8 @@ function updateLifetimeStatsWithAnimation(logs) {
   
   // Similar animation logic for lifetime stats
   // This would be called when switching to lifetime tab
+  updateTokenUsageVisual(stats);
+  updateImpactBalance(stats);
 }
 
 /**
@@ -810,6 +820,153 @@ function tryLoadLogsAgain() {
   setTimeout(() => {
     loadLogs();
   }, 1000);
+}
+
+// IMPACT BALANCE CALCULATION AND VISUALIZATION
+function updateImpactBalance(stats) {
+  try {
+    // Calculate consumption score (based on environmental impact)
+    const consumptionScore = calculateConsumptionScore(stats);
+    
+    // Get contribution score (from donations/offsets)
+    const contributionScore = getContributionScore();
+    
+    // Calculate balance percentage (-100% to +100%)
+    const balanceScore = calculateBalanceScore(consumptionScore, contributionScore);
+    
+    // Update visual elements
+    updateBalanceVisualization(consumptionScore, contributionScore, balanceScore);
+    
+    // Update psychological messaging
+    updatePsychologicalMessaging(balanceScore);
+    
+  } catch(e) {
+    console.error('Error updating impact balance:', e);
+  }
+}
+
+function calculateConsumptionScore(stats) {
+  // Base consumption primarily on token usage and environmental impact
+  const tokenScore = (stats.totalTokens || 0) * 0.1; // Scale tokens 
+  const energyScore = parseFloat(stats.energy || 0) * 100; // Scale energy consumption
+  const co2Score = parseFloat(stats.co2 || 0) * 50; // Scale CO2 impact
+  const waterScore = parseFloat(stats.water || 0) * 2; // Scale water usage
+  
+  const totalScore = tokenScore + energyScore + co2Score + waterScore;
+  return Math.max(totalScore, 1); // Minimum 1 to show consumption
+}
+
+function getContributionScore() {
+  // For now, return 0 (no contributions yet)
+  // In future, this would track actual donations/offsets
+  return 0;
+}
+
+function calculateBalanceScore(consumption, contribution) {
+  if (consumption === 0 && contribution === 0) return 0;
+  
+  const total = consumption + contribution;
+  const balance = ((contribution - consumption) / Math.max(consumption, contribution)) * 100;
+  
+  // Clamp between -100 and +100
+  return Math.max(-100, Math.min(100, Math.round(balance)));
+}
+
+function updateBalanceVisualization(consumption, contribution, balanceScore) {
+  // Update consumption bar
+  const consumptionFill = document.getElementById('consumption-fill');
+  const contributionFill = document.getElementById('contribution-fill');
+  const consumptionBar = document.getElementById('consumption-bar');
+  const contributionBar = document.getElementById('contribution-bar');
+  
+  if (consumptionFill && contributionFill) {
+    const total = Math.max(consumption + contribution, 1);
+    const consumptionPercent = Math.round((consumption / total) * 100);
+    const contributionPercent = Math.round((contribution / total) * 100);
+    
+    consumptionFill.style.width = `${Math.max(consumptionPercent, 5)}%`; // Minimum 5% to show
+    contributionFill.style.width = `${contributionPercent}%`;
+    
+    // Update tooltips with detailed info
+    if (consumptionBar) {
+      consumptionBar.setAttribute('data-tooltip', `AI Consumption Score: ${consumption.toFixed(1)}`);
+    }
+    if (contributionBar) {
+      contributionBar.setAttribute('data-tooltip', `Environmental Contributions: ${contribution.toFixed(1)}`);
+    }
+  }
+  
+  // Update balance score display
+  const scoreValue = document.getElementById('score-value');
+  const balanceScore_element = document.getElementById('balance-score');
+  
+  if (scoreValue) {
+    scoreValue.textContent = `${balanceScore >= 0 ? '+' : ''}${balanceScore}%`;
+  }
+  
+  if (balanceScore_element) {
+    let tooltipText = '';
+    if (balanceScore >= 20) {
+      tooltipText = 'Planet Positive - Contributing more than consuming!';
+    } else if (balanceScore >= 0) {
+      tooltipText = 'Nearly Balanced - Almost offsetting your impact';
+    } else if (balanceScore >= -50) {
+      tooltipText = 'Environmental Debt - Consider offsetting your AI usage';
+    } else {
+      tooltipText = 'High Impact Debt - Time to balance your environmental footprint';
+    }
+    balanceScore_element.setAttribute('data-tooltip', tooltipText);
+  }
+}
+
+function updatePsychologicalMessaging(balanceScore) {
+  const heroElement = document.getElementById('impact-hero');
+  const statusElement = document.getElementById('balance-status');
+  
+  if (!heroElement || !statusElement) return;
+  
+  // Remove existing classes
+  heroElement.classList.remove('negative', 'neutral', 'positive');
+  
+  if (balanceScore >= 20) {
+    // Positive impact
+    heroElement.classList.add('positive');
+    statusElement.textContent = 'Planet Positive 🌱';
+    heroElement.setAttribute('data-tooltip', 'Contributing more than consuming - great job!');
+  } else if (balanceScore >= 0) {
+    // Nearly balanced
+    heroElement.classList.add('neutral');
+    statusElement.textContent = 'Nearly Balanced';
+    heroElement.setAttribute('data-tooltip', 'Almost balanced - keep going!');
+  } else if (balanceScore >= -50) {
+    // Moderate debt
+    heroElement.classList.add('negative');
+    statusElement.textContent = 'Environmental Debt';
+    heroElement.setAttribute('data-tooltip', 'Taking more than giving back to nature');
+  } else {
+    // High debt
+    heroElement.classList.add('negative');
+    statusElement.textContent = 'High Impact Debt';
+    heroElement.setAttribute('data-tooltip', 'Time to give back to nature 🌍');
+  }
+}
+
+function updateTokenUsageVisual(stats){
+  try{
+    const tokenCard=document.getElementById('token-usage-card');
+    if(tokenCard){
+       tokenCard.setAttribute('data-tooltip',`In: ${stats.tokensIn} • Out: ${stats.tokensOut}`);
+    }
+    const inBar=document.getElementById('token-bar-in');
+    const outBar=document.getElementById('token-bar-out');
+    const total=stats.tokensIn+stats.tokensOut;
+    if(inBar&&outBar){
+      const inPercent=total?Math.round((stats.tokensIn/total)*100):0;
+      const outPercent=total?100-inPercent:0;
+      inBar.style.height=`${inPercent}%`;
+      outBar.style.height=`${outPercent}%`;
+    }
+  }catch(e){console.error('Error updating token usage visual',e);}
 }
 
 // Export for global access
