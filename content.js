@@ -178,6 +178,7 @@ async function saveLog(userMessage, assistantResponse) {
         ...existingLog,
         assistantResponse: assistantResponse,
         assistantTokenCount: assistantTokenCount,
+        outputTokens: assistantTokenCount, // For popup compatibility
         energyUsage: energyData.totalEnergy,
         co2Emissions: energyData.co2Emissions,
         lastUpdated: Date.now(),
@@ -197,6 +198,8 @@ async function saveLog(userMessage, assistantResponse) {
       assistantResponse: assistantResponse,
       userTokenCount: userTokenCount,
       assistantTokenCount: assistantTokenCount,
+      inputTokens: userTokenCount, // For popup compatibility
+      outputTokens: assistantTokenCount, // For popup compatibility
       energyUsage: energyUsage,
       co2Emissions: co2Emissions,
     };
@@ -226,117 +229,69 @@ async function saveLog(userMessage, assistantResponse) {
  * Includes error handling to prevent extension crashes
  */
 async function scanMessages() {
-  // Skip if extension context is invalidated
-  if (!isExtensionContextValid) {
-    return false;
-  }
+  if (!isExtensionContextValid) return false;
 
   try {
-    // Find all user and assistant messages by their data attributes
-    const userMessages = [
-      ...document.querySelectorAll('[data-message-author-role="user"]'),
-    ];
-    const assistantMessages = [
-      ...document.querySelectorAll('[data-message-author-role="assistant"]'),
-    ];
+    // Try primary selectors
+    let userMessages = Array.from(
+      document.querySelectorAll('[data-message-author-role="user"]')
+    );
+    let assistantMessages = Array.from(
+      document.querySelectorAll('[data-message-author-role="assistant"]')
+    );
 
-    // Attempt alternative selectors if the primary ones didn't find anything
-    let foundMessages = userMessages.length > 0 && assistantMessages.length > 0;
-
-    // If we didn't find any messages with the primary selectors, try alternative ones
-    if (!foundMessages) {
-      // Try some alternative selectors that might match different versions of ChatGPT
-      const alternativeUserSelectors = [
-        ".markdown p", // Look for paragraph text in markdown areas
-        '[data-role="user"]',
-        ".user-message",
-        '[data-testid="user-message"]',
-        ".text-message-content",
-      ];
-
-      const alternativeAssistantSelectors = [
-        ".markdown p",
-        '[data-role="assistant"]',
-        ".assistant-message",
-        '[data-testid="assistant-message"]',
-        ".assistant-response",
-      ];
-
-      // Try each alternative selector
-      for (const userSelector of alternativeUserSelectors) {
-        const altUserMessages = document.querySelectorAll(userSelector);
-        if (altUserMessages.length > 0) {
-          for (const assistantSelector of alternativeAssistantSelectors) {
-            const altAssistantMessages =
-              document.querySelectorAll(assistantSelector);
-            if (altAssistantMessages.length > 0) {
-              console.log(
-                `Found alternative selectors: ${userSelector} (${altUserMessages.length}) and ${assistantSelector} (${altAssistantMessages.length})`
-              );
-
-              // Try to process these alternative messages
-              for (
-                let i = 0;
-                i <
-                Math.min(altUserMessages.length, altAssistantMessages.length);
-                i++
-              ) {
-                try {
-                  const userMessage = altUserMessages[i].textContent.trim();
-                  const assistantResponse =
-                    altAssistantMessages[i].textContent.trim();
-
-                  if (userMessage && assistantResponse) {
-                    // Save any non-empty exchange
-                    await saveLog(userMessage, assistantResponse);
-                    foundMessages = true;
-                  }
-                } catch (altMessageError) {
-                  console.error(
-                    "Error processing alternative message pair:",
-                    altMessageError
-                  );
-                }
-              }
-
-              // If we found messages with this selector pair, stop trying others
-              if (foundMessages) break;
-            }
-          }
-          // If we found messages with any assistant selector, stop trying other user selectors
-          if (foundMessages) break;
-        }
-      }
-    }
-
-    // Log the results of the scan for debugging
-    if (userMessages.length > 0 || assistantMessages.length > 0) {
+    // Fallback: try more generic selectors if primary ones fail
+    if (userMessages.length === 0 || assistantMessages.length === 0) {
+      const allMessages = Array.from(
+        document.querySelectorAll(".text-base, .markdown")
+      );
+      userMessages = allMessages.filter((el, idx) => idx % 2 === 0);
+      assistantMessages = allMessages.filter((el, idx) => idx % 2 === 1);
       console.log(
-        `Found ${userMessages.length} user messages and ${assistantMessages.length} assistant messages`
+        `[AI Impact] Fallback selector: .text-base/.markdown found ${userMessages.length} user, ${assistantMessages.length} assistant`
       );
     }
 
-    // Process message pairs in order
+    // Defensive: ensure arrays are valid
+    if (!Array.isArray(userMessages) || !Array.isArray(assistantMessages)) {
+      console.warn("[AI Impact] Message arrays not ready, skipping scan.");
+      return false;
+    }
+
+    let foundMessages = userMessages.length > 0 && assistantMessages.length > 0;
+
     for (let i = 0; i < userMessages.length; i++) {
       if (i < assistantMessages.length) {
         try {
-          const userMessage = userMessages[i].textContent.trim();
-          const assistantResponse = assistantMessages[i].textContent.trim();
+          const userMessage = userMessages[i]?.textContent?.trim();
+          const assistantResponse = assistantMessages[i]?.textContent?.trim();
 
-          if (userMessage) {
-            // Save any non-empty exchange
+          if (userMessage && assistantResponse) {
             await saveLog(userMessage, assistantResponse);
+            foundMessages = true;
           }
         } catch (messageError) {
-          console.error("Error processing message pair:", messageError);
-          // Continue with next message pair
+          // Defensive: catch ReferenceError and log it
+          if (messageError instanceof ReferenceError) {
+            console.error(
+              "[AI Impact] ReferenceError in scanMessages: " +
+                messageError.message
+            );
+          } else {
+            console.error(
+              "[AI Impact] Error processing message pair: " +
+                (messageError && messageError.message
+                  ? messageError.message
+                  : messageError)
+            );
+          }
         }
       }
     }
 
     return foundMessages;
   } catch (e) {
-    console.error("Error scanning messages:", e);
+    console.error("[AI Impact] Error scanning messages:", e);
     return false;
   }
 }
