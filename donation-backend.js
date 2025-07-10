@@ -6,12 +6,26 @@
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const app = express();
 const port = 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the current directory
+app.use(express.static(__dirname));
+
+// Serve the donation landing page at the root
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "donation-landing.html"));
+});
+
+// Also serve it at /donation-landing.html for explicit access
+app.get("/donation-landing.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "donation-landing.html"));
+});
 
 // Simulate payment intent creation
 app.post("/create-payment-intent", (req, res) => {

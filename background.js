@@ -86,4 +86,33 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log("Attempted to open popup");
     return true;
   }
+
+  // Handle opening donation landing page
+  if (message.action === "openDonationPage") {
+    console.log("🎯 Received openDonationPage message:", message);
+
+    // Get stats from the message or use defaults
+    const stats = message.stats || {};
+    console.log("📊 Stats received:", stats);
+
+    const params = new URLSearchParams({
+      energy: stats.energy || "0",
+      co2: stats.co2 || "0",
+      water: stats.water || "0",
+      tokens: stats.tokens || "0",
+      messages: stats.messages || "0",
+    });
+
+    const donationUrl = `http://localhost:3001/donation-landing.html?${params.toString()}`;
+    console.log("🌐 Opening donation page:", donationUrl);
+
+    chrome.tabs.create({ url: donationUrl }, (tab) => {
+      if (chrome.runtime.lastError) {
+        console.error("❌ Error opening tab:", chrome.runtime.lastError);
+      } else {
+        console.log("✅ Tab opened successfully:", tab.id);
+      }
+    });
+    return true;
+  }
 });

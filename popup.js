@@ -227,6 +227,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set up simple donation button
     setupSimpleDonationButton();
+
+    // Set up test donor button
+    setupTestDonorButton();
   } catch (err) {
     console.error("Error initializing revolutionary popup:", err);
   }
@@ -302,19 +305,122 @@ function setupSimpleDonationButton() {
 
 // Redirect to donation landing page
 function redirectToDonationLanding() {
-  // Get user's impact data
-  const energyValue = document.getElementById("energy-value");
-  const impact = energyValue ? energyValue.textContent : "0 Wh";
+  // Get latest stats from storage
+  const storage = getChromeStorage();
+  if (!storage) {
+    // fallback to DOM if storage not available
+    const energyValue = document.getElementById("energy-value");
+    const co2Value = document.getElementById("co2-value");
+    const waterValue = document.getElementById("water-value");
+    const tokensValue = document.getElementById("total-tokens-value");
+    const messagesValue = document.getElementById("messages-value");
+    const energy = energyValue
+      ? energyValue.textContent.replace(/[^\d.]/g, "")
+      : "0";
+    const co2 = co2Value ? co2Value.textContent.replace(/[^\d.]/g, "") : "0";
+    const water = waterValue
+      ? waterValue.textContent.replace(/[^\d.]/g, "")
+      : "0";
+    const tokens = tokensValue
+      ? tokensValue.textContent.replace(/[^\d.]/g, "")
+      : "0";
+    const messages = messagesValue
+      ? messagesValue.textContent.replace(/[^\d.]/g, "")
+      : "0";
 
-  // Create landing page URL with user's impact
-  const landingUrl =
-    chrome.runtime.getURL("donation-landing.html") +
-    "?impact=" +
-    encodeURIComponent(impact) +
-    "&source=extension";
+    // Send message to background script to open donation page
+    console.log("📤 Sending message to background script with stats:", {
+      energy,
+      co2,
+      water,
+      tokens,
+      messages,
+    });
+    chrome.runtime.sendMessage(
+      {
+        action: "openDonationPage",
+        stats: { energy, co2, water, tokens, messages },
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("❌ Error sending message:", chrome.runtime.lastError);
+        } else {
+          console.log("✅ Message sent successfully:", response);
+        }
+      }
+    );
+    return;
+  }
 
-  // Open in new tab
-  chrome.tabs.create({ url: landingUrl });
+  storage.get(["chatgptLogs"], function (result) {
+    const logs = result.chatgptLogs || [];
+    // Calculate stats as in popup
+    let tokens = 0,
+      messages = logs.length,
+      energy = 0,
+      co2 = 0,
+      water = 0;
+    logs.forEach((log) => {
+      tokens += (log.inputTokens || 0) + (log.outputTokens || 0);
+      energy += log.energyUsage || 0;
+      co2 += log.co2Emissions || 0;
+      water += ((log.energyUsage || 0) / 1000) * 0.2;
+    });
+
+    // Send message to background script to open donation page
+    const stats = {
+      energy: (Math.round(energy * 10) / 10).toString(),
+      co2: (Math.round(co2 * 1000) / 1000).toString(),
+      water: (Math.round(water * 10) / 10).toString(),
+      tokens: tokens.toString(),
+      messages: messages.toString(),
+    };
+    console.log(
+      "📤 Sending message to background script with calculated stats:",
+      stats
+    );
+    chrome.runtime.sendMessage(
+      {
+        action: "openDonationPage",
+        stats: stats,
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("❌ Error sending message:", chrome.runtime.lastError);
+        } else {
+          console.log("✅ Message sent successfully:", response);
+        }
+      }
+    );
+  });
+}
+
+// Function to simulate user becoming a donor (for testing)
+function simulateDonorStatus() {
+  RegenAIState.updateUserState("donor");
+  RegenAIState.totalContributed = 3000; // Simulate some contributions
+  RegenAIState.updateUI();
+
+  // Recalculate balance with new donor status
+  const storage = getChromeStorage();
+  if (storage) {
+    storage.get(["chatgptLogs"], function (result) {
+      const logs = result.chatgptLogs || [];
+      const stats = calculateStats(logs);
+      updateImpactBalance(stats);
+    });
+  }
+}
+
+// Set up test donor button
+function setupTestDonorButton() {
+  const testDonorBtn = document.getElementById("test-donor-btn");
+  if (testDonorBtn) {
+    testDonorBtn.addEventListener("click", function () {
+      console.log("🧪 Test donor button clicked!");
+      simulateDonorStatus();
+    });
+  }
 }
 
 /**
@@ -433,9 +539,9 @@ function updateTodayStatsWithAnimation(logs) {
   updateChangeIndicators(stats);
   updateTokenUsageVisual(stats);
   updateImpactBalance(stats);
-  
+
   // Ensure main metric shows total tokens
-  const mainMetricValue = document.getElementById('main-metric-value');
+  const mainMetricValue = document.getElementById("main-metric-value");
   if (mainMetricValue) {
     mainMetricValue.textContent = stats.totalTokens || 0;
   }
@@ -515,14 +621,17 @@ function calculateStats(logs) {
     tokensIn += log.inputTokens || 0;
     tokensOut += log.outputTokens || 0;
     totalTokens += (log.inputTokens || 0) + (log.outputTokens || 0);
-    const energy = calculateEnergyAndEmissionsInPopup(log.outputTokens || 0);
-    energyUsageWh += energy.energyUsageWh;
-    co2EmittedKg += energy.energyUsageWh * 0.0005;
-    waterUsedL += energy.energyUsageWh * 0.5;
+    // Use the actual energy and CO2 values from the log (set by content script)
+    const logEnergy = log.energyUsage || 0;
+    const logCO2 = log.co2Emissions || 0;
+    energyUsageWh += logEnergy;
+    co2EmittedKg += logCO2;
+    // Water calculation: 0.2 L per kWh (as in content script, see methodology)
+    waterUsedL += (logEnergy / 1000) * 0.2;
     // Equivalents
-    phonesCharged += energy.energyUsageWh / 13.5;
-    youtubeMinutes += energy.energyUsageWh / 0.25;
-    elevatorFloors += energy.energyUsageWh / 6.25;
+    phonesCharged += logEnergy / 13.5;
+    youtubeMinutes += logEnergy / 0.25;
+    elevatorFloors += logEnergy / 6.25;
   });
 
   // Forest restored (example: 1 m² per 1000 tokens)
@@ -533,9 +642,9 @@ function calculateStats(logs) {
     tokensIn,
     tokensOut,
     totalTokens,
-    energyUsageWh: Math.round(energyUsageWh),
-    waterUsedL: Math.round(waterUsedL),
-    co2EmittedKg: Math.round(co2EmittedKg),
+    energyUsageWh: Math.round(energyUsageWh * 10) / 10, // 1 decimal place
+    waterUsedL: Math.round(waterUsedL * 10) / 10,
+    co2EmittedKg: Math.round(co2EmittedKg * 1000) / 1000, // 3 decimals for small values
     forestRestoredM2,
     phonesCharged: Math.round(phonesCharged),
     youtubeMinutes: Math.round(youtubeMinutes),
@@ -882,146 +991,181 @@ function updateImpactBalance(stats) {
   try {
     // Calculate consumption score (based on environmental impact)
     const consumptionScore = calculateConsumptionScore(stats);
-    
+
     // Get contribution score (from donations/offsets)
     const contributionScore = getContributionScore();
-    
+
     // Calculate balance percentage (-100% to +100%)
-    const balanceScore = calculateBalanceScore(consumptionScore, contributionScore);
-    
+    const balanceScore = calculateBalanceScore(
+      consumptionScore,
+      contributionScore
+    );
+
     // Update visual elements
-    updateBalanceVisualization(consumptionScore, contributionScore, balanceScore);
-    
+    updateBalanceVisualization(
+      consumptionScore,
+      contributionScore,
+      balanceScore
+    );
+
     // Update psychological messaging
     updatePsychologicalMessaging(balanceScore);
-    
-  } catch(e) {
-    console.error('Error updating impact balance:', e);
+  } catch (e) {
+    console.error("Error updating impact balance:", e);
   }
 }
 
 function calculateConsumptionScore(stats) {
   // Base consumption primarily on token usage and environmental impact
-  const tokenScore = (stats.totalTokens || 0) * 0.1; // Scale tokens 
+  const tokenScore = (stats.totalTokens || 0) * 0.1; // Scale tokens
   const energyScore = parseFloat(stats.energy || 0) * 100; // Scale energy consumption
   const co2Score = parseFloat(stats.co2 || 0) * 50; // Scale CO2 impact
   const waterScore = parseFloat(stats.water || 0) * 2; // Scale water usage
-  
+
   const totalScore = tokenScore + energyScore + co2Score + waterScore;
   return Math.max(totalScore, 1); // Minimum 1 to show consumption
 }
 
 function getContributionScore() {
-  // For now, return 0 (no contributions yet)
-  // In future, this would track actual donations/offsets
+  // Check if user is a donor and has contributions
+  if (RegenAIState.userState === "donor") {
+    // Base contribution score for donors
+    const baseContribution = 3000;
+
+    // Add contribution based on total contributed amount
+    const contributionBonus = RegenAIState.totalContributed * 2;
+
+    return baseContribution + contributionBonus;
+  }
+
+  // For non-donors, return 0
   return 0;
 }
 
 function calculateBalanceScore(consumption, contribution) {
   if (consumption === 0 && contribution === 0) return 0;
-  
+
   const total = consumption + contribution;
-  const balance = ((contribution - consumption) / Math.max(consumption, contribution)) * 100;
-  
+  const balance =
+    ((contribution - consumption) / Math.max(consumption, contribution)) * 100;
+
   // Clamp between -100 and +100
   return Math.max(-100, Math.min(100, Math.round(balance)));
 }
 
 function updateBalanceVisualization(consumption, contribution, balanceScore) {
   // Update consumption bar
-  const consumptionFill = document.getElementById('consumption-fill');
-  const contributionFill = document.getElementById('contribution-fill');
-  const consumptionBar = document.getElementById('consumption-bar');
-  const contributionBar = document.getElementById('contribution-bar');
-  
+  const consumptionFill = document.getElementById("consumption-fill");
+  const contributionFill = document.getElementById("contribution-fill");
+  const consumptionBar = document.getElementById("consumption-bar");
+  const contributionBar = document.getElementById("contribution-bar");
+
   if (consumptionFill && contributionFill) {
     const total = Math.max(consumption + contribution, 1);
     const consumptionPercent = Math.round((consumption / total) * 100);
     const contributionPercent = Math.round((contribution / total) * 100);
-    
+
     consumptionFill.style.width = `${Math.max(consumptionPercent, 5)}%`; // Minimum 5% to show
     contributionFill.style.width = `${contributionPercent}%`;
-    
+
     // Update tooltips with detailed info
     if (consumptionBar) {
-      consumptionBar.setAttribute('data-tooltip', `AI Consumption Score: ${consumption.toFixed(1)}`);
+      consumptionBar.setAttribute(
+        "data-tooltip",
+        `AI Consumption Score: ${consumption.toFixed(1)}`
+      );
     }
     if (contributionBar) {
-      contributionBar.setAttribute('data-tooltip', `Environmental Contributions: ${contribution.toFixed(1)}`);
+      contributionBar.setAttribute(
+        "data-tooltip",
+        `Environmental Contributions: ${contribution.toFixed(1)}`
+      );
     }
   }
-  
+
   // Update balance score display
-  const scoreValue = document.getElementById('score-value');
-  const balanceScore_element = document.getElementById('balance-score');
-  
+  const scoreValue = document.getElementById("score-value");
+  const balanceScore_element = document.getElementById("balance-score");
+
   if (scoreValue) {
-    scoreValue.textContent = `${balanceScore >= 0 ? '+' : ''}${balanceScore}%`;
+    scoreValue.textContent = `${balanceScore >= 0 ? "+" : ""}${balanceScore}%`;
   }
-  
+
   if (balanceScore_element) {
-    let tooltipText = '';
+    let tooltipText = "";
     if (balanceScore >= 20) {
-      tooltipText = 'Planet Positive - Contributing more than consuming!';
+      tooltipText = "Planet Positive - Contributing more than consuming!";
     } else if (balanceScore >= 0) {
-      tooltipText = 'Nearly Balanced - Almost offsetting your impact';
+      tooltipText = "Nearly Balanced - Almost offsetting your impact";
     } else if (balanceScore >= -50) {
-      tooltipText = 'Environmental Debt - Consider offsetting your AI usage';
+      tooltipText = "Environmental Debt - Consider offsetting your AI usage";
     } else {
-      tooltipText = 'High Impact Debt - Time to balance your environmental footprint';
+      tooltipText =
+        "High Impact Debt - Time to balance your environmental footprint";
     }
-    balanceScore_element.setAttribute('data-tooltip', tooltipText);
+    balanceScore_element.setAttribute("data-tooltip", tooltipText);
   }
 }
 
 function updatePsychologicalMessaging(balanceScore) {
-  const heroElement = document.getElementById('impact-hero');
-  const statusElement = document.getElementById('balance-status');
-  
+  const heroElement = document.getElementById("impact-hero");
+  const statusElement = document.getElementById("balance-status");
+
   if (!heroElement || !statusElement) return;
-  
+
   // Remove existing classes
-  heroElement.classList.remove('negative', 'neutral', 'positive');
-  
+  heroElement.classList.remove("negative", "neutral", "positive");
+
   if (balanceScore >= 20) {
     // Positive impact
-    heroElement.classList.add('positive');
-    statusElement.textContent = 'Planet Positive 🌱';
-    heroElement.setAttribute('data-tooltip', 'Contributing more than consuming - great job!');
+    heroElement.classList.add("positive");
+    statusElement.textContent = "Planet Positive 🌱";
+    heroElement.setAttribute(
+      "data-tooltip",
+      "Contributing more than consuming - great job!"
+    );
   } else if (balanceScore >= 0) {
     // Nearly balanced
-    heroElement.classList.add('neutral');
-    statusElement.textContent = 'Nearly Balanced';
-    heroElement.setAttribute('data-tooltip', 'Almost balanced - keep going!');
+    heroElement.classList.add("neutral");
+    statusElement.textContent = "Nearly Balanced";
+    heroElement.setAttribute("data-tooltip", "Almost balanced - keep going!");
   } else if (balanceScore >= -50) {
     // Moderate debt
-    heroElement.classList.add('negative');
-    statusElement.textContent = 'Environmental Debt';
-    heroElement.setAttribute('data-tooltip', 'Taking more than giving back to nature');
+    heroElement.classList.add("negative");
+    statusElement.textContent = "Environmental Debt";
+    heroElement.setAttribute(
+      "data-tooltip",
+      "Taking more than giving back to nature"
+    );
   } else {
     // High debt
-    heroElement.classList.add('negative');
-    statusElement.textContent = 'High Impact Debt';
-    heroElement.setAttribute('data-tooltip', 'Time to give back to nature 🌍');
+    heroElement.classList.add("negative");
+    statusElement.textContent = "High Impact Debt";
+    heroElement.setAttribute("data-tooltip", "Time to give back to nature 🌍");
   }
 }
 
-function updateTokenUsageVisual(stats){
-  try{
-    const tokenCard=document.getElementById('token-usage-card');
-    if(tokenCard){
-       tokenCard.setAttribute('data-tooltip',`In: ${stats.tokensIn} • Out: ${stats.tokensOut}`);
+function updateTokenUsageVisual(stats) {
+  try {
+    const tokenCard = document.getElementById("token-usage-card");
+    if (tokenCard) {
+      tokenCard.setAttribute(
+        "data-tooltip",
+        `In: ${stats.tokensIn} • Out: ${stats.tokensOut}`
+      );
     }
-    const inBar=document.getElementById('token-bar-in');
-    const outBar=document.getElementById('token-bar-out');
-    const total=stats.tokensIn+stats.tokensOut;
-    if(inBar&&outBar){
-      const inPercent=total?Math.round((stats.tokensIn/total)*100):0;
-      const outPercent=total?100-inPercent:0;
-      inBar.style.height=`${inPercent}%`;
-      outBar.style.height=`${outPercent}%`;
+    const inBar = document.getElementById("token-bar-in");
+    const outBar = document.getElementById("token-bar-out");
+    const total = stats.tokensIn + stats.tokensOut;
+    if (inBar && outBar) {
+      const inPercent = total ? Math.round((stats.tokensIn / total) * 100) : 0;
+      const outPercent = total ? 100 - inPercent : 0;
+      inBar.style.height = `${inPercent}%`;
+      outBar.style.height = `${outPercent}%`;
     }
-  }catch(e){console.error('Error updating token usage visual',e);}
+  } catch (e) {
+    console.error("Error updating token usage visual", e);
+  }
 }
 
 // Export for global access

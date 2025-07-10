@@ -661,6 +661,87 @@
           opacity: 0;
         }
       }
+
+      .stats-hero {
+        background: linear-gradient(135deg, #f0fdf4 0%, #e0f7fa 100%);
+        border-radius: 18px;
+        margin: 32px auto 24px auto;
+        max-width: 700px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+        padding: 32px 24px 18px 24px;
+        text-align: center;
+        transition: background 0.5s;
+      }
+      .stats-hero.positive {
+        background: linear-gradient(135deg, #d1fae5 0%, #bbf7d0 100%);
+      }
+      .stats-hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .stats-row {
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+      .stat-block {
+        min-width: 80px;
+      }
+      .stat-label {
+        font-size: 13px;
+        color: #4b5563;
+        margin-bottom: 2px;
+        font-weight: 500;
+      }
+      .stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #166534;
+      }
+      .hero-status {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #166534;
+        margin-top: 8px;
+        transition: color 0.5s;
+      }
+      .btn.btn-lg {
+        font-size: 1.25rem;
+        padding: 18px 48px;
+        border-radius: 12px;
+        font-weight: 700;
+        margin-top: 8px;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .btn.btn-lg:disabled {
+        background: #d1fae5;
+        color: #6ee7b7;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      /* Negative (light red) state for stats card */
+      .stats-card.negative {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 2px solid #ef4444;
+        box-shadow: 0 2px 16px rgba(239, 68, 68, 0.08);
+      }
+      .stats-card.negative .stat-value {
+        color: #991b1b;
+      }
+      /* Positive (green) state for stats card */
+      .stats-card.positive {
+        background: #f0fdf4;
+        color: #166534;
+        border: 2px solid #4ade80;
+      }
+      .stats-card.positive .stat-value {
+        color: #166534;
+      }
     </style>
   </head>
   <body>
@@ -680,6 +761,35 @@
         </div>
       </div>
     </header>
+
+    <!-- Add at the top of the body, after <body> -->
+    <div id="stats-hero" class="stats-hero negative">
+      <div class="stats-hero-content">
+        <div class="stats-row">
+          <div class="stat-block">
+            <div class="stat-label">Tokens</div>
+            <div class="stat-value" id="hero-tokens">0</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Energy</div>
+            <div class="stat-value" id="hero-energy">0 kWh</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">CO₂</div>
+            <div class="stat-value" id="hero-co2">0 kg</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Water</div>
+            <div class="stat-value" id="hero-water">0 L</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Messages</div>
+            <div class="stat-value" id="hero-messages">0</div>
+          </div>
+        </div>
+        <div class="hero-status" id="hero-status">Your AI Impact</div>
+      </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -748,6 +858,20 @@
               max="1000"
             />
           </div>
+        </div>
+
+        <!-- Add after the amount selection grid -->
+        <div
+          class="donate-btn-row"
+          style="text-align: center; margin: 32px 0 0 0"
+        >
+          <button
+            id="donate-action-btn"
+            class="btn btn-primary btn-lg"
+            disabled
+          >
+            Donate
+          </button>
         </div>
 
         <div class="urgency-banner">
@@ -839,6 +963,7 @@
         setupAmountSelection();
         updateSocialProof();
         updateUserImpact();
+        parseStatsFromUrl(); // Call this on page load
       });
 
       // Initialize Stripe
@@ -1039,6 +1164,7 @@
             showPaymentError(error.message);
           } else {
             showSuccessState();
+            simulatePositiveFeedback(); // Call this after successful payment
           }
         } catch (error) {
           console.error("Payment error:", error);
@@ -1122,6 +1248,65 @@
             setTimeout(() => confetti.remove(), 3000);
           }, i * 50);
         }
+      }
+
+      function parseStatsFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById("hero-tokens").textContent =
+          params.get("tokens") || "0";
+        document.getElementById("hero-energy").textContent =
+          (params.get("energy") || "0") + " kWh";
+        document.getElementById("hero-co2").textContent =
+          (params.get("co2") || "0") + " kg";
+        document.getElementById("hero-water").textContent =
+          (params.get("water") || "0") + " L";
+        document.getElementById("hero-messages").textContent =
+          params.get("messages") || "0";
+      }
+
+      function simulatePositiveFeedback() {
+        // Turn hero green, update message, trigger confetti
+        const hero = document.getElementById("stats-hero");
+        const status = document.getElementById("hero-status");
+        if (hero && status) {
+          hero.classList.remove("negative");
+          hero.classList.add("positive");
+          status.textContent =
+            "Planet Positive! 🌱 Thank you for restoring forests!";
+          status.style.color = "#15803d";
+          triggerConfetti();
+        }
+      }
+
+      // Call on page load
+      parseStatsFromUrl();
+
+      // After successful donation, call simulatePositiveFeedback();
+      // (You can call this in your Stripe success handler)
+
+      // Enable Donate button only when a valid amount is selected
+      function updateDonateButtonState() {
+        const btn = document.getElementById("donate-action-btn");
+        if (!btn) return;
+        if (selectedAmount && selectedAmount > 0) {
+          btn.disabled = false;
+        } else {
+          btn.disabled = true;
+        }
+      }
+
+      // Call updateDonateButtonState() whenever amount changes
+      // (Add this call in setupAmountSelection and custom input event)
+
+      // On click, trigger payment flow
+      const donateBtn = document.getElementById("donate-action-btn");
+      if (donateBtn) {
+        donateBtn.addEventListener("click", function () {
+          // Trigger payment flow (reuse confirmPayment or similar)
+          if (typeof confirmPayment === "function") {
+            confirmPayment();
+          }
+        });
       }
     </script>
   </body>

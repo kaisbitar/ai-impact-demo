@@ -692,6 +692,65 @@ function createUsageNotification() {
     }
   });
 
+  // Add event listener to open donation page (single click)
+  notification.addEventListener("click", () => {
+    try {
+      // Get today's stats for the current conversation only
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const currentConversationId = conversationId;
+
+      let convoLogs = [];
+      let convoEnergyUsage = 0;
+      let convoMessages = 0;
+      let convoTokens = 0;
+      let convoCo2 = 0;
+      let convoWater = 0;
+
+      if (Array.isArray(logs)) {
+        convoLogs = logs.filter((log) => {
+          try {
+            return (
+              log &&
+              log.timestamp &&
+              new Date(log.timestamp) >= today &&
+              log.conversationId === currentConversationId
+            );
+          } catch (dateError) {
+            return false;
+          }
+        });
+
+        convoMessages = convoLogs.length;
+
+        convoLogs.forEach((log) => {
+          try {
+            convoEnergyUsage += log.energyUsage || 0;
+            convoCo2 += log.co2Emissions || 0;
+            convoTokens += (log.inputTokens || 0) + (log.outputTokens || 0);
+            convoWater += ((log.energyUsage || 0) / 1000) * 0.2;
+          } catch (energyError) {
+            // Skip this log if calculation fails
+          }
+        });
+      }
+
+      // Send message to background script to open donation page
+      chrome.runtime.sendMessage({
+        action: "openDonationPage",
+        stats: {
+          energy: (Math.round(convoEnergyUsage * 10) / 10).toString(),
+          co2: (Math.round(convoCo2 * 1000) / 1000).toString(),
+          water: (Math.round(convoWater * 10) / 10).toString(),
+          tokens: convoTokens.toString(),
+          messages: convoMessages.toString(),
+        },
+      });
+    } catch (e) {
+      console.error("Failed to open donation page:", e);
+    }
+  });
+
   // Add the styles to the head with error handling
   try {
     if (document.head) {
@@ -759,31 +818,31 @@ function updateUsageNotification() {
       return;
     }
 
-    // Get today's usage
+    // Get today's usage for the current conversation
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const currentConversationId = conversationId;
 
-    // Filter logs for today only - with error handling
+    // Filter logs for today and current conversation only
     let todayLogs = [];
     let todayEnergyUsage = 0;
     let todayMessages = 0;
 
     try {
-      // Safely filter logs
       if (Array.isArray(logs)) {
         todayLogs = logs.filter((log) => {
           try {
-            // Handle potentially invalid log entries
-            return log && log.timestamp && new Date(log.timestamp) >= today;
+            return (
+              log &&
+              log.timestamp &&
+              new Date(log.timestamp) >= today &&
+              log.conversationId === currentConversationId
+            );
           } catch (dateError) {
-            // Skip this log entry if date parsing fails
             return false;
           }
         });
-
         todayMessages = todayLogs.length;
-
-        // Safely calculate energy
         todayLogs.forEach((log) => {
           try {
             todayEnergyUsage += log.energyUsage || 0;
@@ -794,35 +853,22 @@ function updateUsageNotification() {
       }
     } catch (logsError) {
       console.error("Error processing logs for notification:", logsError);
-      // Continue with defaults (zeros) if logs processing fails
     }
 
-    // Format energy usage for display (1 decimal place)
     const formattedEnergy = todayEnergyUsage.toFixed(1);
-
-    // Add a timestamp for debugging
     const updateTime = new Date().toLocaleTimeString();
-
-    // Determine icon and color based on user state and usage level
     const userState = getUserState();
     const icon = userState === "donor" ? "🌿" : "⚡️";
-
-    // Define usage thresholds (in Wh)
-    const LOW_USAGE_THRESHOLD = 5.0; // Green: 0-5 Wh
-    const MEDIUM_USAGE_THRESHOLD = 15.0; // Yellow: 5-15 Wh
-    // Red: 15+ Wh
-
-    // Determine notification class based on user state and usage
+    const LOW_USAGE_THRESHOLD = 5.0;
+    const MEDIUM_USAGE_THRESHOLD = 15.0;
     let notificationClass = "";
     if (userState === "donor") {
-      // Donor: high usage = green, else default
       if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
         notificationClass = "low-usage-notification";
       } else {
-        notificationClass = ""; // default style
+        notificationClass = "";
       }
     } else {
-      // Non-donor: normal logic
       if (todayEnergyUsage > MEDIUM_USAGE_THRESHOLD) {
         notificationClass = "high-usage-notification";
       } else if (todayEnergyUsage > LOW_USAGE_THRESHOLD) {
@@ -831,8 +877,6 @@ function updateUsageNotification() {
         notificationClass = "low-usage-notification";
       }
     }
-
-    // Update the notification box class
     const notificationBox = document.getElementById("ai-impact-notification");
     if (notificationBox) {
       notificationBox.classList.remove(
@@ -844,16 +888,10 @@ function updateUsageNotification() {
         notificationBox.classList.add(notificationClass);
       }
     }
-
-    // Set the icon and message as before
-    let message = `<span class="ai-impact-emoji">${icon}</span> <span class="ai-impact-energy">${formattedEnergy} Wh today</span>`;
-
-    // Log for debugging how frequently updates occur
+    let message = `<span class="ai-impact-emoji">${icon}</span> <span class="ai-impact-energy">${formattedEnergy} Wh (this convo)</span>`;
     console.log(
-      `[${updateTime}] Updating energy notification: ${formattedEnergy} Wh (${notificationClass})`
+      `[${updateTime}] Updating energy notification: ${formattedEnergy} Wh (${notificationClass}) for conversationId: ${currentConversationId}`
     );
-
-    // Update the UI with error handling
     try {
       messageElement.innerHTML = message;
     } catch (updateError) {
@@ -913,8 +951,12 @@ function initialize() {
         // Ignore URL parsing errors
       }
 
-      // Scan after URL change
-      setTimeout(async () => await scanMessages(), 1000);
+      // Scan multiple times to catch new messages as they appear
+      for (let i = 1; i <= 5; i++) {
+        setTimeout(() => {
+          scanMessages().then(() => updateUsageNotification());
+        }, i * 1000); // Scan at 1s, 2s, 3s, 4s, 5s after URL change
+      }
     }
   }, 1000);
   intervalIds.push(urlMonitorInterval);
@@ -1015,6 +1057,21 @@ if (
   } catch (e) {
     console.warn("Failed to add message listener:", e);
   }
+}
+
+// Listen for storage changes and update notification if logs change
+if (
+  typeof chrome !== "undefined" &&
+  chrome.storage &&
+  chrome.storage.onChanged
+) {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes.chatgptLogs) {
+      reloadLogsFromStorage().then(() => {
+        updateUsageNotification();
+      });
+    }
+  });
 }
 
 /**

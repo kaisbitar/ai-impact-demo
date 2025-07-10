@@ -395,7 +395,7 @@
       .stat-card {
         background: var(--card-background);
         border-radius: 6px;
-        padding: 4px;
+        padding: 19px;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
         transition: all var(--transition-fast);
@@ -434,15 +434,10 @@
       .stat-icon {
         width: 14px;
         height: 14px;
-        border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 9px;
         color: white;
-        flex-shrink: 0;
-        background: var(--neutral-100);
-        color: var(--primary-green);
       }
 
       .stat-icon.energy {
@@ -471,8 +466,7 @@
       }
 
       .stat-label {
-        font-size: 8px;
-        font-weight: 500;
+        font-size: 9px;
         color: var(--text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -955,7 +949,7 @@
 
       .metrics-row {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(94px, 1fr));
         gap: 4px;
       }
 
@@ -1286,6 +1280,13 @@
         >
           <i class="ri-plant-line"></i>
           🌱 Donate to Plant Trees
+        </button>
+        <button
+          class="btn btn-secondary btn-full"
+          id="test-donor-btn"
+          style="margin-top: 8px; font-size: 11px; padding: 8px 16px"
+        >
+          🧪 Test Donor Status
         </button>
       </div>
     </div>
