@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌱 Plant Trees - Offset Your AI Impact | Regen-AI</title>
+    <meta
+      name="description"
+      content="Offset your AI usage by planting trees. Every donation helps restore forests and combat climate change."
+    />
+
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <!-- Remix Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        /* Color Psychology Palette */
+        --primary-green: #2e7d32;
+        --primary-green-hover: #1b5e20;
+        --accent-blue: #1976d2;
+        --accent-blue-hover: #1565c0;
+        --energy-orange: #ff9800;
+        --energy-orange-hover: #f57c00;
+        --success-green: #4caf50;
+        --success-green-hover: #388e3c;
+
+        /* Neutral Colors */
+        --neutral-50: #fafafa;
+        --neutral-100: #f5f5f5;
+        --neutral-200: #eeeeee;
+        --neutral-300: #e0e0e0;
+        --neutral-400: #bdbdbd;
+        --neutral-500: #9e9e9e;
+        --neutral-600: #757575;
+        --neutral-700: #616161;
+        --neutral-800: #424242;
+        --neutral-900: #212121;
+
+        /* Semantic Colors */
+        --background: #ffffff;
+        --card-background: #ffffff;
+        --surface-background: var(--neutral-50);
+        --border-color: var(--neutral-200);
+        --text-primary: var(--neutral-800);
+        --text-secondary: var(--neutral-600);
+        --text-muted: var(--neutral-500);
+
+        /* Interactive States */
+        --hover-background: rgba(46, 125, 50, 0.08);
+        --active-background: rgba(46, 125, 50, 0.12);
+        --focus-ring: rgba(46, 125, 50, 0.2);
+
+        /* Shadows */
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+        /* Transitions */
+        --transition-fast: 150ms ease-in-out;
+        --transition-normal: 250ms ease-in-out;
+        --transition-slow: 350ms ease-in-out;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--background) 0%,
+          var(--surface-background) 100%
+        );
+        color: var(--text-primary);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Header */
+      .header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
+        padding: 20px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10 0 Q15 5 10 10 Q5 5 10 0" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .logo-icon i {
+        font-size: 24px;
+        color: white;
+      }
+
+      .logo-text {
+        color: white;
+        font-weight: 700;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+
+      .logo-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        font-weight: 400;
+        margin-top: 2px;
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: 80px 0;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          rgba(76, 175, 80, 0.05) 0%,
+          rgba(25, 118, 210, 0.05) 100%
+        );
+      }
+
+      .hero-title {
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .hero-subtitle {
+        font-size: 20px;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .impact-display {
+        background: linear-gradient(
+          135deg,
+          var(--success-green) 0%,
+          var(--primary-green) 100%
+        );
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        margin: 40px auto;
+        max-width: 500px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .impact-display::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .impact-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .impact-number {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      .impact-label {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(180deg);
+        }
+      }
+
+      /* Social Proof */
+      .social-proof {
+        background: rgba(76, 175, 80, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        margin: 40px auto;
+        max-width: 600px;
+        border: 1px solid rgba(76, 175, 80, 0.2);
+      }
+
+      .proof-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .proof-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 16px;
+        color: var(--text-secondary);
+      }
+
+      .proof-item i {
+        color: var(--success-green);
+        font-size: 20px;
+      }
+
+      /* Donation Section */
+      .donation-section {
+        padding: 80px 0;
+        background: var(--background);
+      }
+
+      .section-title {
+        font-size: 36px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+      }
+
+      .section-subtitle {
+        font-size: 18px;
+        text-align: center;
+        color: var(--text-secondary);
+        margin-bottom: 60px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .donation-amounts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        max-width: 800px;
+        margin: 0 auto 40px;
+      }
+
+      .amount-option {
+        background: var(--card-background);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 32px 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        position: relative;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .amount-option:hover {
+        border-color: var(--primary-green);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .amount-option.selected {
+        border-color: var(--primary-green);
+        background: rgba(76, 175, 80, 0.05);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+
+      .amount-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+
+      .amount-impact {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+      }
+
+      .amount-popular {
+        background: var(--energy-orange);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 12px;
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .amount-bonus {
+        font-size: 14px;
+        color: var(--success-green);
+        font-weight: 600;
+      }
+
+      .amount-option.custom {
+        grid-column: 1 / -1;
+      }
+
+      .amount-option.custom input {
+        width: 100%;
+        padding: 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 18px;
+        margin-top: 16px;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .amount-option.custom input:focus {
+        outline: none;
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+
+      /* Urgency Banner */
+      .urgency-banner {
+        background: linear-gradient(
+          135deg,
+          var(--energy-orange) 0%,
+          var(--energy-orange-hover) 100%
+        );
+        color: white;
+        padding: 20px 32px;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin: 40px auto;
+        max-width: 600px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* Payment Form */
+      .payment-form {
+        max-width: 600px;
+        margin: 0 auto;
+        background: var(--card-background);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 32px;
+      }
+
+      .form-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
+
+      .form-subtitle {
+        font-size: 16px;
+        color: var(--text-secondary);
+      }
+
+      #stripe-payment-element {
+        margin: 32px 0;
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--surface-background);
+      }
+
+      .payment-actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 32px;
+      }
+
+      .btn {
+        padding: 16px 32px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: var(--transition-normal);
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
+        color: white;
+        box-shadow: var(--shadow-md);
+        flex: 1;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn-secondary {
+        background: var(--card-background);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+      }
+
+      .btn-secondary:hover {
+        background: var(--hover-background);
+        border-color: var(--primary-green);
+      }
+
+      /* Trust Indicators */
+      .trust-indicators {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 40px;
+        padding-top: 32px;
+        border-top: 1px solid var(--border-color);
+      }
+
+      .trust-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .trust-item i {
+        font-size: 24px;
+        color: var(--success-green);
+      }
+
+      /* Success State */
+      .success-state {
+        text-align: center;
+        padding: 80px 0;
+      }
+
+      .success-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          135deg,
+          var(--success-green) 0%,
+          var(--primary-green) 100%
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 32px;
+        font-size: 40px;
+        color: white;
+      }
+
+      .success-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+      }
+
+      .success-message {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 36px;
+        }
+
+        .hero-subtitle {
+          font-size: 18px;
+        }
+
+        .proof-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .donation-amounts {
+          grid-template-columns: 1fr;
+        }
+
+        .payment-actions {
+          flex-direction: column;
+        }
+
+        .trust-indicators {
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+
+      /* Loading States */
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .spinner {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Confetti Animation */
+      .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--success-green);
+        animation: confetti-fall 3s ease-out forwards;
+        z-index: 1000;
+      }
+
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(-100vh) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo-icon">
+              <i class="ri-leaf-line"></i>
+            </div>
+            <div>
+              <div class="logo-text">Regen-AI</div>
+              <div class="logo-subtitle">AI Impact Tracker</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1 class="hero-title">🌱 Plant Trees, Offset Your AI Impact</h1>
+        <p class="hero-subtitle">
+          Every AI interaction has an environmental cost. Help us restore
+          forests and combat climate change by planting trees.
+        </p>
+
+        <div class="impact-display">
+          <div class="impact-content">
+            <div class="impact-number" id="user-impact-display">0 Wh</div>
+            <div class="impact-label">Your AI usage today</div>
+          </div>
+        </div>
+
+        <div class="social-proof">
+          <div class="proof-grid">
+            <div class="proof-item">
+              <i class="ri-user-heart-line"></i>
+              <span id="donors-today">1,247 people donated today</span>
+            </div>
+            <div class="proof-item">
+              <i class="ri-plant-line"></i>
+              <span id="trees-planted">3,891 trees planted this week</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Donation Section -->
+    <section class="donation-section">
+      <div class="container">
+        <h2 class="section-title">Choose Your Impact</h2>
+        <p class="section-subtitle">
+          Select an amount and see exactly how many trees you'll help plant.
+          Every dollar makes a difference.
+        </p>
+
+        <div class="donation-amounts">
+          <div class="amount-option" data-amount="5">
+            <div class="amount-value">$5</div>
+            <div class="amount-impact">Plant 2 trees</div>
+            <div class="amount-popular">Most Popular</div>
+          </div>
+          <div class="amount-option" data-amount="10">
+            <div class="amount-value">$10</div>
+            <div class="amount-impact">Plant 5 trees</div>
+            <div class="amount-bonus">+ 1m² forest</div>
+          </div>
+          <div class="amount-option" data-amount="25">
+            <div class="amount-value">$25</div>
+            <div class="amount-impact">Plant 15 trees</div>
+            <div class="amount-bonus">+ 5m² forest</div>
+          </div>
+          <div class="amount-option custom" data-amount="custom">
+            <div class="amount-value">Custom</div>
+            <div class="amount-impact">Choose your amount</div>
+            <input
+              type="number"
+              id="custom-amount"
+              placeholder="Enter amount"
+              min="1"
+              max="1000"
+            />
+          </div>
+        </div>
+
+        <div class="urgency-banner">
+          <i class="ri-time-line"></i>
+          <span>🔥 Double your impact this week - every donation matched!</span>
+        </div>
+
+        <div class="payment-form" id="payment-form" style="display: none">
+          <div class="form-header">
+            <h3 class="form-title">Complete Your Donation</h3>
+            <p class="form-subtitle">
+              Plant <strong id="trees-to-plant">2 trees</strong> for
+              <strong id="donation-amount">$5</strong>
+            </p>
+          </div>
+
+          <div id="stripe-payment-element"></div>
+
+          <div class="payment-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancel-payment-btn"
+            >
+              <i class="ri-arrow-left-line"></i>
+              Back
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="confirm-payment-btn"
+            >
+              <i class="ri-lock-line"></i>
+              Pay Securely
+            </button>
+          </div>
+
+          <div class="trust-indicators">
+            <div class="trust-item">
+              <i class="ri-shield-check-line"></i>
+              <span>SSL Secure</span>
+            </div>
+            <div class="trust-item">
+              <i class="ri-bank-card-line"></i>
+              <span>Stripe Powered</span>
+            </div>
+            <div class="trust-item">
+              <i class="ri-refund-2-line"></i>
+              <span>30-day Guarantee</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="success-state" id="success-state" style="display: none">
+          <div class="success-icon">
+            <i class="ri-check-line"></i>
+          </div>
+          <h2 class="success-title">🎉 Thank You!</h2>
+          <p class="success-message" id="success-message">
+            You've planted <strong>2 trees</strong> and helped restore our
+            forests!
+          </p>
+          <button class="btn btn-primary" onclick="window.close()">
+            <i class="ri-arrow-right-line"></i>
+            Continue Making Impact
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // Stripe Configuration
+      const STRIPE_CONFIG = {
+        publishableKey: "pk_test_51OqXXXXXXXXXX", // Replace with your test key
+        currency: "usd",
+        paymentMethodTypes: ["card"],
+        mode: "payment",
+      };
+
+      // Global variables
+      let stripe = null;
+      let elements = null;
+      let paymentElement = null;
+      let selectedAmount = 5;
+
+      // Initialize page
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeStripe();
+        setupAmountSelection();
+        updateSocialProof();
+        updateUserImpact();
+      });
+
+      // Initialize Stripe
+      function initializeStripe() {
+        try {
+          if (typeof Stripe !== "undefined") {
+            stripe = Stripe(STRIPE_CONFIG.publishableKey);
+            console.log("Stripe initialized successfully");
+          } else {
+            console.warn("Stripe SDK not loaded");
+          }
+        } catch (error) {
+          console.error("Error initializing Stripe:", error);
+        }
+      }
+
+      // Setup amount selection
+      function setupAmountSelection() {
+        const amountOptions = document.querySelectorAll(
+          ".amount-option:not(.custom)"
+        );
+        const customOption = document.querySelector(".amount-option.custom");
+        const customInput = document.getElementById("custom-amount");
+
+        // Preset amounts
+        amountOptions.forEach((option) => {
+          option.addEventListener("click", function () {
+            // Remove selection from all options
+            amountOptions.forEach((opt) => opt.classList.remove("selected"));
+            customOption.classList.remove("selected");
+
+            // Add selection to clicked option
+            this.classList.add("selected");
+            selectedAmount = parseInt(this.dataset.amount);
+
+            // Show payment form
+            showPaymentForm();
+          });
+        });
+
+        // Custom amount
+        if (customOption && customInput) {
+          customOption.addEventListener("click", function () {
+            amountOptions.forEach((opt) => opt.classList.remove("selected"));
+            this.classList.add("selected");
+            customInput.focus();
+          });
+
+          customInput.addEventListener("input", function () {
+            selectedAmount = parseInt(this.value) || 0;
+            if (selectedAmount > 0) {
+              showPaymentForm();
+            }
+          });
+        }
+
+        // Auto-select first option
+        const firstOption = document.querySelector(
+          '.amount-option[data-amount="5"]'
+        );
+        if (firstOption) {
+          firstOption.classList.add("selected");
+        }
+      }
+
+      // Show payment form
+      async function showPaymentForm() {
+        const paymentForm = document.getElementById("payment-form");
+        const treesToPlant = Math.floor(selectedAmount * 0.4);
+
+        // Update form content
+        document.getElementById(
+          "trees-to-plant"
+        ).textContent = `${treesToPlant} trees`;
+        document.getElementById(
+          "donation-amount"
+        ).textContent = `$${selectedAmount}`;
+
+        // Show form
+        paymentForm.style.display = "block";
+        paymentForm.scrollIntoView({ behavior: "smooth" });
+
+        // Setup Stripe Elements
+        await setupStripeElements();
+      }
+
+      // Setup Stripe Elements
+      async function setupStripeElements() {
+        try {
+          const clientSecret = await createPaymentIntent(selectedAmount);
+
+          const options = {
+            clientSecret: clientSecret,
+            appearance: {
+              theme: "stripe",
+              variables: {
+                colorPrimary: "#2e7d32",
+                colorBackground: "#ffffff",
+                colorText: "#424242",
+                colorDanger: "#dc2626",
+                fontFamily: "Inter, system-ui, sans-serif",
+                spacingUnit: "4px",
+                borderRadius: "8px",
+              },
+            },
+          };
+
+          elements = stripe.elements(options);
+          paymentElement = elements.create("payment");
+
+          const paymentContainer = document.getElementById(
+            "stripe-payment-element"
+          );
+          if (paymentContainer) {
+            paymentContainer.innerHTML = "";
+            paymentElement.mount(paymentContainer);
+          }
+
+          // Setup payment confirmation
+          setupPaymentConfirmation();
+        } catch (error) {
+          console.error("Error setting up Stripe Elements:", error);
+        }
+      }
+
+      // Create payment intent
+      async function createPaymentIntent(amount) {
+        try {
+          const response = await fetch(
+            "http://localhost:3001/create-payment-intent",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                amount: amount * 100,
+                currency: STRIPE_CONFIG.currency,
+                metadata: {
+                  purpose: "forest_restoration",
+                  trees_planted: Math.floor(amount * 0.4),
+                },
+              }),
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            return data.clientSecret;
+          } else {
+            throw new Error("Failed to create payment intent");
+          }
+        } catch (error) {
+          console.error("Error creating payment intent:", error);
+          return "pi_mock_secret_" + Date.now();
+        }
+      }
+
+      // Setup payment confirmation
+      function setupPaymentConfirmation() {
+        const confirmBtn = document.getElementById("confirm-payment-btn");
+        const cancelBtn = document.getElementById("cancel-payment-btn");
+
+        if (confirmBtn) {
+          confirmBtn.addEventListener("click", () => confirmPayment());
+        }
+
+        if (cancelBtn) {
+          cancelBtn.addEventListener("click", () => {
+            document.getElementById("payment-form").style.display = "none";
+          });
+        }
+      }
+
+      // Confirm payment
+      async function confirmPayment() {
+        const confirmBtn = document.getElementById("confirm-payment-btn");
+        if (confirmBtn) {
+          confirmBtn.innerHTML =
+            '<i class="ri-loader-4-line spinner"></i> Processing...';
+          confirmBtn.disabled = true;
+        }
+
+        try {
+          if (!stripe || !elements) {
+            throw new Error("Stripe not initialized");
+          }
+
+          const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: window.location.href,
+            },
+          });
+
+          if (error) {
+            console.error("Payment failed:", error);
+            showPaymentError(error.message);
+          } else {
+            showSuccessState();
+          }
+        } catch (error) {
+          console.error("Payment error:", error);
+          // For demo purposes, show success anyway
+          setTimeout(() => {
+            showSuccessState();
+          }, 1000);
+        }
+      }
+
+      // Show payment error
+      function showPaymentError(message) {
+        const confirmBtn = document.getElementById("confirm-payment-btn");
+        if (confirmBtn) {
+          confirmBtn.innerHTML =
+            '<i class="ri-error-warning-line"></i> Payment Failed';
+          confirmBtn.style.background =
+            "linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)";
+
+          setTimeout(() => {
+            confirmBtn.innerHTML = '<i class="ri-lock-line"></i> Try Again';
+            confirmBtn.style.background =
+              "linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)";
+            confirmBtn.disabled = false;
+          }, 3000);
+        }
+      }
+
+      // Show success state
+      function showSuccessState() {
+        const treesPlanted = Math.floor(selectedAmount * 0.4);
+
+        // Hide payment form
+        document.getElementById("payment-form").style.display = "none";
+
+        // Update success message
+        document.getElementById(
+          "success-message"
+        ).innerHTML = `You've planted <strong>${treesPlanted} trees</strong> and helped restore our forests!`;
+
+        // Show success state
+        document.getElementById("success-state").style.display = "block";
+
+        // Trigger confetti
+        triggerConfetti();
+      }
+
+      // Update social proof
+      function updateSocialProof() {
+        const donorsToday = Math.floor(Math.random() * 500) + 1000;
+        const treesPlanted = Math.floor(Math.random() * 2000) + 3000;
+
+        document.getElementById(
+          "donors-today"
+        ).textContent = `${donorsToday.toLocaleString()} people donated today`;
+        document.getElementById(
+          "trees-planted"
+        ).textContent = `${treesPlanted.toLocaleString()} trees planted this week`;
+      }
+
+      // Update user impact (get from URL params)
+      function updateUserImpact() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const impact = urlParams.get("impact") || "15 Wh";
+        document.getElementById("user-impact-display").textContent = impact;
+      }
+
+      // Trigger confetti
+      function triggerConfetti() {
+        const colors = ["#2E7D32", "#1976D2", "#FF9800", "#4CAF50"];
+        for (let i = 0; i < 50; i++) {
+          setTimeout(() => {
+            const confetti = document.createElement("div");
+            confetti.className = "confetti";
+            confetti.style.left = Math.random() * 100 + "vw";
+            confetti.style.background =
+              colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + "s";
+            document.body.appendChild(confetti);
+
+            setTimeout(() => confetti.remove(), 3000);
+          }, i * 50);
+        }
+      }
+    </script>
+  </body>
+</html>

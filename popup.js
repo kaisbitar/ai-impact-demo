@@ -31,38 +31,39 @@ const getChromeStorage = () => {
 
 // Revolutionary State Management
 const RegenAIState = {
-  userState: 'notOptedIn', // 'notOptedIn', 'donor', 'emailCollected'
-  impactLevel: 'low', // 'low', 'medium', 'high'
+  userState: "notOptedIn", // 'notOptedIn', 'donor', 'emailCollected'
+  impactLevel: "low", // 'low', 'medium', 'high'
   contributionStreak: 0,
   totalContributed: 0,
   lastContributionDate: null,
-  
+
   updateUserState(newState) {
     this.userState = newState;
-    localStorage.setItem('regenAI_userState', newState);
+    localStorage.setItem("regenAI_userState", newState);
     this.updateUI();
   },
-  
+
   updateImpactLevel(energyUsage) {
-    if (energyUsage < 100) this.impactLevel = 'low';
-    else if (energyUsage < 500) this.impactLevel = 'medium';
-    else this.impactLevel = 'high';
+    if (energyUsage < 100) this.impactLevel = "low";
+    else if (energyUsage < 500) this.impactLevel = "medium";
+    else this.impactLevel = "high";
     this.updateUI();
   },
-  
+
   updateUI() {
     this.updateHeroSection();
     this.updateActionCard();
     this.updateProgressBar();
   },
-  
+
   updateHeroSection() {
     const subtitle = document.getElementById("user-state-subtitle");
     const metricLabel = document.getElementById("main-metric-label");
     const mainMetricTile = document.getElementById("main-metric-tile");
-    
+
     if (this.userState === "donor") {
-      if (subtitle) subtitle.textContent = "Thank you for supporting reforestation! 🌱";
+      if (subtitle)
+        subtitle.textContent = "Thank you for supporting reforestation! 🌱";
       if (metricLabel) metricLabel.textContent = "m² restored";
       if (mainMetricTile) mainMetricTile.style.display = "block";
     } else {
@@ -71,36 +72,38 @@ const RegenAIState = {
       if (mainMetricTile) mainMetricTile.style.display = "none";
     }
   },
-  
+
   updateActionCard() {
-    const actionCard = document.getElementById('donation-card');
-    const actionTitle = actionCard?.querySelector('.action-title');
-    const actionDescription = actionCard?.querySelector('.action-description');
-    
-    if (this.userState === 'donor') {
-      if (actionTitle) actionTitle.textContent = 'Continue Your Impact';
-      if (actionDescription) actionDescription.textContent = 
-        `You've contributed to ${this.totalContributed}m² of forest restoration. Keep making a difference!`;
+    const actionCard = document.getElementById("donation-card");
+    const actionTitle = actionCard?.querySelector(".action-title");
+    const actionDescription = actionCard?.querySelector(".action-description");
+
+    if (this.userState === "donor") {
+      if (actionTitle) actionTitle.textContent = "Continue Your Impact";
+      if (actionDescription)
+        actionDescription.textContent = `You've contributed to ${this.totalContributed}m² of forest restoration. Keep making a difference!`;
     } else {
-      if (actionTitle) actionTitle.textContent = 'Support Forest Restoration';
-      if (actionDescription) actionDescription.textContent = 
-        'Offset your AI impact by contributing to Bergwaldprojekt\'s reforestation efforts';
+      if (actionTitle) actionTitle.textContent = "Support Forest Restoration";
+      if (actionDescription)
+        actionDescription.textContent =
+          "Offset your AI impact by contributing to Bergwaldprojekt's reforestation efforts";
     }
   },
-  
+
   updateProgressBar() {
-    const progressFill = document.getElementById('donation-progress');
-    const progressText = document.getElementById('donation-text');
-    
-    if (this.userState === 'donor') {
+    const progressFill = document.getElementById("donation-progress");
+    const progressText = document.getElementById("donation-text");
+
+    if (this.userState === "donor") {
       const progress = Math.min((this.totalContributed / 100) * 100, 100);
       if (progressFill) progressFill.style.width = `${progress}%`;
-      if (progressText) progressText.textContent = `${this.totalContributed}m² restored`;
+      if (progressText)
+        progressText.textContent = `${this.totalContributed}m² restored`;
     } else {
-      if (progressFill) progressFill.style.width = '0%';
-      if (progressText) progressText.textContent = 'Ready to make a difference';
+      if (progressFill) progressFill.style.width = "0%";
+      if (progressText) progressText.textContent = "Ready to make a difference";
     }
-  }
+  },
 };
 
 // Revolutionary Animation Controller
@@ -110,33 +113,33 @@ const AnimationController = {
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       const current = start + (end - start) * this.easeOutQuart(progress);
       element.textContent = this.formatNumber(current);
-      
+
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
     };
     requestAnimationFrame(animate);
   },
-  
+
   easeOutQuart(t) {
     return 1 - Math.pow(1 - t, 4);
   },
-  
+
   formatNumber(num) {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "K";
     return Math.round(num).toString();
   },
-  
+
   triggerConfetti() {
     // Simple confetti effect for achievements
-    const colors = ['#2E7D32', '#1976D2', '#FF9800', '#4CAF50'];
+    const colors = ["#2E7D32", "#1976D2", "#FF9800", "#4CAF50"];
     for (let i = 0; i < 20; i++) {
       setTimeout(() => {
-        const confetti = document.createElement('div');
+        const confetti = document.createElement("div");
         confetti.style.cssText = `
           position: fixed;
           top: 50%;
@@ -150,15 +153,15 @@ const AnimationController = {
           animation: confetti-fall 2s ease-out forwards;
         `;
         document.body.appendChild(confetti);
-        
+
         setTimeout(() => confetti.remove(), 2000);
       }, i * 50);
     }
-  }
+  },
 };
 
 // Add confetti animation to CSS
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   @keyframes confetti-fall {
     0% {
@@ -176,18 +179,22 @@ document.head.appendChild(style);
 document.addEventListener("DOMContentLoaded", function () {
   try {
     // Initialize revolutionary state
-    RegenAIState.userState = localStorage.getItem('regenAI_userState') || 'notOptedIn';
-    RegenAIState.totalContributed = parseInt(localStorage.getItem('regenAI_totalContributed')) || 0;
-    
+    RegenAIState.userState =
+      localStorage.getItem("regenAI_userState") || "notOptedIn";
+    RegenAIState.totalContributed =
+      parseInt(localStorage.getItem("regenAI_totalContributed")) || 0;
+
     // Set up revolutionary tab switching
-    document.getElementById("lifetime-tab").addEventListener("click", function () {
-      // Only show overlay if not opted in
-      if (!getUserEmail()) {
-        showEmailOverlay();
-        return;
-      }
-      switchTab("lifetime");
-    });
+    document
+      .getElementById("lifetime-tab")
+      .addEventListener("click", function () {
+        // Only show overlay if not opted in
+        if (!getUserEmail()) {
+          showEmailOverlay();
+          return;
+        }
+        switchTab("lifetime");
+      });
 
     document.getElementById("today-tab").addEventListener("click", function () {
       switchTab("today");
@@ -218,6 +225,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set up revolutionary donation button
     setupDonationButton();
 
+    // Set up simple donation button
+    setupSimpleDonationButton();
   } catch (err) {
     console.error("Error initializing revolutionary popup:", err);
   }
@@ -241,14 +250,14 @@ function switchTab(tabId) {
   // Show the selected tab with fade in
   const selectedTab = document.getElementById(`${tabId}-stats`);
   const selectedTabBtn = document.getElementById(`${tabId}-tab`);
-  
+
   if (selectedTab) {
     selectedTab.classList.add("active");
     setTimeout(() => {
       selectedTab.style.opacity = "1";
     }, 50);
   }
-  
+
   if (selectedTabBtn) {
     selectedTabBtn.classList.add("active");
   }
@@ -258,14 +267,14 @@ function switchTab(tabId) {
  * Revolutionary donation button setup
  */
 function setupDonationButton() {
-  const donateBtn = document.getElementById('donate-btn');
+  const donateBtn = document.getElementById("donate-btn");
   if (donateBtn) {
-    donateBtn.addEventListener('click', function() {
+    donateBtn.addEventListener("click", function () {
       if (!getUserEmail()) {
         showEmailOverlay();
         return;
       }
-      if (RegenAIState.userState === 'donor') {
+      if (RegenAIState.userState === "donor") {
         // Show contribution success
         showContributionSuccess();
       } else {
@@ -276,20 +285,52 @@ function setupDonationButton() {
   }
 }
 
+// Simple donation button handler
+function setupSimpleDonationButton() {
+  const simpleDonateBtn = document.getElementById("simple-donate-btn");
+  console.log("🔍 Looking for simple-donate-btn:", simpleDonateBtn);
+  if (simpleDonateBtn) {
+    console.log("✅ Found simple-donate-btn, adding click listener");
+    simpleDonateBtn.addEventListener("click", function () {
+      console.log("🌱 Donation button clicked!");
+      redirectToDonationLanding();
+    });
+  } else {
+    console.warn("❌ simple-donate-btn not found in DOM");
+  }
+}
+
+// Redirect to donation landing page
+function redirectToDonationLanding() {
+  // Get user's impact data
+  const energyValue = document.getElementById("energy-value");
+  const impact = energyValue ? energyValue.textContent : "0 Wh";
+
+  // Create landing page URL with user's impact
+  const landingUrl =
+    chrome.runtime.getURL("donation-landing.html") +
+    "?impact=" +
+    encodeURIComponent(impact) +
+    "&source=extension";
+
+  // Open in new tab
+  chrome.tabs.create({ url: landingUrl });
+}
+
 /**
  * Show revolutionary contribution success
  */
 function showContributionSuccess() {
-  const actionCard = document.getElementById('donation-card');
+  const actionCard = document.getElementById("donation-card");
   if (actionCard) {
-    actionCard.style.transform = 'scale(1.05)';
-    actionCard.style.boxShadow = '0 20px 40px rgba(46, 125, 50, 0.3)';
-    
+    actionCard.style.transform = "scale(1.05)";
+    actionCard.style.boxShadow = "0 20px 40px rgba(46, 125, 50, 0.3)";
+
     setTimeout(() => {
-      actionCard.style.transform = 'scale(1)';
-      actionCard.style.boxShadow = '';
+      actionCard.style.transform = "scale(1)";
+      actionCard.style.boxShadow = "";
     }, 300);
-    
+
     // Trigger confetti for achievement
     AnimationController.triggerConfetti();
   }
@@ -322,11 +363,10 @@ function loadLogs() {
       // Update stats with revolutionary animations
       updateTodayStatsWithAnimation(logs);
       updateLifetimeStatsWithAnimation(logs);
-      
+
       // Update impact level based on energy usage
       const totalEnergy = calculateTotalEnergy(logs);
       RegenAIState.updateImpactLevel(totalEnergy);
-
     });
   } catch (e) {
     console.error("Error in revolutionary loadLogs:", e);
@@ -386,7 +426,8 @@ function updateTodayStatsWithAnimation(logs) {
   if (youtubeValue) youtubeValue.textContent = `${stats.youtubeMinutes} min`;
 
   const elevatorValue = document.getElementById("elevator-value");
-  if (elevatorValue) elevatorValue.textContent = `${stats.elevatorFloors} floors`;
+  if (elevatorValue)
+    elevatorValue.textContent = `${stats.elevatorFloors} floors`;
 
   // Update change indicators
   updateChangeIndicators(stats);
@@ -397,7 +438,7 @@ function updateTodayStatsWithAnimation(logs) {
  */
 function updateLifetimeStatsWithAnimation(logs) {
   const stats = calculateStats(logs);
-  
+
   // Similar animation logic for lifetime stats
   // This would be called when switching to lifetime tab
 }
@@ -409,23 +450,27 @@ function updateChangeIndicators(stats) {
   const energyChange = document.getElementById("energy-change");
   const waterChange = document.getElementById("water-change");
   const co2Change = document.getElementById("co2-change");
-  
+
   if (energyChange) {
     const change = Math.round((stats.energyUsageWh / 100) * 100);
     energyChange.textContent = `+${change}% today`;
-    energyChange.className = `stat-change ${change > 0 ? 'positive' : 'negative'}`;
+    energyChange.className = `stat-change ${
+      change > 0 ? "positive" : "negative"
+    }`;
   }
-  
+
   if (waterChange) {
-    const change = Math.round((stats.energyUsageWh * 0.5 / 50) * 100);
+    const change = Math.round(((stats.energyUsageWh * 0.5) / 50) * 100);
     waterChange.textContent = `+${change}% today`;
-    waterChange.className = `stat-change ${change > 0 ? 'positive' : 'negative'}`;
+    waterChange.className = `stat-change ${
+      change > 0 ? "positive" : "negative"
+    }`;
   }
-  
+
   if (co2Change) {
-    const change = Math.round((stats.energyUsageWh * 0.0005 / 0.25) * 100);
+    const change = Math.round(((stats.energyUsageWh * 0.0005) / 0.25) * 100);
     co2Change.textContent = `+${change}% today`;
-    co2Change.className = `stat-change ${change > 0 ? 'negative' : 'positive'}`;
+    co2Change.className = `stat-change ${change > 0 ? "negative" : "positive"}`;
   }
 }
 
@@ -434,7 +479,7 @@ function updateChangeIndicators(stats) {
  */
 function filterTodayLogs(logs) {
   const today = new Date().toDateString();
-  return logs.filter(log => {
+  return logs.filter((log) => {
     const logDate = new Date(log.timestamp).toDateString();
     return logDate === today;
   });
@@ -456,7 +501,7 @@ function calculateStats(logs) {
   let youtubeMinutes = 0;
   let elevatorFloors = 0;
 
-  logs.forEach(log => {
+  logs.forEach((log) => {
     tokensIn += log.inputTokens || 0;
     tokensOut += log.outputTokens || 0;
     totalTokens += (log.inputTokens || 0) + (log.outputTokens || 0);
@@ -484,7 +529,7 @@ function calculateStats(logs) {
     forestRestoredM2,
     phonesCharged: Math.round(phonesCharged),
     youtubeMinutes: Math.round(youtubeMinutes),
-    elevatorFloors: Math.round(elevatorFloors)
+    elevatorFloors: Math.round(elevatorFloors),
   };
 }
 
@@ -495,37 +540,38 @@ function setupEmailForm() {
   const emailForm = document.getElementById("email-form");
   const emailInput = document.getElementById("email-input");
   const skipBtn = document.getElementById("skip-btn");
-  
+
   if (emailForm) {
-    emailForm.addEventListener("submit", function(e) {
+    emailForm.addEventListener("submit", function (e) {
       e.preventDefault();
-      
+
       const email = emailInput.value.trim();
-      const marketingConsent = document.getElementById("marketing-consent").checked;
-      
+      const marketingConsent =
+        document.getElementById("marketing-consent").checked;
+
       if (isValidEmail(email)) {
         saveUserEmail(email, marketingConsent);
         hideEmailOverlay();
-        
+
         // Show success animation
         showEmailSuccess();
       } else {
         // Show error state
-        emailInput.style.borderColor = '#f44336';
-        emailInput.style.boxShadow = '0 0 0 3px rgba(244, 67, 54, 0.2)';
-        
+        emailInput.style.borderColor = "#f44336";
+        emailInput.style.boxShadow = "0 0 0 3px rgba(244, 67, 54, 0.2)";
+
         setTimeout(() => {
-          emailInput.style.borderColor = '';
-          emailInput.style.boxShadow = '';
+          emailInput.style.borderColor = "";
+          emailInput.style.boxShadow = "";
         }, 2000);
       }
     });
   }
-  
+
   if (skipBtn) {
-    skipBtn.addEventListener("click", function() {
+    skipBtn.addEventListener("click", function () {
       hideEmailOverlay();
-      RegenAIState.updateUserState('notOptedIn');
+      RegenAIState.updateUserState("notOptedIn");
     });
   }
 }
@@ -536,7 +582,7 @@ function setupEmailForm() {
 function showEmailSuccess() {
   const overlay = document.getElementById("email-overlay");
   const overlayContent = overlay?.querySelector(".overlay-content");
-  
+
   if (overlayContent) {
     overlayContent.innerHTML = `
       <div class="overlay-header">
@@ -555,7 +601,7 @@ function showEmailSuccess() {
         </button>
       </div>
     `;
-    
+
     // Trigger confetti
     AnimationController.triggerConfetti();
   }
@@ -568,7 +614,7 @@ function showEmailOverlay() {
   const overlay = document.getElementById("email-overlay");
   if (overlay) {
     overlay.classList.add("active");
-    
+
     // Focus on email input
     setTimeout(() => {
       const emailInput = document.getElementById("email-input");
@@ -593,7 +639,7 @@ function hideEmailOverlay() {
 function checkUserEmailAndUpdateUI() {
   const userEmail = getUserEmail();
   if (userEmail) {
-    RegenAIState.updateUserState('emailCollected');
+    RegenAIState.updateUserState("emailCollected");
     hideEmailOverlay();
   } else {
     showEmailOverlay();
@@ -607,13 +653,13 @@ function saveUserEmail(email, marketingConsent = false) {
   try {
     localStorage.setItem("userEmail", email);
     localStorage.setItem("marketingConsent", marketingConsent.toString());
-    
+
     // Send to backend
     sendEmailToBackend(email, marketingConsent);
-    
+
     // Update state
-    RegenAIState.updateUserState('emailCollected');
-    
+    RegenAIState.updateUserState("emailCollected");
+
     console.log("Email saved successfully:", email);
   } catch (error) {
     console.error("Error saving email:", error);
@@ -650,7 +696,7 @@ function isValidEmail(email) {
 function setupEstimationMethodToggle() {
   const estimationSelect = document.getElementById("estimation-method");
   if (estimationSelect) {
-    estimationSelect.addEventListener("change", function() {
+    estimationSelect.addEventListener("change", function () {
       const method = this.value;
       saveEstimationMethod(method);
       recalculateLogsInPopup(method);
@@ -664,7 +710,7 @@ function setupEstimationMethodToggle() {
 function loadEstimationMethod() {
   const storage = getChromeStorage();
   if (storage) {
-    storage.get(["estimationMethod"], function(result) {
+    storage.get(["estimationMethod"], function (result) {
       const method = result.estimationMethod || "community";
       const select = document.getElementById("estimation-method");
       if (select) {
@@ -690,23 +736,26 @@ function saveEstimationMethod(method) {
 function recalculateLogsInPopup(method, callback) {
   const storage = getChromeStorage();
   if (storage) {
-    storage.get(["chatgptLogs"], function(result) {
+    storage.get(["chatgptLogs"], function (result) {
       const logs = result.chatgptLogs || [];
-      
+
       // Recalculate with new method
-      logs.forEach(log => {
-        const energy = calculateEnergyAndEmissionsInPopup(log.outputTokens || 0, method);
+      logs.forEach((log) => {
+        const energy = calculateEnergyAndEmissionsInPopup(
+          log.outputTokens || 0,
+          method
+        );
         log.energyUsageWh = energy.energyUsageWh;
         log.co2Emissions = energy.co2Emissions;
       });
-      
+
       // Update storage
       storage.set({ chatgptLogs: logs });
-      
+
       // Update UI
       updateTodayStatsWithAnimation(logs);
       updateLifetimeStatsWithAnimation(logs);
-      
+
       if (callback) callback();
     });
   }
@@ -715,9 +764,12 @@ function recalculateLogsInPopup(method, callback) {
 /**
  * Revolutionary energy calculation
  */
-function calculateEnergyAndEmissionsInPopup(outputTokens, method = "community") {
+function calculateEnergyAndEmissionsInPopup(
+  outputTokens,
+  method = "community"
+) {
   let energyUsageWh;
-  
+
   if (method === "community") {
     // Community estimates
     energyUsageWh = outputTokens * 0.0025; // 2.5 Wh per token
@@ -725,12 +777,12 @@ function calculateEnergyAndEmissionsInPopup(outputTokens, method = "community") 
     // Altman estimates
     energyUsageWh = outputTokens * 0.001; // 1 Wh per token
   }
-  
+
   const co2Emissions = energyUsageWh * 0.0005; // 0.5 kg CO2 per kWh
-  
+
   return {
     energyUsageWh,
-    co2Emissions
+    co2Emissions,
   };
 }
 
@@ -748,7 +800,10 @@ function adjustPopupHeight() {
     if (!activeTab) return;
 
     const currentScrollHeight = document.body.scrollHeight;
-    if (currentScrollHeight !== lastHeight && currentScrollHeight > window.innerHeight) {
+    if (
+      currentScrollHeight !== lastHeight &&
+      currentScrollHeight > window.innerHeight
+    ) {
       lastHeight = currentScrollHeight;
       if (resizeObserver) {
         resizeObserver.disconnect();
