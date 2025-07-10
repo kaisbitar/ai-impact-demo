@@ -1,0 +1,25 @@
+{
+    "name": "ai-impact-donation-backend",
+    "version": "1.0.0",
+    "description": "Backend for AI Impact Tracker donation landing page",
+    "main": "donation-backend.js",
+    "scripts": {
+        "start": "node donation-backend.js",
+        "dev": "nodemon donation-backend.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "keywords": [
+        "donation",
+        "stripe",
+        "forest",
+        "ai-impact"
+    ],
+    "author": "Your Name",
+    "license": "MIT"
+}
