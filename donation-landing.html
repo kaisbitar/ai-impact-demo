@@ -30,27 +30,27 @@
 
     <style>
       :root {
-        /* Color Psychology Palette */
-        --primary-green: #2e7d32;
-        --primary-green-hover: #1b5e20;
-        --accent-blue: #1976d2;
-        --accent-blue-hover: #1565c0;
-        --energy-orange: #ff9800;
-        --energy-orange-hover: #f57c00;
-        --success-green: #4caf50;
-        --success-green-hover: #388e3c;
-
-        /* Neutral Colors */
-        --neutral-50: #fafafa;
-        --neutral-100: #f5f5f5;
-        --neutral-200: #eeeeee;
-        --neutral-300: #e0e0e0;
-        --neutral-400: #bdbdbd;
-        --neutral-500: #9e9e9e;
-        --neutral-600: #757575;
-        --neutral-700: #616161;
-        --neutral-800: #424242;
-        --neutral-900: #212121;
+        /* Bergwaldprojekt-inspired Color Palette */
+        --primary-green: #2d5016;
+        --primary-green-hover: #1e3a0f;
+        --accent-green: #4a7c59;
+        --accent-green-hover: #3d6b4a;
+        --earth-brown: #8b7355;
+        --earth-brown-hover: #7a6347;
+        --forest-dark: #1a3d1a;
+        --forest-light: #6b8e6b;
+        
+        /* Natural Neutral Colors */
+        --neutral-50: #fafbf9;
+        --neutral-100: #f5f7f3;
+        --neutral-200: #e8ede4;
+        --neutral-300: #d1d9cc;
+        --neutral-400: #a3b3a0;
+        --neutral-500: #7a8c77;
+        --neutral-600: #5a6b57;
+        --neutral-700: #44523f;
+        --neutral-800: #2d3a2a;
+        --neutral-900: #1a2318;
 
         /* Semantic Colors */
         --background: #ffffff;
@@ -62,12 +62,12 @@
         --text-muted: var(--neutral-500);
 
         /* Interactive States */
-        --hover-background: rgba(46, 125, 50, 0.08);
-        --active-background: rgba(46, 125, 50, 0.12);
-        --focus-ring: rgba(46, 125, 50, 0.2);
+        --hover-background: rgba(45, 80, 22, 0.08);
+        --active-background: rgba(45, 80, 22, 0.12);
+        --focus-ring: rgba(45, 80, 22, 0.2);
 
         /* Shadows */
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
         --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
           0 2px 4px -1px rgba(0, 0, 0, 0.06);
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
@@ -104,7 +104,7 @@
         background: linear-gradient(
           135deg,
           var(--primary-green) 0%,
-          var(--accent-blue) 100%
+          var(--accent-green) 100%
         );
         padding: 20px 0;
         position: relative;
@@ -179,8 +179,8 @@
         text-align: center;
         background: linear-gradient(
           135deg,
-          rgba(76, 175, 80, 0.05) 0%,
-          rgba(25, 118, 210, 0.05) 100%
+          rgba(45, 80, 22, 0.05) 0%,
+          rgba(74, 124, 89, 0.05) 100%
         );
       }
 
@@ -204,7 +204,7 @@
       .impact-display {
         background: linear-gradient(
           135deg,
-          var(--success-green) 0%,
+          var(--accent-green) 0%,
           var(--primary-green) 100%
         );
         color: white;
@@ -259,12 +259,12 @@
 
       /* Social Proof */
       .social-proof {
-        background: rgba(76, 175, 80, 0.1);
+        background: rgba(45, 80, 22, 0.1);
         border-radius: 16px;
         padding: 24px;
         margin: 40px auto;
         max-width: 600px;
-        border: 1px solid rgba(76, 175, 80, 0.2);
+        border: 1px solid rgba(45, 80, 22, 0.2);
       }
 
       .proof-grid {
@@ -282,7 +282,7 @@
       }
 
       .proof-item i {
-        color: var(--success-green);
+        color: var(--accent-green);
         font-size: 20px;
       }
 
@@ -338,8 +338,8 @@
 
       .amount-option.selected {
         border-color: var(--primary-green);
-        background: rgba(76, 175, 80, 0.05);
-        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        background: rgba(45, 80, 22, 0.05);
+        box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
       }
 
       .amount-value {
@@ -356,7 +356,7 @@
       }
 
       .amount-popular {
-        background: var(--energy-orange);
+        background: var(--earth-brown);
         color: white;
         font-size: 12px;
         font-weight: 600;
@@ -370,7 +370,7 @@
 
       .amount-bonus {
         font-size: 14px;
-        color: var(--success-green);
+        color: var(--accent-green);
         font-weight: 600;
       }
 
@@ -392,15 +392,15 @@
       .amount-option.custom input:focus {
         outline: none;
         border-color: var(--primary-green);
-        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.1);
       }
 
       /* Urgency Banner */
       .urgency-banner {
         background: linear-gradient(
           135deg,
-          var(--energy-orange) 0%,
-          var(--energy-orange-hover) 100%
+          var(--earth-brown) 0%,
+          var(--earth-brown-hover) 100%
         );
         color: white;
         padding: 20px 32px;
@@ -497,7 +497,7 @@
           rgba(255, 255, 255, 0.2),
           transparent
         );
-        transition: var(--transition-normal);
+        transition: left 0.5s;
       }
 
       .btn:hover::before {
@@ -508,27 +508,37 @@
         background: linear-gradient(
           135deg,
           var(--primary-green) 0%,
-          var(--accent-blue) 100%
+          var(--accent-green) 100%
         );
         color: white;
         box-shadow: var(--shadow-md);
-        flex: 1;
       }
 
       .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-green-hover) 0%,
+          var(--accent-green-hover) 100%
+        );
         transform: translateY(-2px);
         box-shadow: var(--shadow-lg);
       }
 
       .btn-secondary {
-        background: var(--card-background);
+        background: var(--surface-background);
         color: var(--text-primary);
-        border: 1px solid var(--border-color);
+        border: 2px solid var(--border-color);
       }
 
       .btn-secondary:hover {
         background: var(--hover-background);
         border-color: var(--primary-green);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
       }
 
       /* Trust Indicators */
@@ -552,46 +562,52 @@
 
       .trust-item i {
         font-size: 24px;
-        color: var(--success-green);
+        color: var(--accent-green);
       }
 
       /* Success State */
-      .success-state {
+      .success-message {
+        background: linear-gradient(
+          135deg,
+          var(--accent-green) 0%,
+          var(--primary-green) 100%
+        );
+        color: white;
+        padding: 32px;
+        border-radius: 20px;
         text-align: center;
-        padding: 80px 0;
+        margin: 40px auto;
+        max-width: 500px;
+        box-shadow: var(--shadow-lg);
       }
 
       .success-icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(
-          135deg,
-          var(--success-green) 0%,
-          var(--primary-green) 100%
-        );
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 32px;
-        font-size: 40px;
-        color: white;
+        font-size: 48px;
+        margin-bottom: 16px;
+        display: block;
       }
 
       .success-title {
-        font-size: 36px;
+        font-size: 24px;
         font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 16px;
+        margin-bottom: 12px;
       }
 
-      .success-message {
-        font-size: 18px;
-        color: var(--text-secondary);
-        margin-bottom: 40px;
-        max-width: 500px;
-        margin-left: auto;
-        margin-right: auto;
+      .success-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-bottom: 24px;
+      }
+
+      /* Error State */
+      .error-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 16px;
+        border-radius: 12px;
+        margin: 16px 0;
+        font-size: 14px;
       }
 
       /* Responsive Design */
@@ -604,11 +620,15 @@
           font-size: 18px;
         }
 
-        .proof-grid {
-          grid-template-columns: 1fr;
+        .section-title {
+          font-size: 28px;
         }
 
         .donation-amounts {
+          grid-template-columns: 1fr;
+        }
+
+        .proof-grid {
           grid-template-columns: 1fr;
         }
 
@@ -616,9 +636,32 @@
           flex-direction: column;
         }
 
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+
         .trust-indicators {
           flex-direction: column;
           gap: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 0 16px;
+        }
+
+        .hero {
+          padding: 60px 0;
+        }
+
+        .donation-section {
+          padding: 60px 0;
+        }
+
+        .payment-form {
+          padding: 24px;
         }
       }
 
@@ -646,7 +689,7 @@
         position: fixed;
         width: 10px;
         height: 10px;
-        background: var(--success-green);
+        background: var(--accent-green);
         animation: confetti-fall 3s ease-out forwards;
         z-index: 1000;
       }
@@ -742,6 +785,28 @@
       .stats-card.positive .stat-value {
         color: #166534;
       }
+
+      /* Accessibility */
+      .btn:focus,
+      .amount-option:focus,
+      input:focus {
+        outline: 2px solid var(--focus-ring);
+        outline-offset: 2px;
+      }
+
+      /* Print Styles */
+      @media print {
+        .header,
+        .urgency-banner,
+        .payment-form {
+          display: none;
+        }
+
+        .hero,
+        .donation-section {
+          padding: 20px 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -794,16 +859,16 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="container">
-        <h1 class="hero-title">🌱 Plant Trees, Offset Your AI Impact</h1>
+        <h1 class="hero-title">🌲 Restore Forests, Offset Your Digital Footprint</h1>
         <p class="hero-subtitle">
-          Every AI interaction has an environmental cost. Help us restore
-          forests and combat climate change by planting trees.
+          Every digital interaction impacts our planet. Join us in restoring native forests 
+          and protecting biodiversity through sustainable reforestation projects.
         </p>
 
         <div class="impact-display">
           <div class="impact-content">
             <div class="impact-number" id="user-impact-display">0 Wh</div>
-            <div class="impact-label">Your AI usage today</div>
+            <div class="impact-label">Your digital footprint today</div>
           </div>
         </div>
 
@@ -825,30 +890,35 @@
     <!-- Donation Section -->
     <section class="donation-section">
       <div class="container">
-        <h2 class="section-title">Choose Your Impact</h2>
+        <h2 class="section-title">Support Forest Restoration</h2>
         <p class="section-subtitle">
-          Select an amount and see exactly how many trees you'll help plant.
-          Every dollar makes a difference.
+          Choose your contribution to native forest restoration projects.<br>
+          <span style="font-size: 15px; color: var(--text-muted);">All donations are monthly (per month).</span>
+          Every contribution helps protect biodiversity and combat climate change.
         </p>
 
         <div class="donation-amounts">
           <div class="amount-option" data-amount="5">
             <div class="amount-value">$5</div>
+            <div class="amount-period" style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">per month</div>
             <div class="amount-impact">Plant 2 trees</div>
             <div class="amount-popular">Most Popular</div>
           </div>
           <div class="amount-option" data-amount="10">
             <div class="amount-value">$10</div>
+            <div class="amount-period" style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">per month</div>
             <div class="amount-impact">Plant 5 trees</div>
             <div class="amount-bonus">+ 1m² forest</div>
           </div>
           <div class="amount-option" data-amount="25">
             <div class="amount-value">$25</div>
+            <div class="amount-period" style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">per month</div>
             <div class="amount-impact">Plant 15 trees</div>
             <div class="amount-bonus">+ 5m² forest</div>
           </div>
           <div class="amount-option custom" data-amount="custom">
             <div class="amount-value">Custom</div>
+            <div class="amount-period" style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">per month</div>
             <div class="amount-impact">Choose your amount</div>
             <input
               type="number"
@@ -876,14 +946,14 @@
 
         <div class="urgency-banner">
           <i class="ri-time-line"></i>
-          <span>🔥 Double your impact this week - every donation matched!</span>
+          <span>🌱 Spring planting season - every donation matched this month!</span>
         </div>
 
         <div class="payment-form" id="payment-form" style="display: none">
           <div class="form-header">
-            <h3 class="form-title">Complete Your Donation</h3>
+            <h3 class="form-title">Complete Your Forest Restoration Donation</h3>
             <p class="form-subtitle">
-              Plant <strong id="trees-to-plant">2 trees</strong> for
+              Support <strong id="trees-to-plant">2 trees</strong> for
               <strong id="donation-amount">$5</strong>
             </p>
           </div>
@@ -922,6 +992,10 @@
               <i class="ri-refund-2-line"></i>
               <span>30-day Guarantee</span>
             </div>
+            <div class="trust-item">
+              <i class="ri-plant-line"></i>
+              <span>Certified Projects</span>
+            </div>
           </div>
         </div>
 
@@ -929,14 +1003,13 @@
           <div class="success-icon">
             <i class="ri-check-line"></i>
           </div>
-          <h2 class="success-title">🎉 Thank You!</h2>
+          <h2 class="success-title">🌲 Thank You for Supporting Forest Restoration!</h2>
           <p class="success-message" id="success-message">
-            You've planted <strong>2 trees</strong> and helped restore our
-            forests!
+            You've helped plant <strong>2 trees</strong> and restore native forest ecosystems!
           </p>
           <button class="btn btn-primary" onclick="window.close()">
             <i class="ri-arrow-right-line"></i>
-            Continue Making Impact
+            Continue Protecting Nature
           </button>
         </div>
       </div>
@@ -1060,7 +1133,7 @@
             appearance: {
               theme: "stripe",
               variables: {
-                colorPrimary: "#2e7d32",
+                colorPrimary: "#2d5016",
                 colorBackground: "#ffffff",
                 colorText: "#424242",
                 colorDanger: "#dc2626",
@@ -1187,7 +1260,7 @@
           setTimeout(() => {
             confirmBtn.innerHTML = '<i class="ri-lock-line"></i> Try Again';
             confirmBtn.style.background =
-              "linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%)";
+              "linear-gradient(135deg, #2d5016 0%, #1e3a0f 100%)";
             confirmBtn.disabled = false;
           }, 3000);
         }
@@ -1203,7 +1276,7 @@
         // Update success message
         document.getElementById(
           "success-message"
-        ).innerHTML = `You've planted <strong>${treesPlanted} trees</strong> and helped restore our forests!`;
+        ).innerHTML = `You've helped plant <strong>${treesPlanted} trees</strong> and restore native forest ecosystems!`;
 
         // Show success state
         document.getElementById("success-state").style.display = "block";
@@ -1219,7 +1292,7 @@
 
         document.getElementById(
           "donors-today"
-        ).textContent = `${donorsToday.toLocaleString()} people donated today`;
+        ).textContent = `${donorsToday.toLocaleString()} people supported forest restoration today`;
         document.getElementById(
           "trees-planted"
         ).textContent = `${treesPlanted.toLocaleString()} trees planted this week`;
@@ -1234,7 +1307,7 @@
 
       // Trigger confetti
       function triggerConfetti() {
-        const colors = ["#2E7D32", "#1976D2", "#FF9800", "#4CAF50"];
+        const colors = ["#2D5016", "#4A7C59", "#8B7355", "#6B8E6B"];
         for (let i = 0; i < 50; i++) {
           setTimeout(() => {
             const confetti = document.createElement("div");
@@ -1272,7 +1345,7 @@
           hero.classList.remove("negative");
           hero.classList.add("positive");
           status.textContent =
-            "Planet Positive! 🌱 Thank you for restoring forests!";
+            "Forest Positive! 🌲 Thank you for supporting forest restoration!";
           status.style.color = "#15803d";
           triggerConfetti();
         }
