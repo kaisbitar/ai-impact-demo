@@ -231,7 +231,7 @@
 
       /* Revolutionary Content Sections */
       .content-section {
-        padding: 8px;
+        padding: 28px;
       }
 
       /* MINIMAL IMPACT BALANCE HERO */
@@ -242,7 +242,7 @@
         color: white;
         margin-bottom: 8px;
         position: relative;
-        overflow: hidden;
+        /* overflow: hidden; */
         transition: background 0.6s ease-in-out;
       }
 
@@ -673,6 +673,12 @@
         box-shadow: var(--shadow-md);
       }
 
+      /* Exclude hero section elements from universal tooltip styles */
+      .balance-bar[data-tooltip]::after,
+      .balance-score[data-tooltip]::after {
+        display: none;
+      }
+
       [data-tooltip]:hover::after {
         opacity: 1;
         visibility: visible;
@@ -687,6 +693,25 @@
         width: 200px;
         text-align: center;
         line-height: 1.3;
+        z-index: 1002;
+      }
+
+      /* Hero section specific tooltips to prevent overlapping */
+      .balance-bar[data-tooltip]::after,
+      .balance-score[data-tooltip]::after {
+        z-index: 1003;
+        bottom: 120%;
+        font-size: 9px;
+        padding: 4px 6px;
+        white-space: nowrap;
+        max-width: 120px;
+        text-align: center;
+      }
+
+      .balance-bar[data-tooltip]:hover::after,
+      .balance-score[data-tooltip]:hover::after {
+        opacity: 1;
+        visibility: visible;
       }
 
       /* Specific tooltip for metric cards */
@@ -1046,6 +1071,7 @@
         padding: 2px 6px;
         font-size: 12px;
         min-width: 0;
+        padding: 31px;
       }
       .compact-metric i {
         font-size: 14px;
@@ -1149,17 +1175,17 @@
         </div>
         <div class="metrics-row compact-metrics-row">
           <div
-            class="compact-metric metric-tooltip"
+            class="compact-metric metric-tooltip stat-card"
             id="compact-tokens"
-            title="Tokens used"
+            data-tooltip="Tokens used"
           >
             <i class="ri-bar-chart-grouped-line"></i>
             <span class="compact-metric-value" id="total-tokens-value">0</span>
           </div>
           <div
-            class="compact-metric metric-tooltip"
+            class="compact-metric metric-tooltip stat-card"
             id="compact-messages"
-            title="Messages processed"
+            data-tooltip="Messages processed"
           >
             <i class="ri-message-2-line"></i>
             <span class="compact-metric-value" id="messages-value">0</span>
@@ -1288,7 +1314,7 @@
           style="margin-top: 12px"
         >
           <i class="ri-plant-line"></i>
-          🌱 Donate to Plant Trees
+          🌱 Restore Forests Now
         </button>
         <button
           class="btn btn-secondary btn-full"

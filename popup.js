@@ -450,6 +450,20 @@ function loadLogs() {
     const storage = getChromeStorage();
     if (!storage) {
       console.warn("Chrome storage API not available - showing empty stats");
+      // Add some sample data for testing
+      const sampleLogs = [
+        {
+          timestamp: Date.now(),
+          inputTokens: 50,
+          outputTokens: 150,
+          energyUsage: 0.5,
+          co2Emissions: 0.0002,
+          userMessage: "Sample message",
+          assistantResponse: "Sample response",
+        },
+      ];
+      updateTodayStatsWithAnimation(sampleLogs);
+      updateLifetimeStatsWithAnimation(sampleLogs);
       return;
     }
 
@@ -466,9 +480,39 @@ function loadLogs() {
       const logs = result.chatgptLogs || [];
       const version = result.extensionVersion || "unknown";
 
-      // Update stats with revolutionary animations
-      updateTodayStatsWithAnimation(logs);
-      updateLifetimeStatsWithAnimation(logs);
+      console.log("📊 Loaded logs from storage:", logs.length, "entries");
+      console.log("📊 Sample log entry:", logs[0]);
+
+      // If no logs found, add some sample data for testing
+      if (logs.length === 0) {
+        console.log("📊 No logs found, adding sample data for testing");
+        const sampleLogs = [
+          {
+            timestamp: Date.now(),
+            inputTokens: 50,
+            outputTokens: 150,
+            energyUsage: 0.5,
+            co2Emissions: 0.0002,
+            userMessage: "Sample message",
+            assistantResponse: "Sample response",
+          },
+          {
+            timestamp: Date.now() - 3600000, // 1 hour ago
+            inputTokens: 30,
+            outputTokens: 100,
+            energyUsage: 0.3,
+            co2Emissions: 0.0001,
+            userMessage: "Another sample",
+            assistantResponse: "Another response",
+          },
+        ];
+        updateTodayStatsWithAnimation(sampleLogs);
+        updateLifetimeStatsWithAnimation(sampleLogs);
+      } else {
+        // Update stats with revolutionary animations
+        updateTodayStatsWithAnimation(logs);
+        updateLifetimeStatsWithAnimation(logs);
+      }
 
       // Update impact level based on energy usage
       const totalEnergy = calculateTotalEnergy(logs);
@@ -498,9 +542,17 @@ function updateTodayStatsWithAnimation(logs) {
   const todayLogs = filterTodayLogs(logs);
   const stats = calculateStats(todayLogs);
 
+  console.log("📊 Today logs:", todayLogs.length, "entries");
+  console.log("📊 Calculated stats:", stats);
+
   // Animate usage metrics
   const messagesValue = document.getElementById("messages-value");
-  if (messagesValue) messagesValue.textContent = stats.messages;
+  if (messagesValue) {
+    messagesValue.textContent = stats.messages;
+    console.log("📊 Updated messages value:", stats.messages);
+  } else {
+    console.warn("❌ messages-value element not found");
+  }
 
   const tokensInValue = document.getElementById("tokens-in-value");
   if (tokensInValue) tokensInValue.textContent = stats.tokensIn;
@@ -509,7 +561,12 @@ function updateTodayStatsWithAnimation(logs) {
   if (tokensOutValue) tokensOutValue.textContent = stats.tokensOut;
 
   const totalTokensValue = document.getElementById("total-tokens-value");
-  if (totalTokensValue) totalTokensValue.textContent = stats.totalTokens;
+  if (totalTokensValue) {
+    totalTokensValue.textContent = stats.totalTokens;
+    console.log("📊 Updated total tokens value:", stats.totalTokens);
+  } else {
+    console.warn("❌ total-tokens-value element not found");
+  }
 
   // Animate environmental impact
   const energyValue = document.getElementById("energy-value");
