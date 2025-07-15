@@ -22,7 +22,7 @@
     <style>
       :root {
         /* Revolutionary Color Psychology Palette */
-        --primary-green: #2e7d32; /* Growth, renewal, environmental consciousness */
+        --primary-green: #09a472; /* Growth, renewal, environmental consciousness */
         --primary-green-hover: #1b5e20; /* Deeper commitment */
         --accent-blue: #1976d2; /* Trust, technology, water */
         --accent-blue-hover: #1565c0; /* Deeper trust */
@@ -234,162 +234,246 @@
         padding: 0px 28px;
       }
 
-      /* MINIMAL IMPACT BALANCE HERO */
-      .impact-hero {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        border-radius: 8px;
-        padding: 8px;
-        color: white;
-        margin-bottom: 8px;
-        position: relative;
-        /* overflow: hidden; */
-        transition: background 0.6s ease-in-out;
+      /* M² Planted Chart Section */
+      .m2-chart-section {
+        /* background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); */
+        /* border-radius: 16px; */
+        padding: 20px 0px;
+        margin-bottom: 16px;
+        /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); */
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
       }
 
-      /* Dynamic background states */
-      .impact-hero.negative {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-      }
-
-      .impact-hero.neutral {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-      }
-
-      .impact-hero.positive {
-        background: linear-gradient(
-          135deg,
-          var(--success-green) 0%,
-          var(--primary-green) 100%
-        );
-      }
-
-      .balance-container {
+      .chart-header {
         display: flex;
         align-items: center;
-        gap: 6px;
-        margin-bottom: 4px;
-      }
-
-      .balance-bar {
-        flex: 1;
-        height: 16px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .balance-bar .bar-fill {
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        border-radius: 8px;
-        transition: width 0.6s ease-out;
-      }
-
-      .balance-bar.consumption .bar-fill {
-        background: linear-gradient(90deg, #ff6b6b 0%, #ee5a52 100%);
-      }
-
-      .balance-bar.contribution .bar-fill {
-        background: linear-gradient(90deg, #51cf66 0%, #37b24d 100%);
-      }
-
-      .balance-bar i {
-        font-size: 10px;
-        color: white;
-        position: relative;
-        z-index: 2;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      }
-
-      .balance-score {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 6px;
-        padding: 2px 6px;
-        backdrop-filter: blur(4px);
-        min-width: 50px;
-        text-align: center;
-      }
-
-      .score-value {
-        font-size: 12px;
+        gap: 8px;
+        margin-bottom: 16px;
+        font-size: 0.9rem;
         font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-
-      .balance-status {
-        text-align: center;
-        font-size: 9px;
-        font-weight: 500;
-        opacity: 0.9;
+        color: #374151;
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
 
-      .impact-hero::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle,
-          rgba(255, 255, 255, 0.1) 0%,
-          transparent 70%
-        );
-        animation: float 6s ease-in-out infinite;
+      .chart-header i {
+        color: #10b981;
+        font-size: 1rem;
       }
 
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        50% {
-          transform: translateY(-10px) rotate(180deg);
-        }
-      }
-
-      .hero-content {
-        position: relative;
-        z-index: 2;
-      }
-
-      .hero-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 4px;
-        letter-spacing: -0.02em;
-      }
-
-      .hero-subtitle {
-        font-size: 11px;
-        opacity: 0.9;
+      .chart-container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
         margin-bottom: 8px;
       }
 
-      .hero-metric {
+      .chart-bar {
+        flex: 1;
+        height: 24px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+
+      .chart-bar.red {
+        background: #fecaca;
+        border: 1px solid #fca5a5;
+      }
+      .chart-fill.red {
+        background: linear-gradient(90deg, #f87171 0%, #fca5a5 100%);
+      }
+      .chart-value.red span:first-child {
+        color: #ef4444;
+        transition: color 0.4s;
+      }
+      .chart-bar,
+      .chart-fill,
+      .chart-value span:first-child {
+        transition: background 0.4s, color 0.4s;
+      }
+
+      .chart-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        border-radius: 12px;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chart-fill::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .chart-value {
         display: flex;
         align-items: baseline;
-        gap: 6px;
+        gap: 4px;
+        min-width: 80px;
+        text-align: right;
       }
 
-      .hero-number {
-        font-size: 18px;
+      .chart-value span:first-child {
+        font-size: 1.5rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
+        color: #10b981;
+        line-height: 1;
       }
 
-      .hero-unit {
-        font-size: 11px;
+      .chart-unit {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #6b7280;
+      }
+
+      .chart-label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        text-align: center;
         font-weight: 500;
-        opacity: 0.8;
+      }
+
+      .chart-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 16px;
+      }
+
+      .view-details-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #6b7280;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(107, 114, 128, 0.2);
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .view-details-btn:hover {
+        background: rgba(107, 114, 128, 0.1);
+        color: #374151;
+        transform: translateY(-1px);
+      }
+
+      .view-details-btn i {
+        font-size: 0.9rem;
+        transition: transform 0.3s;
+      }
+
+      .view-details-btn.active i {
+        transform: rotate(180deg);
+      }
+
+      .plant-trees-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .plant-trees-btn:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+      }
+
+      .plant-trees-btn i {
+        font-size: 1rem;
+      }
+
+      /* Smart shrinking behavior */
+      .m2-chart-section.details-visible {
+        padding: 12px 0px;
+        margin-bottom: 8px;
+      }
+
+      .m2-chart-section.details-visible .chart-header {
+        margin-bottom: 8px;
+        font-size: 0.8rem;
+      }
+
+      .m2-chart-section.details-visible .chart-container {
+        margin-bottom: 4px;
+      }
+
+      .m2-chart-section.details-visible .chart-bar {
+        height: 16px;
+      }
+
+      .m2-chart-section.details-visible .chart-value span:first-child {
+        font-size: 1.2rem;
+      }
+
+      .m2-chart-section.details-visible .chart-label {
+        font-size: 0.7rem;
+        margin-bottom: 8px;
+      }
+
+      .m2-chart-section.details-visible .chart-actions {
+        margin-top: 8px;
+        gap: 8px;
+      }
+
+      .m2-chart-section.details-visible .view-details-btn,
+      .m2-chart-section.details-visible .plant-trees-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+
+      .details-container {
+        animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       /* ULTRA COMPACT METRICS GRID */
@@ -403,7 +487,7 @@
       .stat-card {
         background: var(--card-background);
         border-radius: 6px;
-        padding: 19px;
+        padding: 10px;
         box-shadow: var(--shadow-sm);
         border: 1px solid var(--border-color);
         transition: all var(--transition-fast);
@@ -954,6 +1038,8 @@
         color: var(--text-muted);
         border-top: 1px solid var(--border-color);
         background: var(--surface-background);
+        bottom: 0px;
+        position: absolute;
       }
 
       .methodology-link {
@@ -1037,8 +1123,10 @@
 
       /* Styles for CTA Section */
       .cta-section {
-        margin-top: 24px;
+        margin-top: -8px;
         text-align: center;
+        gap: 19px;
+        margin-bottom: 35px;
       }
 
       .cta-title {
@@ -1070,7 +1158,7 @@
         padding: 2px 6px;
         font-size: 12px;
         min-width: 0;
-        padding: 31px;
+        padding: 13px;
       }
       .compact-metric i {
         font-size: 14px;
@@ -1079,6 +1167,9 @@
       .compact-metric-value {
         font-weight: bold;
         font-size: 13px;
+      }
+      .usage-limited .compact-metric:nth-child(n + 3) {
+        display: none !important;
       }
     </style>
   </head>
@@ -1123,56 +1214,43 @@
 
     <!-- Revolutionary Content -->
     <div class="content-section">
-      <!-- Impact Balance Hero Section -->
-      <div
-        class="impact-hero"
-        id="impact-hero"
-        data-tooltip="Balance between AI consumption and environmental contribution"
-      >
-        <div class="hero-content">
-          <div class="balance-container">
-            <!-- Consumption Bar -->
-            <div
-              class="balance-bar consumption"
-              data-tooltip="AI Resource Consumption"
-            >
-              <div class="bar-fill" id="consumption-fill"></div>
-              <i class="ri-cpu-line"></i>
-            </div>
-
-            <!-- Score Display -->
-            <div
-              class="balance-score"
-              id="balance-score"
-              data-tooltip="Environmental balance score"
-            >
-              <span class="score-value" id="score-value">-100%</span>
-            </div>
-
-            <!-- Contribution Bar -->
-            <div
-              class="balance-bar contribution"
-              data-tooltip="Environmental Contributions"
-            >
-              <div class="bar-fill" id="contribution-fill"></div>
-              <i class="ri-plant-line"></i>
-            </div>
-          </div>
-
-          <div class="balance-status" id="balance-status">High Impact Debt</div>
+      <!-- M² Planted Chart Section -->
+      <div class="m2-chart-section">
+        <div class="chart-header">
+          <i class="ri-plant-line"></i>
+          <span>Forest Restoration</span>
         </div>
-
-        <!-- Hidden values for compatibility -->
-        <span id="main-metric-value" style="display: none">0</span>
-        <span id="main-metric-label" style="display: none">Tokens</span>
+        <div class="chart-container">
+          <div class="chart-bar">
+            <div class="chart-fill" id="m2-chart-fill"></div>
+          </div>
+          <div class="chart-value">
+            <span id="m2-planted-value">0</span>
+            <span class="chart-unit">m²</span>
+          </div>
+        </div>
+        <div class="chart-label" id="m2-chart-label">
+          No forest restoration yet
+        </div>
+        <div class="chart-actions">
+          <button class="view-details-btn" id="view-details-btn">
+            <i class="ri-arrow-down-s-line"></i>
+            View details
+          </button>
+          <button class="plant-trees-btn" id="plant-trees-btn">
+            <i class="ri-plant-line"></i>
+            Plant Trees Now
+          </button>
+        </div>
       </div>
-      <!-- Usage Section -->
+
+      <!-- Usage Section (always visible) -->
       <div class="category-section">
         <div class="category-header">
           <i class="ri-bar-chart-grouped-line"></i>
           Usage
         </div>
-        <div class="metrics-row compact-metrics-row">
+        <div class="metrics-row compact-metrics-row" id="usage-metrics-row">
           <div
             class="compact-metric metric-tooltip stat-card"
             id="compact-tokens"
@@ -1189,96 +1267,106 @@
             <i class="ri-message-2-line"></i>
             <span class="compact-metric-value" id="messages-value">0</span>
           </div>
+          <!-- Add any additional usage tiles here, if needed -->
         </div>
       </div>
-      <!-- Environmental Impact Section -->
-      <div class="category-section">
-        <div class="category-header">
-          <i class="ri-plant-line"></i>
-          Environmental Impact
+
+      <!-- Details Sections Container -->
+      <div
+        id="details-container"
+        class="details-container"
+        style="display: none"
+      >
+        <!-- Environmental Impact Section -->
+        <div class="category-section">
+          <div class="category-header">
+            <i class="ri-plant-line"></i>
+            Environmental Impact
+          </div>
+          <div class="metrics-row">
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Energy consumed by AI processing"
+            >
+              <div class="stat-header">
+                <div class="stat-icon energy">
+                  <i class="ri-flashlight-line"></i>
+                </div>
+                <div class="stat-label">Energy</div>
+              </div>
+              <div class="stat-value" id="energy-value">0 kWh</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Water used for cooling data centers"
+            >
+              <div class="stat-header">
+                <div class="stat-icon water">
+                  <i class="ri-water-flash-line"></i>
+                </div>
+                <div class="stat-label">Water</div>
+              </div>
+              <div class="stat-value" id="water-value">0 L</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Carbon dioxide emissions"
+            >
+              <div class="stat-header">
+                <div class="stat-icon co2"><i class="ri-cloud-line"></i></div>
+                <div class="stat-label">CO₂</div>
+              </div>
+              <div class="stat-value" id="co2-value">0 kg</div>
+            </div>
+          </div>
         </div>
-        <div class="metrics-row">
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Energy consumed by AI processing"
-          >
-            <div class="stat-header">
-              <div class="stat-icon energy">
-                <i class="ri-flashlight-line"></i>
-              </div>
-              <div class="stat-label">Energy</div>
-            </div>
-            <div class="stat-value" id="energy-value">0 kWh</div>
+        <!-- Environmental Equivalents Section -->
+        <div class="category-section">
+          <div class="category-header">
+            <i class="ri-equalizer-line"></i>
+            Environmental Equivalents
           </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Water used for cooling data centers"
-          >
-            <div class="stat-header">
-              <div class="stat-icon water">
-                <i class="ri-water-flash-line"></i>
+          <div class="metrics-row">
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Equivalent phone charges"
+            >
+              <div class="stat-header">
+                <div class="stat-icon phones">
+                  <i class="ri-battery-charge-line"></i>
+                </div>
+                <div class="stat-label">Phones</div>
               </div>
-              <div class="stat-label">Water</div>
+              <div class="stat-value" id="phones-value">0</div>
             </div>
-            <div class="stat-value" id="water-value">0 L</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Carbon dioxide emissions"
-          >
-            <div class="stat-header">
-              <div class="stat-icon co2"><i class="ri-cloud-line"></i></div>
-              <div class="stat-label">CO₂</div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="YouTube minutes equivalent"
+            >
+              <div class="stat-header">
+                <div class="stat-icon youtube">
+                  <i class="ri-youtube-line"></i>
+                </div>
+                <div class="stat-label">YouTube</div>
+              </div>
+              <div class="stat-value" id="youtube-value">0 min</div>
             </div>
-            <div class="stat-value" id="co2-value">0 kg</div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Elevator floors equivalent"
+            >
+              <div class="stat-header">
+                <div class="stat-icon elevator">
+                  <i class="ri-building-2-line"></i>
+                </div>
+                <div class="stat-label">Elevator</div>
+              </div>
+              <div class="stat-value" id="elevator-value">0 floors</div>
+            </div>
           </div>
         </div>
       </div>
-      <!-- Environmental Equivalents Section -->
-      <div class="category-section">
-        <div class="category-header">
-          <i class="ri-equalizer-line"></i>
-          Environmental Equivalents
-        </div>
-        <div class="metrics-row">
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Equivalent phone charges"
-          >
-            <div class="stat-header">
-              <div class="stat-icon phones">
-                <i class="ri-battery-charge-line"></i>
-              </div>
-              <div class="stat-label">Phones</div>
-            </div>
-            <div class="stat-value" id="phones-value">0</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="YouTube minutes equivalent"
-          >
-            <div class="stat-header">
-              <div class="stat-icon youtube">
-                <i class="ri-youtube-line"></i>
-              </div>
-              <div class="stat-label">YouTube</div>
-            </div>
-            <div class="stat-value" id="youtube-value">0 min</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Elevator floors equivalent"
-          >
-            <div class="stat-header">
-              <div class="stat-icon elevator">
-                <i class="ri-building-2-line"></i>
-              </div>
-              <div class="stat-label">Elevator</div>
-            </div>
-            <div class="stat-value" id="elevator-value">0 floors</div>
-          </div>
-        </div>
-      </div>
+
       <!-- Compact Action Card -->
       <div class="action-section compact-action">
         <div

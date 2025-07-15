@@ -51,26 +51,52 @@ const RegenAIState = {
   },
 
   updateUI() {
-    this.updateHeroSection();
     this.updateActionCard();
     this.updateProgressBar();
+    this.updateM2Chart();
   },
 
-  updateHeroSection() {
-    const subtitle = document.getElementById("impact-subtitle");
-    const metricLabel = document.getElementById("main-metric-label");
-    const mainMetricTile = document.getElementById("main-metric-tile");
+  updateM2Chart() {
+    const m2Value = document.getElementById("m2-planted-value");
+    const m2Fill = document.getElementById("m2-chart-fill");
+    const m2Label = document.getElementById("m2-chart-label");
+    const m2Bar = m2Fill?.parentElement;
+    const m2ValueContainer = m2Value?.parentElement;
 
-    if (this.userState === "donor") {
-      if (subtitle)
-        subtitle.textContent = "Thank you for supporting reforestation! 🌱";
-      if (metricLabel) metricLabel.textContent = "m² restored";
-      if (mainMetricTile) mainMetricTile.style.display = "block";
-    } else {
-      if (subtitle) subtitle.textContent = "Track your AI footprint";
-      if (metricLabel) metricLabel.textContent = "Tokens";
-      if (mainMetricTile) mainMetricTile.style.display = "none";
+    if (!m2Value || !m2Fill || !m2Label || !m2Bar || !m2ValueContainer) return;
+
+    let m2Planted = 0;
+    let label = "No forest restoration yet";
+    let isDonor = this.userState === "donor";
+
+    if (isDonor) {
+      // Generate a random number between 50-500 for donors
+      m2Planted = Math.floor(Math.random() * 451) + 50; // 50 to 500
+      label = `You've helped restore ${m2Planted} m² of forest! 🌱`;
     }
+
+    // Update the value display
+    m2Value.textContent = m2Planted;
+
+    // Update the chart fill (max width is 100%, scale based on max 500m²)
+    const fillPercentage = Math.min((m2Planted / 500) * 100, 100);
+    m2Fill.style.width = `${fillPercentage}%`;
+
+    // Update the label
+    m2Label.textContent = label;
+
+    // Color logic
+    if (isDonor) {
+      m2Bar.classList.remove("red");
+      m2Fill.classList.remove("red");
+      m2ValueContainer.classList.remove("red");
+    } else {
+      m2Bar.classList.add("red");
+      m2Fill.classList.add("red");
+      m2ValueContainer.classList.add("red");
+    }
+
+    return;
   },
 
   updateActionCard() {
@@ -230,6 +256,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Set up test donor button
     setupTestDonorButton();
+
+    // Set up m² chart interactions
+    setupM2ChartInteractions();
   } catch (err) {
     console.error("Error initializing revolutionary popup:", err);
   }
@@ -400,16 +429,6 @@ function simulateDonorStatus() {
   RegenAIState.updateUserState("donor");
   RegenAIState.totalContributed = 3000; // Simulate some contributions
   RegenAIState.updateUI();
-
-  // Recalculate balance with new donor status
-  const storage = getChromeStorage();
-  if (storage) {
-    storage.get(["chatgptLogs"], function (result) {
-      const logs = result.chatgptLogs || [];
-      const stats = calculateStats(logs);
-      updateImpactBalance(stats);
-    });
-  }
 }
 
 // Set up test donor button
@@ -431,30 +450,17 @@ function setupTestDonorButton() {
   testDonorBtn.addEventListener("click", function () {
     const currentState =
       localStorage.getItem("regenAI_userState") || "notOptedIn";
-    const storage = getChromeStorage();
     if (currentState === "donor") {
       RegenAIState.updateUserState("notOptedIn");
       RegenAIState.totalContributed = 0;
       RegenAIState.updateUI();
       setButtonLabel();
-      if (!storage) return;
-      storage.get(["chatgptLogs"], function (result) {
-        const logs = result.chatgptLogs || [];
-        const stats = calculateStats(logs);
-        updateImpactBalance(stats);
-      });
       return;
     }
     RegenAIState.updateUserState("donor");
     RegenAIState.totalContributed = 3000;
     RegenAIState.updateUI();
     setButtonLabel();
-    if (!storage) return;
-    storage.get(["chatgptLogs"], function (result) {
-      const logs = result.chatgptLogs || [];
-      const stats = calculateStats(logs);
-      updateImpactBalance(stats);
-    });
   });
 }
 
@@ -630,7 +636,7 @@ function updateTodayStatsWithAnimation(logs) {
   // Update all visual elements
   updateChangeIndicators(stats);
   updateTokenUsageVisual(stats);
-  updateImpactBalance(stats);
+  // updateImpactBalance(stats); // Removed as per edit hint
 
   // Ensure main metric shows total tokens
   const mainMetricValue = document.getElementById("main-metric-value");
@@ -648,7 +654,7 @@ function updateLifetimeStatsWithAnimation(logs) {
   // Similar animation logic for lifetime stats
   // This would be called when switching to lifetime tab
   updateTokenUsageVisual(stats);
-  updateImpactBalance(stats);
+  // updateImpactBalance(stats); // Removed as per edit hint
 }
 
 /**
@@ -1079,163 +1085,7 @@ function tryLoadLogsAgain() {
 }
 
 // IMPACT BALANCE CALCULATION AND VISUALIZATION
-function updateImpactBalance(stats) {
-  try {
-    // Calculate consumption score (based on environmental impact)
-    const consumptionScore = calculateConsumptionScore(stats);
-
-    // Get contribution score (from donations/offsets)
-    const contributionScore = getContributionScore();
-
-    // Calculate balance percentage (-100% to +100%)
-    const balanceScore = calculateBalanceScore(
-      consumptionScore,
-      contributionScore
-    );
-
-    // Update visual elements
-    updateBalanceVisualization(
-      consumptionScore,
-      contributionScore,
-      balanceScore
-    );
-
-    // Update psychological messaging
-    updatePsychologicalMessaging(balanceScore);
-  } catch (e) {
-    console.error("Error updating impact balance:", e);
-  }
-}
-
-function calculateConsumptionScore(stats) {
-  // Base consumption primarily on token usage and environmental impact
-  const tokenScore = (stats.totalTokens || 0) * 0.1; // Scale tokens
-  const energyScore = parseFloat(stats.energy || 0) * 100; // Scale energy consumption
-  const co2Score = parseFloat(stats.co2 || 0) * 50; // Scale CO2 impact
-  const waterScore = parseFloat(stats.water || 0) * 2; // Scale water usage
-
-  const totalScore = tokenScore + energyScore + co2Score + waterScore;
-  return Math.max(totalScore, 1); // Minimum 1 to show consumption
-}
-
-function getContributionScore() {
-  // Check if user is a donor and has contributions
-  if (RegenAIState.userState === "donor") {
-    // Base contribution score for donors
-    const baseContribution = 3000;
-
-    // Add contribution based on total contributed amount
-    const contributionBonus = RegenAIState.totalContributed * 2;
-
-    return baseContribution + contributionBonus;
-  }
-
-  // For non-donors, return 0
-  return 0;
-}
-
-function calculateBalanceScore(consumption, contribution) {
-  if (consumption === 0 && contribution === 0) return 0;
-
-  const total = consumption + contribution;
-  const balance =
-    ((contribution - consumption) / Math.max(consumption, contribution)) * 100;
-
-  // Clamp between -100 and +100
-  return Math.max(-100, Math.min(100, Math.round(balance)));
-}
-
-function updateBalanceVisualization(consumption, contribution, balanceScore) {
-  // Update consumption bar
-  const consumptionFill = document.getElementById("consumption-fill");
-  const contributionFill = document.getElementById("contribution-fill");
-  const consumptionBar = document.getElementById("consumption-bar");
-  const contributionBar = document.getElementById("contribution-bar");
-
-  if (consumptionFill && contributionFill) {
-    const total = Math.max(consumption + contribution, 1);
-    const consumptionPercent = Math.round((consumption / total) * 100);
-    const contributionPercent = Math.round((contribution / total) * 100);
-
-    consumptionFill.style.width = `${Math.max(consumptionPercent, 5)}%`; // Minimum 5% to show
-    contributionFill.style.width = `${contributionPercent}%`;
-
-    // Update tooltips with detailed info
-    if (consumptionBar) {
-      consumptionBar.setAttribute(
-        "data-tooltip",
-        `AI Consumption Score: ${consumption.toFixed(1)}`
-      );
-    }
-    if (contributionBar) {
-      contributionBar.setAttribute(
-        "data-tooltip",
-        `Environmental Contributions: ${contribution.toFixed(1)}`
-      );
-    }
-  }
-
-  // Update balance score display
-  const scoreValue = document.getElementById("score-value");
-  const balanceScore_element = document.getElementById("balance-score");
-
-  if (scoreValue) {
-    scoreValue.textContent = `${balanceScore >= 0 ? "+" : ""}${balanceScore}%`;
-  }
-
-  if (balanceScore_element) {
-    let tooltipText = "";
-    if (balanceScore >= 20) {
-      tooltipText = "Planet Positive - Contributing more than consuming!";
-    } else if (balanceScore >= 0) {
-      tooltipText = "Nearly Balanced - Almost offsetting your impact";
-    } else if (balanceScore >= -50) {
-      tooltipText = "Environmental Debt - Consider offsetting your AI usage";
-    } else {
-      tooltipText =
-        "High Impact Debt - Time to balance your environmental footprint";
-    }
-    balanceScore_element.setAttribute("data-tooltip", tooltipText);
-  }
-}
-
-function updatePsychologicalMessaging(balanceScore) {
-  const heroElement = document.getElementById("impact-hero");
-  const statusElement = document.getElementById("balance-status");
-
-  if (!heroElement || !statusElement) return;
-
-  // Remove existing classes
-  heroElement.classList.remove("negative", "neutral", "positive");
-
-  if (balanceScore >= 20) {
-    // Positive impact
-    heroElement.classList.add("positive");
-    statusElement.textContent = "Planet Positive 🌱";
-    heroElement.setAttribute(
-      "data-tooltip",
-      "Contributing more than consuming - great job!"
-    );
-  } else if (balanceScore >= 0) {
-    // Nearly balanced
-    heroElement.classList.add("neutral");
-    statusElement.textContent = "Nearly Balanced";
-    heroElement.setAttribute("data-tooltip", "Almost balanced - keep going!");
-  } else if (balanceScore >= -50) {
-    // Moderate debt
-    heroElement.classList.add("negative");
-    statusElement.textContent = "Environmental Debt";
-    heroElement.setAttribute(
-      "data-tooltip",
-      "Taking more than giving back to nature"
-    );
-  } else {
-    // High debt
-    heroElement.classList.add("negative");
-    statusElement.textContent = "High Impact Debt";
-    heroElement.setAttribute("data-tooltip", "Time to give back to nature 🌍");
-  }
-}
+// Removed hero-related functions
 
 function updateTokenUsageVisual(stats) {
   try {
@@ -1257,6 +1107,51 @@ function updateTokenUsageVisual(stats) {
     }
   } catch (e) {
     console.error("Error updating token usage visual", e);
+  }
+}
+
+// Set up m² chart interactions
+function setupM2ChartInteractions() {
+  const viewDetailsBtn = document.getElementById("view-details-btn");
+  const plantTreesBtn = document.getElementById("plant-trees-btn");
+  const detailsContainer = document.getElementById("details-container");
+  const m2ChartSection = document.querySelector(".m2-chart-section");
+  const usageMetricsRow = document.getElementById("usage-metrics-row");
+
+  if (viewDetailsBtn && detailsContainer && m2ChartSection && usageMetricsRow) {
+    viewDetailsBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const isVisible = detailsContainer.style.display === "block";
+
+      if (isVisible) {
+        detailsContainer.style.display = "none";
+        m2ChartSection.classList.remove("details-visible");
+        viewDetailsBtn.innerHTML =
+          '<i class="ri-arrow-down-s-line"></i> View details';
+        viewDetailsBtn.classList.remove("active");
+        usageMetricsRow.classList.add("usage-limited");
+      } else {
+        detailsContainer.style.display = "block";
+        m2ChartSection.classList.add("details-visible");
+        viewDetailsBtn.innerHTML =
+          '<i class="ri-arrow-up-s-line"></i> Hide details';
+        viewDetailsBtn.classList.add("active");
+        usageMetricsRow.classList.remove("usage-limited");
+      }
+
+      return;
+    });
+    // Set initial state
+    usageMetricsRow.classList.add("usage-limited");
+  }
+
+  if (plantTreesBtn) {
+    plantTreesBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      redirectToDonationLanding();
+      return;
+    });
   }
 }
 
