@@ -415,12 +415,47 @@ function simulateDonorStatus() {
 // Set up test donor button
 function setupTestDonorButton() {
   const testDonorBtn = document.getElementById("test-donor-btn");
-  if (testDonorBtn) {
-    testDonorBtn.addEventListener("click", function () {
-      console.log("🧪 Test donor button clicked!");
-      simulateDonorStatus();
+  if (!testDonorBtn) return;
+
+  // Set initial label based on state
+  const setButtonLabel = () => {
+    const userState = localStorage.getItem("regenAI_userState") || "notOptedIn";
+    testDonorBtn.textContent =
+      userState === "donor"
+        ? "🔄 Switch to Non-Donor Demo"
+        : "🧪 Switch to Donor Demo";
+  };
+
+  setButtonLabel();
+
+  testDonorBtn.addEventListener("click", function () {
+    const currentState =
+      localStorage.getItem("regenAI_userState") || "notOptedIn";
+    const storage = getChromeStorage();
+    if (currentState === "donor") {
+      RegenAIState.updateUserState("notOptedIn");
+      RegenAIState.totalContributed = 0;
+      RegenAIState.updateUI();
+      setButtonLabel();
+      if (!storage) return;
+      storage.get(["chatgptLogs"], function (result) {
+        const logs = result.chatgptLogs || [];
+        const stats = calculateStats(logs);
+        updateImpactBalance(stats);
+      });
+      return;
+    }
+    RegenAIState.updateUserState("donor");
+    RegenAIState.totalContributed = 3000;
+    RegenAIState.updateUI();
+    setButtonLabel();
+    if (!storage) return;
+    storage.get(["chatgptLogs"], function (result) {
+      const logs = result.chatgptLogs || [];
+      const stats = calculateStats(logs);
+      updateImpactBalance(stats);
     });
-  }
+  });
 }
 
 /**
