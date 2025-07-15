@@ -296,113 +296,508 @@
         font-size: 20px;
       }
 
-      /* Donation Section */
+      /* Revolutionary Donation Section */
       .donation-section {
         padding: 80px 0;
-        background: var(--background);
+        background: linear-gradient(
+          135deg,
+          var(--background) 0%,
+          var(--surface-background) 100%
+        );
       }
 
-      .section-title {
-        font-size: 36px;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 20px;
-        color: var(--text-primary);
-      }
-
-      .section-subtitle {
-        font-size: 18px;
-        text-align: center;
-        color: var(--text-secondary);
-        margin-bottom: 60px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .donation-amounts {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 24px;
-        max-width: 800px;
-        margin: 0 auto 40px;
-      }
-
-      .amount-option {
-        background: var(--card-background);
-        border: 2px solid var(--border-color);
-        border-radius: 16px;
-        padding: 32px 24px;
-        text-align: center;
-        cursor: pointer;
-        transition: var(--transition-fast);
+      /* Support Hero Section */
+      .support-hero {
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
+        border-radius: 24px;
+        padding: 48px 32px;
+        margin-bottom: 48px;
         position: relative;
-        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
       }
 
-      .amount-option:hover {
-        border-color: var(--primary-green);
-        transform: translateY(-4px);
+      .support-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10 0 Q15 5 10 10 Q5 5 10 0" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .support-hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+      }
+
+      .support-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        font-size: 32px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .support-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        letter-spacing: -0.02em;
+      }
+
+      .support-subtitle {
+        font-size: 18px;
+        opacity: 0.9;
+        margin-bottom: 32px;
+        line-height: 1.6;
+      }
+
+      .support-highlight {
+        color: #ffd700;
+        font-weight: 600;
+      }
+
+      .support-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 24px;
+        margin-top: 32px;
+      }
+
+      .support-stat {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .support-stat-number {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .support-stat-label {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      /* Revolutionary Donation Cards */
+      .donation-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 48px;
+      }
+
+      .donation-card {
+        background: var(--card-background);
+        border-radius: 20px;
+        padding: 32px;
         box-shadow: var(--shadow-lg);
+        border: 2px solid var(--border-color);
+        transition: all var(--transition-normal);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
       }
 
-      .amount-option.selected {
+      .donation-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
+        opacity: 0;
+        transition: opacity var(--transition-normal);
+      }
+
+      .donation-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
         border-color: var(--primary-green);
-        background: var(--hover-background);
-        box-shadow: 0 0 0 3px var(--focus-ring);
       }
 
-      .amount-value {
+      .donation-card:hover::before {
+        opacity: 1;
+      }
+
+      .donation-card.featured {
+        border-color: var(--energy-orange);
+        box-shadow: 0 8px 32px rgba(255, 152, 0, 0.15);
+      }
+
+      .donation-card.featured::before {
+        background: linear-gradient(
+          90deg,
+          var(--energy-orange) 0%,
+          var(--primary-green) 100%
+        );
+        opacity: 1;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+
+      .card-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--accent-blue) 100%
+        );
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+      }
+
+      .donation-card.featured .card-icon {
+        background: linear-gradient(
+          135deg,
+          var(--energy-orange) 0%,
+          var(--primary-green) 100%
+        );
+      }
+
+      .card-badge {
+        background: var(--neutral-100);
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .card-badge.featured {
+        background: var(--energy-orange);
+        color: white;
+      }
+
+      .card-content {
+        margin-bottom: 24px;
+      }
+
+      .card-amount {
         font-size: 32px;
         font-weight: 800;
         color: var(--text-primary);
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
 
-      .amount-impact {
-        font-size: 16px;
-        color: var(--text-secondary);
-        margin-bottom: 8px;
-      }
-
-      .amount-popular {
-        background: var(--energy-orange);
-        color: white;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 4px 12px;
-        border-radius: 12px;
-        position: absolute;
-        top: -12px;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-
-      .amount-bonus {
+      .card-period {
         font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      .card-impact {
+        margin-bottom: 20px;
+      }
+
+      .impact-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--text-secondary);
+      }
+
+      .impact-item i {
+        color: var(--primary-green);
+        font-size: 16px;
+      }
+
+      .card-benefits {
+        margin-bottom: 20px;
+      }
+
+      .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .benefit-item i {
         color: var(--success-green);
+        font-size: 14px;
+      }
+
+      .custom-input-container {
+        margin: 20px 0;
+      }
+
+      .input-wrapper {
+        position: relative;
+        margin-bottom: 12px;
+      }
+
+      .currency-symbol {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
         font-weight: 600;
+        font-size: 16px;
       }
 
-      .amount-option.custom {
-        grid-column: 1 / -1;
-      }
-
-      .amount-option.custom input {
+      .custom-input {
         width: 100%;
-        padding: 16px;
+        padding: 16px 16px 16px 40px;
         border: 2px solid var(--border-color);
         border-radius: 12px;
         font-size: 18px;
-        margin-top: 16px;
-        text-align: center;
         font-weight: 600;
+        text-align: center;
+        transition: var(--transition-fast);
       }
 
-      .amount-option.custom input:focus {
+      .custom-input:focus {
         outline: none;
         border-color: var(--primary-green);
         box-shadow: 0 0 0 3px var(--focus-ring);
+      }
+
+      .custom-preview {
+        font-size: 13px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .card-action {
+        text-align: center;
+      }
+
+      .card-btn {
+        width: 100%;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        background: linear-gradient(
+          135deg,
+          var(--primary-green) 0%,
+          var(--success-green) 100%
+        );
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .card-btn:hover::before {
+        left: 100%;
+      }
+
+      .card-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .card-btn.featured {
+        background: linear-gradient(
+          135deg,
+          var(--energy-orange) 0%,
+          var(--primary-green) 100%
+        );
+      }
+
+      .card-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Revolutionary Urgency Banner */
+      .urgency-banner-modern {
+        background: linear-gradient(
+          135deg,
+          var(--energy-orange) 0%,
+          var(--energy-orange-hover) 100%
+        );
+        border-radius: 20px;
+        padding: 24px 32px;
+        margin-bottom: 48px;
+        color: white;
+        box-shadow: var(--shadow-lg);
+        animation: pulse 2s infinite;
+      }
+
+      .urgency-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .urgency-icon {
+        font-size: 24px;
+        opacity: 0.9;
+      }
+
+      .urgency-text {
+        flex: 1;
+      }
+
+      .urgency-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .urgency-subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .urgency-timer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .timer-item {
+        text-align: center;
+        min-width: 50px;
+      }
+
+      .timer-number {
+        display: block;
+        font-size: 20px;
+        font-weight: 800;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-bottom: 4px;
+      }
+
+      .timer-label {
+        font-size: 11px;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .timer-separator {
+        font-size: 20px;
+        font-weight: 800;
+        opacity: 0.7;
+      }
+
+      /* Revolutionary Trust Section */
+      .trust-section {
+        margin-top: 48px;
+      }
+
+      .trust-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 24px;
+      }
+
+      .trust-item-modern {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--card-background);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: var(--transition-fast);
+      }
+
+      .trust-item-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-green);
+      }
+
+      .trust-icon {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue) 0%,
+          var(--primary-green) 100%
+        );
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .trust-content {
+        flex: 1;
+      }
+
+      .trust-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .trust-subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
       }
 
       /* Urgency Banner */
@@ -631,12 +1026,37 @@
           font-size: 18px;
         }
 
-        .section-title {
+        .support-title {
           font-size: 28px;
         }
 
-        .donation-amounts {
+        .support-subtitle {
+          font-size: 16px;
+        }
+
+        .support-stats {
           grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .donation-cards {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .urgency-content {
+          flex-direction: column;
+          gap: 16px;
+          text-align: center;
+        }
+
+        .urgency-timer {
+          justify-content: center;
+        }
+
+        .trust-grid {
+          grid-template-columns: 1fr;
+          gap: 16px;
         }
 
         .proof-grid {
@@ -717,19 +1137,15 @@
       }
 
       .stats-hero {
-        background: linear-gradient(
-          135deg,
-          var(--neutral-50) 0%,
-          var(--surface-background) 100%
-        );
-        border-radius: 18px;
-        margin: 32px auto 24px auto;
-        max-width: 700px;
-        box-shadow: var(--shadow-sm);
+        /* background: linear-gradient(135deg, var(--neutral-50) 0%, var(--surface-background) 100%); */
+        /* border-radius: 18px; */
+        margin: 0px auto 24px auto;
+        max-width: 1000px;
+        /* box-shadow: var(--shadow-sm); */
         padding: 32px 24px 18px 24px;
         text-align: center;
         transition: background 0.5s;
-        border: 1px solid var(--border-color);
+        /* border: 1px solid var(--border-color); */
       }
       .stats-hero.positive {
         background: linear-gradient(
@@ -737,6 +1153,26 @@
           var(--hover-background) 0%,
           rgba(76, 175, 80, 0.1) 100%
         );
+      }
+      .stats-hero.negative .chart-bar {
+        background: #fecaca;
+        border: 1px solid #fca5a5;
+      }
+      .stats-hero.negative .chart-fill {
+        background: linear-gradient(90deg, #f87171 0%, #fca5a5 100%);
+      }
+      .stats-hero.negative .chart-value span:first-child {
+        color: #ef4444;
+      }
+      .stats-hero.positive .chart-bar {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
+      .stats-hero.positive .chart-fill {
+        background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      }
+      .stats-hero.positive .chart-value span:first-child {
+        color: #10b981;
       }
       .stats-hero-content {
         display: flex;
@@ -747,7 +1183,7 @@
       /* M² Planted Chart Section */
       .m2-chart-section {
         padding: 20px 0px;
-        margin-bottom: 16px;
+        margin-bottom: -24px;
         border: 1px solid rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(10px);
         width: 100%;
@@ -870,7 +1306,7 @@
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 24px;
         justify-content: center;
-        margin-bottom: 12px;
+        margin-top: 26px;
       }
       .stat-card {
         background: var(--card-background);
@@ -955,7 +1391,7 @@
       .stat-value {
         font-size: 22px;
         font-weight: 700;
-        color: var(--success-green);
+        /* color: var(--success-green); */
       }
       .hero-status {
         font-size: 1.1rem;
@@ -1021,6 +1457,9 @@
           padding: 20px 0;
         }
       }
+      .hidden {
+        display: none !important;
+      }
     </style>
   </head>
   <body>
@@ -1043,334 +1482,486 @@
       </div>
     </header>
 
-    <!-- Add at the top of the body, after <body> -->
-    <div id="stats-hero" class="stats-hero negative">
-      <div class="stats-hero-content">
-        <!-- M² Planted Chart Section -->
-        <div class="m2-chart-section">
-          <div class="chart-header">
-            <i class="ri-plant-line"></i>
-            <span>Forest Restoration</span>
-          </div>
-          <div class="chart-container">
-            <div class="chart-bar">
-              <div class="chart-fill" id="m2-chart-fill"></div>
+    <!-- Step 1: Forest Restoration chart + button -->
+    <div id="step-1">
+      <div id="stats-hero" class="stats-hero negative">
+        <div class="stats-hero-content">
+          <!-- M² Planted Chart Section -->
+          <div class="m2-chart-section">
+            <div class="chart-header">
+              <i class="ri-plant-line"></i>
+              <span>Forest Restoration</span>
             </div>
-            <div class="chart-value">
-              <span id="m2-planted-value">0</span>
-              <span class="chart-unit">m²</span>
+            <div class="chart-container">
+              <div class="chart-bar">
+                <div class="chart-fill" id="m2-chart-fill"></div>
+              </div>
+              <div class="chart-value">
+                <span id="m2-planted-value">0</span>
+                <span class="chart-unit">m²</span>
+              </div>
             </div>
+            <div class="chart-label" id="m2-chart-label">
+              No forest restoration yet
+            </div>
+            <button
+              id="plant-trees-btn"
+              class="btn btn-primary btn-lg"
+              style="margin: 32px auto 0 auto; display: block"
+            >
+              <i class="ri-plant-line"></i> Plant Trees Now
+            </button>
           </div>
-          <div class="chart-label" id="m2-chart-label">
-            No forest restoration yet
+          <div class="stats-grid">
+            <div class="stat-card metric-tooltip" data-tooltip="Tokens used">
+              <div class="stat-header">
+                <div class="stat-icon" style="background: var(--primary-green)">
+                  <i class="ri-bar-chart-grouped-line"></i>
+                </div>
+                <div class="stat-label">Tokens</div>
+              </div>
+              <div class="stat-value" id="hero-tokens">0</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Messages processed"
+            >
+              <div class="stat-header">
+                <div class="stat-icon" style="background: var(--accent-blue)">
+                  <i class="ri-message-2-line"></i>
+                </div>
+                <div class="stat-label">Messages</div>
+              </div>
+              <div class="stat-value" id="hero-messages">0</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Energy consumed by AI processing"
+            >
+              <div class="stat-header">
+                <div class="stat-icon energy">
+                  <i class="ri-flashlight-line"></i>
+                </div>
+                <div class="stat-label">Energy</div>
+              </div>
+              <div class="stat-value" id="hero-energy">0 kWh</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Water used for cooling data centers"
+            >
+              <div class="stat-header">
+                <div class="stat-icon water">
+                  <i class="ri-water-flash-line"></i>
+                </div>
+                <div class="stat-label">Water</div>
+              </div>
+              <div class="stat-value" id="hero-water">0 L</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Carbon dioxide emissions"
+            >
+              <div class="stat-header">
+                <div class="stat-icon co2"><i class="ri-cloud-line"></i></div>
+                <div class="stat-label">CO₂</div>
+              </div>
+              <div class="stat-value" id="hero-co2">0 kg</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Equivalent phone charges"
+            >
+              <div class="stat-header">
+                <div class="stat-icon phones">
+                  <i class="ri-battery-charge-line"></i>
+                </div>
+                <div class="stat-label">Phones</div>
+              </div>
+              <div class="stat-value" id="hero-phones">0</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="YouTube minutes equivalent"
+            >
+              <div class="stat-header">
+                <div class="stat-icon youtube">
+                  <i class="ri-youtube-line"></i>
+                </div>
+                <div class="stat-label">YouTube</div>
+              </div>
+              <div class="stat-value" id="hero-youtube">0 min</div>
+            </div>
+            <div
+              class="stat-card metric-tooltip"
+              data-tooltip="Elevator floors equivalent"
+            >
+              <div class="stat-header">
+                <div class="stat-icon elevator">
+                  <i class="ri-building-2-line"></i>
+                </div>
+                <div class="stat-label">Elevator</div>
+              </div>
+              <div class="stat-value" id="hero-elevator">0 floors</div>
+            </div>
           </div>
         </div>
-
-        <div class="stats-grid">
-          <div class="stat-card metric-tooltip" data-tooltip="Tokens used">
-            <div class="stat-header">
-              <div class="stat-icon" style="background: var(--primary-green)">
-                <i class="ri-bar-chart-grouped-line"></i>
-              </div>
-              <div class="stat-label">Tokens</div>
-            </div>
-            <div class="stat-value" id="hero-tokens">0</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Messages processed"
-          >
-            <div class="stat-header">
-              <div class="stat-icon" style="background: var(--accent-blue)">
-                <i class="ri-message-2-line"></i>
-              </div>
-              <div class="stat-label">Messages</div>
-            </div>
-            <div class="stat-value" id="hero-messages">0</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Energy consumed by AI processing"
-          >
-            <div class="stat-header">
-              <div class="stat-icon energy">
-                <i class="ri-flashlight-line"></i>
-              </div>
-              <div class="stat-label">Energy</div>
-            </div>
-            <div class="stat-value" id="hero-energy">0 kWh</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Water used for cooling data centers"
-          >
-            <div class="stat-header">
-              <div class="stat-icon water">
-                <i class="ri-water-flash-line"></i>
-              </div>
-              <div class="stat-label">Water</div>
-            </div>
-            <div class="stat-value" id="hero-water">0 L</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Carbon dioxide emissions"
-          >
-            <div class="stat-header">
-              <div class="stat-icon co2"><i class="ri-cloud-line"></i></div>
-              <div class="stat-label">CO₂</div>
-            </div>
-            <div class="stat-value" id="hero-co2">0 kg</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Equivalent phone charges"
-          >
-            <div class="stat-header">
-              <div class="stat-icon phones">
-                <i class="ri-battery-charge-line"></i>
-              </div>
-              <div class="stat-label">Phones</div>
-            </div>
-            <div class="stat-value" id="hero-phones">0</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="YouTube minutes equivalent"
-          >
-            <div class="stat-header">
-              <div class="stat-icon youtube">
-                <i class="ri-youtube-line"></i>
-              </div>
-              <div class="stat-label">YouTube</div>
-            </div>
-            <div class="stat-value" id="hero-youtube">0 min</div>
-          </div>
-          <div
-            class="stat-card metric-tooltip"
-            data-tooltip="Elevator floors equivalent"
-          >
-            <div class="stat-header">
-              <div class="stat-icon elevator">
-                <i class="ri-building-2-line"></i>
-              </div>
-              <div class="stat-label">Elevator</div>
-            </div>
-            <div class="stat-value" id="hero-elevator">0 floors</div>
-          </div>
-        </div>
-        <div class="hero-status" id="hero-status">Your AI Impact</div>
       </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <h1 class="hero-title">
-          🌲 Restore Forests, Offset Your Digital Footprint
-        </h1>
-        <p class="hero-subtitle">
-          Every digital interaction impacts our planet. Join us in restoring
-          native forests and protecting biodiversity through sustainable
-          reforestation projects.
-        </p>
+    <!-- Step 2: Donation options -->
+    <div id="step-2" class="hidden">
+      <section class="donation-section">
+        <div class="container">
+          <!-- Revolutionary Hero Section -->
+          <div class="support-hero">
+            <div class="support-hero-content">
+              <div class="support-icon">
+                <i class="ri-heart-pulse-line"></i>
+              </div>
+              <h2 class="support-title">Support Forest Restoration</h2>
+              <p class="support-subtitle">
+                Join thousands of people making a positive impact on our
+                planet.<br />
+                <span class="support-highlight"
+                  >Every donation plants native trees and restores
+                  biodiversity.</span
+                >
+              </p>
+              <div class="support-stats">
+                <div class="support-stat">
+                  <div class="support-stat-number">2,847</div>
+                  <div class="support-stat-label">Trees Planted Today</div>
+                </div>
+                <div class="support-stat">
+                  <div class="support-stat-number">1,234</div>
+                  <div class="support-stat-label">Active Supporters</div>
+                </div>
+                <div class="support-stat">
+                  <div class="support-stat-number">15.2k</div>
+                  <div class="support-stat-label">m² Forest Restored</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-        <div class="impact-display">
-          <div class="impact-content">
-            <div class="impact-number" id="user-impact-display">0 Wh</div>
-            <div class="impact-label">Your digital footprint today</div>
+          <!-- Revolutionary Donation Cards -->
+          <div class="donation-cards">
+            <div class="donation-card" data-amount="5">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="ri-seedling-line"></i>
+                </div>
+                <div class="card-badge">Most Popular</div>
+              </div>
+              <div class="card-content">
+                <div class="card-amount">$5</div>
+                <div class="card-period">per month</div>
+                <div class="card-impact">
+                  <div class="impact-item">
+                    <i class="ri-plant-line"></i>
+                    <span>Plant 2 trees</span>
+                  </div>
+                  <div class="impact-item">
+                    <i class="ri-map-pin-line"></i>
+                    <span>Restore 1m² forest</span>
+                  </div>
+                </div>
+                <div class="card-benefits">
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Monthly impact reports</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Project updates</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-action">
+                <button class="card-btn">Choose $5 Plan</button>
+              </div>
+            </div>
+
+            <div class="donation-card featured" data-amount="10">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="ri-forest-line"></i>
+                </div>
+                <div class="card-badge featured">Best Value</div>
+              </div>
+              <div class="card-content">
+                <div class="card-amount">$10</div>
+                <div class="card-period">per month</div>
+                <div class="card-impact">
+                  <div class="impact-item">
+                    <i class="ri-plant-line"></i>
+                    <span>Plant 5 trees</span>
+                  </div>
+                  <div class="impact-item">
+                    <i class="ri-map-pin-line"></i>
+                    <span>Restore 2.5m² forest</span>
+                  </div>
+                </div>
+                <div class="card-benefits">
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>All $5 benefits</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Priority project access</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Exclusive updates</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-action">
+                <button class="card-btn featured">Choose $10 Plan</button>
+              </div>
+            </div>
+
+            <div class="donation-card" data-amount="25">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="ri-earth-line"></i>
+                </div>
+                <div class="card-badge">Impact Leader</div>
+              </div>
+              <div class="card-content">
+                <div class="card-amount">$25</div>
+                <div class="card-period">per month</div>
+                <div class="card-impact">
+                  <div class="impact-item">
+                    <i class="ri-plant-line"></i>
+                    <span>Plant 15 trees</span>
+                  </div>
+                  <div class="impact-item">
+                    <i class="ri-map-pin-line"></i>
+                    <span>Restore 7.5m² forest</span>
+                  </div>
+                </div>
+                <div class="card-benefits">
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>All previous benefits</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Personal impact dashboard</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="ri-check-line"></i>
+                    <span>Direct project involvement</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-action">
+                <button class="card-btn">Choose $25 Plan</button>
+              </div>
+            </div>
+
+            <div class="donation-card custom" data-amount="custom">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="ri-settings-3-line"></i>
+                </div>
+                <div class="card-badge">Custom</div>
+              </div>
+              <div class="card-content">
+                <div class="card-amount">Custom</div>
+                <div class="card-period">per month</div>
+                <div class="card-impact">
+                  <div class="impact-item">
+                    <i class="ri-plant-line"></i>
+                    <span>Choose your impact</span>
+                  </div>
+                  <div class="impact-item">
+                    <i class="ri-map-pin-line"></i>
+                    <span>Flexible contribution</span>
+                  </div>
+                </div>
+                <div class="custom-input-container">
+                  <div class="input-wrapper">
+                    <span class="currency-symbol">$</span>
+                    <input
+                      type="number"
+                      id="custom-amount"
+                      placeholder="Enter amount"
+                      min="1"
+                      max="1000"
+                      class="custom-input"
+                    />
+                  </div>
+                  <div class="custom-preview" id="custom-preview">
+                    <span>≈ 0 trees planted</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card-action">
+                <button class="card-btn" id="custom-btn" disabled>
+                  Choose Custom Plan
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revolutionary Urgency Banner -->
+          <div class="urgency-banner-modern">
+            <div class="urgency-content">
+              <div class="urgency-icon">
+                <i class="ri-time-line"></i>
+              </div>
+              <div class="urgency-text">
+                <div class="urgency-title">🌱 Spring Planting Season</div>
+                <div class="urgency-subtitle">
+                  Every donation matched this month! Double your impact.
+                </div>
+              </div>
+              <div class="urgency-timer">
+                <div class="timer-item">
+                  <span class="timer-number" id="days">07</span>
+                  <span class="timer-label">Days</span>
+                </div>
+                <div class="timer-separator">:</div>
+                <div class="timer-item">
+                  <span class="timer-number" id="hours">23</span>
+                  <span class="timer-label">Hours</span>
+                </div>
+                <div class="timer-separator">:</div>
+                <div class="timer-item">
+                  <span class="timer-number" id="minutes">45</span>
+                  <span class="timer-label">Min</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Revolutionary Trust Indicators -->
+          <div class="trust-section">
+            <div class="trust-grid">
+              <div class="trust-item-modern">
+                <div class="trust-icon">
+                  <i class="ri-shield-check-line"></i>
+                </div>
+                <div class="trust-content">
+                  <div class="trust-title">100% Secure</div>
+                  <div class="trust-subtitle">Bank-level encryption</div>
+                </div>
+              </div>
+              <div class="trust-item-modern">
+                <div class="trust-icon">
+                  <i class="ri-refund-2-line"></i>
+                </div>
+                <div class="trust-content">
+                  <div class="trust-title">30-Day Guarantee</div>
+                  <div class="trust-subtitle">Full refund if not satisfied</div>
+                </div>
+              </div>
+              <div class="trust-item-modern">
+                <div class="trust-icon">
+                  <i class="ri-plant-line"></i>
+                </div>
+                <div class="trust-content">
+                  <div class="trust-title">Certified Projects</div>
+                  <div class="trust-subtitle">
+                    Verified by independent auditors
+                  </div>
+                </div>
+              </div>
+              <div class="trust-item-modern">
+                <div class="trust-icon">
+                  <i class="ri-transparency-line"></i>
+                </div>
+                <div class="trust-content">
+                  <div class="trust-title">Full Transparency</div>
+                  <div class="trust-subtitle">
+                    See exactly where your money goes
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </section>
+    </div>
 
-        <div class="social-proof">
-          <div class="proof-grid">
-            <div class="proof-item">
-              <i class="ri-user-heart-line"></i>
-              <span id="donors-today">1,247 people donated today</span>
+    <!-- Step 3: Payment form -->
+    <div id="step-3" class="hidden">
+      <section class="donation-section">
+        <div class="container">
+          <div class="payment-form" id="payment-form">
+            <div class="form-header">
+              <h3 class="form-title">
+                Complete Your Forest Restoration Donation
+              </h3>
+              <p class="form-subtitle">
+                Support <strong id="trees-to-plant">2 trees</strong> for
+                <strong id="donation-amount">$5</strong>
+              </p>
             </div>
-            <div class="proof-item">
-              <i class="ri-plant-line"></i>
-              <span id="trees-planted">3,891 trees planted this week</span>
+
+            <div id="stripe-payment-element"></div>
+
+            <div class="payment-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="cancel-payment-btn"
+              >
+                <i class="ri-arrow-left-line"></i>
+                Back
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="confirm-payment-btn"
+              >
+                <i class="ri-lock-line"></i>
+                Pay Securely
+              </button>
+            </div>
+
+            <div class="trust-indicators">
+              <div class="trust-item">
+                <i class="ri-shield-check-line"></i>
+                <span>SSL Secure</span>
+              </div>
+              <div class="trust-item">
+                <i class="ri-bank-card-line"></i>
+                <span>Stripe Powered</span>
+              </div>
+              <div class="trust-item">
+                <i class="ri-refund-2-line"></i>
+                <span>30-day Guarantee</span>
+              </div>
+              <div class="trust-item">
+                <i class="ri-plant-line"></i>
+                <span>Certified Projects</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Donation Section -->
-    <section class="donation-section">
-      <div class="container">
-        <h2 class="section-title">Support Forest Restoration</h2>
-        <p class="section-subtitle">
-          Choose your contribution to native forest restoration projects.<br />
-          <span style="font-size: 15px; color: var(--text-muted)"
-            >All donations are monthly (per month).</span
-          >
-          Every contribution helps protect biodiversity and combat climate
-          change.
-        </p>
-
-        <div class="donation-amounts">
-          <div class="amount-option" data-amount="5">
-            <div class="amount-value">$5</div>
-            <div
-              class="amount-period"
-              style="
-                font-size: 13px;
-                color: var(--text-muted);
-                margin-bottom: 4px;
-              "
-            >
-              per month
+          <div class="success-state" id="success-state" style="display: none">
+            <div class="success-icon">
+              <i class="ri-check-line"></i>
             </div>
-            <div class="amount-impact">Plant 2 trees</div>
-            <div class="amount-popular">Most Popular</div>
-          </div>
-          <div class="amount-option" data-amount="10">
-            <div class="amount-value">$10</div>
-            <div
-              class="amount-period"
-              style="
-                font-size: 13px;
-                color: var(--text-muted);
-                margin-bottom: 4px;
-              "
-            >
-              per month
-            </div>
-            <div class="amount-impact">Plant 5 trees</div>
-            <div class="amount-bonus">+ 1m² forest</div>
-          </div>
-          <div class="amount-option" data-amount="25">
-            <div class="amount-value">$25</div>
-            <div
-              class="amount-period"
-              style="
-                font-size: 13px;
-                color: var(--text-muted);
-                margin-bottom: 4px;
-              "
-            >
-              per month
-            </div>
-            <div class="amount-impact">Plant 15 trees</div>
-            <div class="amount-bonus">+ 5m² forest</div>
-          </div>
-          <div class="amount-option custom" data-amount="custom">
-            <div class="amount-value">Custom</div>
-            <div
-              class="amount-period"
-              style="
-                font-size: 13px;
-                color: var(--text-muted);
-                margin-bottom: 4px;
-              "
-            >
-              per month
-            </div>
-            <div class="amount-impact">Choose your amount</div>
-            <input
-              type="number"
-              id="custom-amount"
-              placeholder="Enter amount"
-              min="1"
-              max="1000"
-            />
-          </div>
-        </div>
-
-        <!-- Add after the amount selection grid -->
-        <div
-          class="donate-btn-row"
-          style="text-align: center; margin: 32px 0 0 0"
-        >
-          <button
-            id="donate-action-btn"
-            class="btn btn-primary btn-lg"
-            disabled
-          >
-            Donate
-          </button>
-        </div>
-
-        <div class="urgency-banner">
-          <i class="ri-time-line"></i>
-          <span
-            >🌱 Spring planting season - every donation matched this
-            month!</span
-          >
-        </div>
-
-        <div class="payment-form" id="payment-form" style="display: none">
-          <div class="form-header">
-            <h3 class="form-title">
-              Complete Your Forest Restoration Donation
-            </h3>
-            <p class="form-subtitle">
-              Support <strong id="trees-to-plant">2 trees</strong> for
-              <strong id="donation-amount">$5</strong>
+            <h2 class="success-title">
+              🌲 Thank You for Supporting Forest Restoration!
+            </h2>
+            <p class="success-message" id="success-message">
+              You've helped plant <strong>2 trees</strong> and restore native
+              forest ecosystems!
             </p>
-          </div>
-
-          <div id="stripe-payment-element"></div>
-
-          <div class="payment-actions">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              id="cancel-payment-btn"
-            >
-              <i class="ri-arrow-left-line"></i>
-              Back
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              id="confirm-payment-btn"
-            >
-              <i class="ri-lock-line"></i>
-              Pay Securely
+            <button class="btn btn-primary" onclick="window.close()">
+              <i class="ri-arrow-right-line"></i>
+              Continue Protecting Nature
             </button>
           </div>
-
-          <div class="trust-indicators">
-            <div class="trust-item">
-              <i class="ri-shield-check-line"></i>
-              <span>SSL Secure</span>
-            </div>
-            <div class="trust-item">
-              <i class="ri-bank-card-line"></i>
-              <span>Stripe Powered</span>
-            </div>
-            <div class="trust-item">
-              <i class="ri-refund-2-line"></i>
-              <span>30-day Guarantee</span>
-            </div>
-            <div class="trust-item">
-              <i class="ri-plant-line"></i>
-              <span>Certified Projects</span>
-            </div>
-          </div>
         </div>
-
-        <div class="success-state" id="success-state" style="display: none">
-          <div class="success-icon">
-            <i class="ri-check-line"></i>
-          </div>
-          <h2 class="success-title">
-            🌲 Thank You for Supporting Forest Restoration!
-          </h2>
-          <p class="success-message" id="success-message">
-            You've helped plant <strong>2 trees</strong> and restore native
-            forest ecosystems!
-          </p>
-          <button class="btn btn-primary" onclick="window.close()">
-            <i class="ri-arrow-right-line"></i>
-            Continue Protecting Nature
-          </button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
 
     <script>
       // Stripe Configuration
@@ -1394,6 +1985,30 @@
         updateSocialProof();
         updateUserImpact();
         parseStatsFromUrl(); // Call this on page load
+        startCountdownTimer(); // Start the urgency countdown
+
+        // Stepper logic
+        const step1 = document.getElementById("step-1");
+        const step2 = document.getElementById("step-2");
+        const step3 = document.getElementById("step-3");
+        const plantBtn = document.getElementById("plant-trees-btn");
+        const paymentForm = document.getElementById("payment-form");
+
+        function showStep(step) {
+          step1.classList.add("hidden");
+          step2.classList.add("hidden");
+          step3.classList.add("hidden");
+          if (step === 1) step1.classList.remove("hidden");
+          if (step === 2) step2.classList.remove("hidden");
+          if (step === 3) step3.classList.remove("hidden");
+        }
+        showStep(1);
+
+        if (plantBtn) {
+          plantBtn.addEventListener("click", function () {
+            showStep(2);
+          });
+        }
       });
 
       // Initialize Stripe
@@ -1412,69 +2027,97 @@
 
       // Setup amount selection
       function setupAmountSelection() {
-        const amountOptions = document.querySelectorAll(
-          ".amount-option:not(.custom)"
+        const donationCards = document.querySelectorAll(
+          ".donation-card:not(.custom)"
         );
-        const customOption = document.querySelector(".amount-option.custom");
+        const customCard = document.querySelector(".donation-card.custom");
         const customInput = document.getElementById("custom-amount");
+        const customBtn = document.getElementById("custom-btn");
+        const customPreview = document.getElementById("custom-preview");
 
         // Preset amounts
-        amountOptions.forEach((option) => {
-          option.addEventListener("click", function () {
-            // Remove selection from all options
-            amountOptions.forEach((opt) => opt.classList.remove("selected"));
-            customOption.classList.remove("selected");
+        donationCards.forEach((card) => {
+          const cardBtn = card.querySelector(".card-btn");
 
-            // Add selection to clicked option
-            this.classList.add("selected");
-            selectedAmount = parseInt(this.dataset.amount);
+          cardBtn.addEventListener("click", function () {
+            // Remove selection from all cards
+            donationCards.forEach((c) => c.classList.remove("selected"));
+            customCard.classList.remove("selected");
 
-            // Show payment form
+            // Add selection to clicked card
+            card.classList.add("selected");
+            selectedAmount = parseInt(card.dataset.amount);
+
+            // Enable donate button and proceed to next step
+            const donateBtn = document.getElementById("donate-action-btn");
+            if (donateBtn) {
+              donateBtn.disabled = false;
+            }
+
+            // Show step 3 (payment form)
+            showStep(3);
             showPaymentForm();
           });
         });
 
         // Custom amount
-        if (customOption && customInput) {
-          customOption.addEventListener("click", function () {
-            amountOptions.forEach((opt) => opt.classList.remove("selected"));
+        if (customCard && customInput && customBtn) {
+          customCard.addEventListener("click", function () {
+            donationCards.forEach((c) => c.classList.remove("selected"));
             this.classList.add("selected");
             customInput.focus();
           });
 
           customInput.addEventListener("input", function () {
-            selectedAmount = parseInt(this.value) || 0;
+            const amount = parseInt(this.value) || 0;
+            selectedAmount = amount;
+
+            // Update preview
+            if (customPreview) {
+              const trees = Math.floor(amount * 0.4);
+              customPreview.innerHTML = `<span>≈ ${trees} trees planted</span>`;
+            }
+
+            // Enable/disable custom button
+            if (amount > 0) {
+              customBtn.disabled = false;
+            } else {
+              customBtn.disabled = true;
+            }
+          });
+
+          customBtn.addEventListener("click", function () {
             if (selectedAmount > 0) {
+              // Show step 3 (payment form)
+              showStep(3);
               showPaymentForm();
             }
           });
         }
 
         // Auto-select first option
-        const firstOption = document.querySelector(
-          '.amount-option[data-amount="5"]'
+        const firstCard = document.querySelector(
+          '.donation-card[data-amount="5"]'
         );
-        if (firstOption) {
-          firstOption.classList.add("selected");
+        if (firstCard) {
+          firstCard.classList.add("selected");
         }
       }
 
       // Show payment form
       async function showPaymentForm() {
-        const paymentForm = document.getElementById("payment-form");
         const treesToPlant = Math.floor(selectedAmount * 0.4);
 
         // Update form content
-        document.getElementById(
-          "trees-to-plant"
-        ).textContent = `${treesToPlant} trees`;
-        document.getElementById(
-          "donation-amount"
-        ).textContent = `$${selectedAmount}`;
+        const treesElement = document.getElementById("trees-to-plant");
+        const amountElement = document.getElementById("donation-amount");
 
-        // Show form
-        paymentForm.style.display = "block";
-        paymentForm.scrollIntoView({ behavior: "smooth" });
+        if (treesElement) {
+          treesElement.textContent = `${treesToPlant} trees`;
+        }
+        if (amountElement) {
+          amountElement.textContent = `$${selectedAmount}`;
+        }
 
         // Setup Stripe Elements
         await setupStripeElements();
@@ -1647,19 +2290,24 @@
         const donorsToday = Math.floor(Math.random() * 500) + 1000;
         const treesPlanted = Math.floor(Math.random() * 2000) + 3000;
 
-        document.getElementById(
-          "donors-today"
-        ).textContent = `${donorsToday.toLocaleString()} people supported forest restoration today`;
-        document.getElementById(
-          "trees-planted"
-        ).textContent = `${treesPlanted.toLocaleString()} trees planted this week`;
+        const donorsTodayElem = document.getElementById("donors-today");
+        const treesPlantedElem = document.getElementById("trees-planted");
+        if (donorsTodayElem) {
+          donorsTodayElem.textContent = `${donorsToday.toLocaleString()} people supported forest restoration today`;
+        }
+        if (treesPlantedElem) {
+          treesPlantedElem.textContent = `${treesPlanted.toLocaleString()} trees planted this week`;
+        }
       }
 
       // Update user impact (get from URL params)
       function updateUserImpact() {
         const urlParams = new URLSearchParams(window.location.search);
         const impact = urlParams.get("impact") || "15 Wh";
-        document.getElementById("user-impact-display").textContent = impact;
+        const impactElem = document.getElementById("user-impact-display");
+        if (impactElem) {
+          impactElem.textContent = impact;
+        }
       }
 
       // Trigger confetti
@@ -1708,36 +2356,47 @@
         }
       }
 
+      // Countdown timer for urgency banner
+      function startCountdownTimer() {
+        // Set end date to 7 days from now
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 7);
+
+        function updateTimer() {
+          const now = new Date().getTime();
+          const distance = endDate.getTime() - now;
+
+          if (distance > 0) {
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor(
+              (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            );
+            const minutes = Math.floor(
+              (distance % (1000 * 60 * 60)) / (1000 * 60)
+            );
+
+            const daysElement = document.getElementById("days");
+            const hoursElement = document.getElementById("hours");
+            const minutesElement = document.getElementById("minutes");
+
+            if (daysElement)
+              daysElement.textContent = days.toString().padStart(2, "0");
+            if (hoursElement)
+              hoursElement.textContent = hours.toString().padStart(2, "0");
+            if (minutesElement)
+              minutesElement.textContent = minutes.toString().padStart(2, "0");
+          }
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 60000); // Update every minute
+      }
+
       // Call on page load
       parseStatsFromUrl();
 
       // After successful donation, call simulatePositiveFeedback();
       // (You can call this in your Stripe success handler)
-
-      // Enable Donate button only when a valid amount is selected
-      function updateDonateButtonState() {
-        const btn = document.getElementById("donate-action-btn");
-        if (!btn) return;
-        if (selectedAmount && selectedAmount > 0) {
-          btn.disabled = false;
-        } else {
-          btn.disabled = true;
-        }
-      }
-
-      // Call updateDonateButtonState() whenever amount changes
-      // (Add this call in setupAmountSelection and custom input event)
-
-      // On click, trigger payment flow
-      const donateBtn = document.getElementById("donate-action-btn");
-      if (donateBtn) {
-        donateBtn.addEventListener("click", function () {
-          // Trigger payment flow (reuse confirmPayment or similar)
-          if (typeof confirmPayment === "function") {
-            confirmPayment();
-          }
-        });
-      }
     </script>
   </body>
 </html>
