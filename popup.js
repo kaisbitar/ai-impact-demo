@@ -54,6 +54,28 @@ const RegenAIState = {
     this.updateActionCard();
     this.updateProgressBar();
     this.updateM2Chart();
+    // Update Plant Trees Now button label
+    const plantTreesBtn = document.getElementById("plant-trees-btn");
+    if (plantTreesBtn) {
+      if (this.userState === "donor") {
+        plantTreesBtn.innerHTML =
+          '<i class="ri-dashboard-line"></i> View Dashboard';
+      } else {
+        plantTreesBtn.innerHTML =
+          '<i class="ri-plant-line"></i> Plant Trees Now';
+      }
+    }
+    // Update Restore Forests Now button label
+    const restoreBtn = document.getElementById("simple-donate-btn");
+    if (restoreBtn) {
+      if (this.userState === "donor") {
+        restoreBtn.innerHTML =
+          '<i class="ri-dashboard-line"></i> View Dashboard';
+      } else {
+        restoreBtn.innerHTML =
+          '<i class="ri-plant-line"></i> 🌱 Restore Forests Now';
+      }
+    }
   },
 
   updateM2Chart() {
@@ -321,15 +343,16 @@ function setupDonationButton() {
 function setupSimpleDonationButton() {
   const simpleDonateBtn = document.getElementById("simple-donate-btn");
   console.log("🔍 Looking for simple-donate-btn:", simpleDonateBtn);
-  if (simpleDonateBtn) {
-    console.log("✅ Found simple-donate-btn, adding click listener");
-    simpleDonateBtn.addEventListener("click", function () {
-      console.log("🌱 Donation button clicked!");
-      redirectToDonationLanding();
-    });
-  } else {
-    console.warn("❌ simple-donate-btn not found in DOM");
-  }
+  if (!simpleDonateBtn) return;
+  console.log("✅ Found simple-donate-btn, adding click listener");
+  simpleDonateBtn.addEventListener("click", function () {
+    if (RegenAIState.userState === "donor") {
+      window.open("/dashboard/index.html", "_blank");
+      return;
+    }
+    console.log("🌱 Donation button clicked!");
+    redirectToDonationLanding();
+  });
 }
 
 // Redirect to donation landing page
@@ -1149,6 +1172,10 @@ function setupM2ChartInteractions() {
   if (plantTreesBtn) {
     plantTreesBtn.addEventListener("click", function (e) {
       e.preventDefault();
+      if (RegenAIState.userState === "donor") {
+        window.open("/dashboard/index.html", "_blank");
+        return;
+      }
       redirectToDonationLanding();
       return;
     });

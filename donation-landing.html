@@ -1892,6 +1892,57 @@
     <div id="step-3" class="hidden">
       <section class="donation-section">
         <div class="container">
+          <!-- Demo Payment Options -->
+          <div
+            id="payment-options-demo"
+            style="
+              max-width: 600px;
+              margin: 0 auto 24px auto;
+              display: flex;
+              gap: 24px;
+              justify-content: center;
+            "
+          >
+            <button
+              class="btn btn-secondary"
+              type="button"
+              id="demo-stripe-btn"
+              style="display: flex; align-items: center; gap: 8px"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Stripe_Logo%2C_revised_2016.svg"
+                alt="Stripe"
+                style="height: 20px"
+              />
+              Stripe
+            </button>
+            <button
+              class="btn btn-secondary"
+              type="button"
+              id="demo-paypal-btn"
+              style="display: flex; align-items: center; gap: 8px"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                alt="PayPal"
+                style="height: 20px"
+              />
+              PayPal
+            </button>
+            <button
+              class="btn btn-secondary"
+              type="button"
+              id="demo-applepay-btn"
+              style="display: flex; align-items: center; gap: 8px"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg"
+                alt="Apple Pay"
+                style="height: 20px"
+              />
+              Apple Pay
+            </button>
+          </div>
           <div class="payment-form" id="payment-form">
             <div class="form-header">
               <h3 class="form-title">
@@ -1978,6 +2029,19 @@
       let paymentElement = null;
       let selectedAmount = 5;
 
+      // Stepper logic (move to top-level scope)
+      const step1 = document.getElementById("step-1");
+      const step2 = document.getElementById("step-2");
+      const step3 = document.getElementById("step-3");
+      function showStep(step) {
+        step1.classList.add("hidden");
+        step2.classList.add("hidden");
+        step3.classList.add("hidden");
+        if (step === 1) step1.classList.remove("hidden");
+        if (step === 2) step2.classList.remove("hidden");
+        if (step === 3) step3.classList.remove("hidden");
+      }
+
       // Initialize page
       document.addEventListener("DOMContentLoaded", function () {
         initializeStripe();
@@ -1987,23 +2051,8 @@
         parseStatsFromUrl(); // Call this on page load
         startCountdownTimer(); // Start the urgency countdown
 
-        // Stepper logic
-        const step1 = document.getElementById("step-1");
-        const step2 = document.getElementById("step-2");
-        const step3 = document.getElementById("step-3");
-        const plantBtn = document.getElementById("plant-trees-btn");
-        const paymentForm = document.getElementById("payment-form");
-
-        function showStep(step) {
-          step1.classList.add("hidden");
-          step2.classList.add("hidden");
-          step3.classList.add("hidden");
-          if (step === 1) step1.classList.remove("hidden");
-          if (step === 2) step2.classList.remove("hidden");
-          if (step === 3) step3.classList.remove("hidden");
-        }
         showStep(1);
-
+        const plantBtn = document.getElementById("plant-trees-btn");
         if (plantBtn) {
           plantBtn.addEventListener("click", function () {
             showStep(2);
@@ -2397,6 +2446,22 @@
 
       // After successful donation, call simulatePositiveFeedback();
       // (You can call this in your Stripe success handler)
+
+      // Optionally, you can add a script to highlight the selected payment method (demo only)
+      document.addEventListener("DOMContentLoaded", function () {
+        const demoBtns = [
+          document.getElementById("demo-stripe-btn"),
+          document.getElementById("demo-paypal-btn"),
+          document.getElementById("demo-applepay-btn"),
+        ];
+        demoBtns.forEach((btn) => {
+          if (!btn) return;
+          btn.addEventListener("click", function () {
+            demoBtns.forEach((b) => b.classList.remove("selected"));
+            btn.classList.add("selected");
+          });
+        });
+      });
     </script>
   </body>
 </html>
